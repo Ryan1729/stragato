@@ -2,36 +2,41 @@ module View exposing (..)
 
 import Html exposing (Html)
 import Svg exposing (..)
-import Svg.Attributes exposing (..)
-import Math.Vector2 as V2 exposing (Vec2, vec2, getX, getY, add)
+import Svg.Attributes exposing (width, height, viewBox, x, y, fill, stroke, strokeWidth, points)
+import Math.Vector2 as V2 exposing (Vec2, vec2, getX, getY, add, scale)
 import String
 
 
 view : () -> Html msg
 view _ =
     svg [ width "600", height "600", viewBox "0 0 1024 1024" ]
-        [ rect
-            [ x "0"
-            , y "0"
-            , width "100%"
-            , height "100%"
-            , fill "#08f"
+        <| [ rect
+                [ x "0"
+                , y "0"
+                , width "100%"
+                , height "100%"
+                , fill "#08f"
+                ]
+                []
+           ]
+        ++ List.map (hexagon << add (vec2 400 400) << scale 60)
+            [ (vec2 0 0)
+            , (vec2 1.5 hexagonHeightConstant)
+            , (vec2 0 <| 2 * hexagonHeightConstant)
+            , (vec2 1.5 <| 3 * hexagonHeightConstant)
             ]
-            []
-        , hexagon (vec2 0 0)
-        , hexagon (vec2 400 400)
-        , hexagon (vec2 520 400)
-        , hexagon (vec2 400 520)
-        , hexagon (vec2 520 520)
-        ]
+
+
+hexagonHeightConstant =
+    (sqrt 3) / 2
 
 
 hexagon center =
     polygon
         [ fill "lime"
         , points <| hexagonPoints center 60
-          -- , stroke "grey"
-          -- , strokeWidth "4"
+        , stroke "grey"
+        , strokeWidth "4"
         ]
         []
 
