@@ -18,30 +18,44 @@ view _ =
             , fill "#08f"
             ]
             []
-        , polygon
-            [ fill "lime"
-            , points <| hexagonPoints (vec2 400 400) 60
-            ]
-            []
+        , hexagon (vec2 0 0)
+        , hexagon (vec2 400 400)
+        , hexagon (vec2 520 400)
+        , hexagon (vec2 400 520)
+        , hexagon (vec2 520 520)
         ]
 
 
-sin60 =
-    sin (pi / 3)
+hexagon center =
+    polygon
+        [ fill "lime"
+        , points <| hexagonPoints center 60
+          -- , stroke "grey"
+          -- , strokeWidth "4"
+        ]
+        []
 
 
-
-{- derived from tables at http://www.rdwarf.com/lerickson/hex/ -}
+tau =
+    2 * pi
 
 
 hexagonPointsList =
-    [ vec2 0 1.5
-    , vec2 0 0.5
-    , vec2 sin60 0
-    , vec2 (2 * sin60) 0.5
-    , vec2 (2 * sin60) 1.5
-    , vec2 sin60 2
-    ]
+    List.map
+        (\fraction ->
+            let
+                angle =
+                    tau * fraction
+            in
+                vec2 (cos angle) (sin angle)
+        )
+        [ 0
+        , 1 / 6
+        , 2 / 6
+        , 3 / 6
+        , 4 / 6
+        , 5 / 6
+        ]
 
 
 v2ToSVGString : Vec2 -> String
@@ -50,7 +64,7 @@ v2ToSVGString vector =
 
 
 hexagonPoints : Vec2 -> Float -> String
-hexagonPoints corner sideLength =
+hexagonPoints center sideLength =
     hexagonPointsList
-        |> List.map (V2.scale sideLength >> add corner >> v2ToSVGString)
+        |> List.map (V2.scale sideLength >> add center >> v2ToSVGString)
         |> String.join " "
