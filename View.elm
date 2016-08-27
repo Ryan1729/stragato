@@ -24,7 +24,7 @@ background =
         ]
         []
     ]
-        ++ List.map (hexagon << add (vec2 400 400) << V2.scale 60)
+        ++ List.map (space << add (vec2 400 400) << V2.scale 60)
             [ (vec2 0 0)
             , (vec2 1.5 hexagonHeightConstant)
             , (vec2 0 <| 2 * hexagonHeightConstant)
@@ -42,7 +42,7 @@ view model =
 piece center =
     polygon
         [ fill "#fa0"
-        , points <| starPoints center 42
+        , points <| piecePoints center
         , stroke "grey"
         , strokeWidth "4"
         , onMouseDownWithPosition PieceDragStart
@@ -60,10 +60,10 @@ onMouseDownWithPosition msgConstructor =
         on "mousedown" msgDecoder
 
 
-hexagon center =
+space center =
     polygon
         [ fill "lime"
-        , points <| hexagonPoints center 60
+        , points <| spacePoints center
         , stroke "grey"
         , strokeWidth "4"
         ]
@@ -99,6 +99,12 @@ hexagonPointsList =
         ]
 
 
+spacePointsList : List Vec2
+spacePointsList =
+    List.map (V2.scale 60)
+        hexagonPointsList
+
+
 starPointsList : List Vec2
 starPointsList =
     List.map ((+) (7 / 48) >> fractionToPointOnCircle)
@@ -108,6 +114,12 @@ starPointsList =
         , 1 / 5
         , 3 / 5
         ]
+
+
+piecePointsList : List Vec2
+piecePointsList =
+    List.map (V2.scale 40)
+        starPointsList
 
 
 v2ToSVGString : Vec2 -> String
@@ -122,18 +134,18 @@ v2ToSVGString vector =
         x ++ "," ++ y
 
 
-pointsListToSVGString : List Vec2 -> Vec2 -> Float -> String
-pointsListToSVGString pointsList center sideLength =
+pointsListToSVGString : List Vec2 -> Vec2 -> String
+pointsListToSVGString pointsList center =
     pointsList
-        |> List.map (V2.scale sideLength >> add center >> v2ToSVGString)
+        |> List.map (add center >> v2ToSVGString)
         |> String.join " "
 
 
-hexagonPoints : Vec2 -> Float -> String
-hexagonPoints =
-    pointsListToSVGString hexagonPointsList
+spacePoints : Vec2 -> String
+spacePoints =
+    pointsListToSVGString spacePointsList
 
 
-starPoints : Vec2 -> Float -> String
-starPoints =
-    pointsListToSVGString starPointsList
+piecePoints : Vec2 -> String
+piecePoints =
+    pointsListToSVGString piecePointsList
