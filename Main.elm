@@ -1,7 +1,9 @@
 module Main exposing (..)
 
 import Html.App exposing (program)
+import Msg exposing (Msg(..))
 import View exposing (view)
+import Ports
 
 
 main : Program Never
@@ -21,9 +23,11 @@ main =
 --}
 
 
-update : msg -> () -> ( (), Cmd msg )
-update msg _ =
-    () ! []
+update : Msg -> () -> ( (), Cmd msg )
+update message _ =
+    case message of
+        PlayClack ->
+            () ! [ Ports.sound "clack" ]
 
 
 subscriptions =
