@@ -1,34 +1,30 @@
 module Main exposing (..)
 
 import Html.App exposing (program)
-import Msg exposing (Msg(..))
 import View exposing (view)
-import Ports
+import Model exposing (init)
+import Update exposing (update)
+import Msg exposing (Msg(PieceDragMove, PieceDragEnd))
+import Mouse
 
 
 main : Program Never
 main =
     program
-        { init = ( (), Cmd.none )
+        { init = init
         , update = update
         , subscriptions = subscriptions
         , view = view
         }
 
 
+subscriptions model =
+    case model.pieceDrag of
+        Nothing ->
+            Sub.none
 
---type alias Model = {
---  width = 8,
---  height = 6,
---}
-
-
-update : Msg -> () -> ( (), Cmd msg )
-update message _ =
-    case message of
-        PlayClack ->
-            () ! [ Ports.sound "clack" ]
-
-
-subscriptions =
-    always Sub.none
+        Just _ ->
+            Sub.batch
+                [ Mouse.moves PieceDragMove
+                , Mouse.ups PieceDragEnd
+                ]
