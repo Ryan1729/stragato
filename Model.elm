@@ -9,7 +9,19 @@ type alias Model =
     , piecePosition : Vec2
     , width : Int
     , height : Int
+    , pieceList : List Piece
     }
+
+
+type alias Piece =
+    { pieceType : PieceType
+    , position : Vec2
+    }
+
+
+type PieceType
+    = Star
+    | WeirdThing
 
 
 defaultState =
@@ -17,6 +29,7 @@ defaultState =
     , piecePosition = vec2 100 100
     , width = 4
     , height = 5
+    , pieceList = [ Piece Star (vec2 280 100), Piece WeirdThing (vec2 100 100) ]
     }
 
 

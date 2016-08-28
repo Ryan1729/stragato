@@ -1,13 +1,13 @@
 module View exposing (..)
 
 import Html exposing (Html)
-import Svg exposing (svg, rect, polygon, Attribute)
+import Svg exposing (Svg, svg, rect, polygon, Attribute)
 import Svg.Attributes exposing (..)
 import Svg.Events exposing (onClick, on)
 import Math.Vector2 as V2 exposing (Vec2, vec2, getX, getY, add, scale, fromRecord)
 import String
 import Msg exposing (Msg(PlayClack, SelectPiece))
-import Model exposing (Model)
+import Model exposing (Model, Piece, PieceType(..))
 import Mouse
 import Json.Decode
 
@@ -26,32 +26,37 @@ background =
     ]
 
 
-
--- ++ List.map (space << add (vec2 400 400) << V2.scale 60)
---     [ (vec2 0 0)
---     , (vec2 1.5 hexagonHeightConstant)
---     , (vec2 0 <| 2 * hexagonHeightConstant)
---     , (vec2 1.5 <| 3 * hexagonHeightConstant)
---     ]
-
-
 view : Model -> Html Msg
 view model =
     let
-        pieces =
+        selectedId =
             case model.pieceSelected of
                 Nothing ->
-                    [ piece False model.piecePosition ]
+                    -1
 
                 Just id ->
-                    [ piece True model.piecePosition ]
+                    id
     in
         svg [ width "600", height "600", viewBox "0 0 600 600" ]
             <| background
             ++ (List.map (space << add (vec2 100 100) << V2.scale 60)
                     <| hexGridPoints model.width model.height
                )
-            ++ pieces
+            ++ List.indexedMap (getPieceView selectedId) model.pieceList
+
+
+getPieceView : Int -> Int -> Piece -> Svg Msg
+getPieceView selectedId currentId piece =
+    let
+        isSelected =
+            selectedId == currentId
+    in
+        case piece.pieceType of
+            Star ->
+                starPiece piece.position isSelected currentId
+
+            WeirdThing ->
+                weirdThingPiece piece.position isSelected currentId
 
 
 hexagonHeightConstant =
@@ -83,14 +88,25 @@ hexGridPoints width height =
             baseList
 
 
-piece selected center =
+starPiece : Vec2 -> Bool -> Int -> Svg Msg
+starPiece center =
+    piece <| starPoints center
+
+
+weirdThingPiece : Vec2 -> Bool -> Int -> Svg Msg
+weirdThingPiece center =
+    piece <| weirdThingPoints center
+
+
+piece : String -> Bool -> Int -> Svg Msg
+piece piecesPoints selected id =
     polygon
         [ fill "#fa0"
-        , points <| piecePoints center
+        , points piecesPoints
         , stroke "grey"
         , strokeWidth "4"
         , cursor "move"
-        , onClick <| SelectPiece 1
+        , onClick <| SelectPiece id
         , fillOpacity
             <| if selected then
                 "0.5"
@@ -136,6 +152,24 @@ hexagonPointsList =
         ]
 
 
+weirdThingPointsList : List Vec2
+weirdThingPointsList =
+    List.map fractionToPointOnCircle
+        [ 0
+        , 1 / 6
+        , 5 / 6
+        , 2 / 6
+        , 4 / 6
+        , 3 / 6
+        ]
+
+
+weirdThingPiecePointsList : List Vec2
+weirdThingPiecePointsList =
+    List.map (V2.scale 40)
+        weirdThingPointsList
+
+
 spacePointsList : List Vec2
 spacePointsList =
     List.map (V2.scale 60)
@@ -153,8 +187,8 @@ starPointsList =
         ]
 
 
-piecePointsList : List Vec2
-piecePointsList =
+starPiecePointsList : List Vec2
+starPiecePointsList =
     List.map (V2.scale 40)
         starPointsList
 
@@ -183,6 +217,11 @@ spacePoints =
     pointsListToSVGString spacePointsList
 
 
-piecePoints : Vec2 -> String
-piecePoints =
-    pointsListToSVGString piecePointsList
+starPoints : Vec2 -> String
+starPoints =
+    pointsListToSVGString starPiecePointsList
+
+
+weirdThingPoints : Vec2 -> String
+weirdThingPoints =
+    pointsListToSVGString weirdThingPiecePointsList
