@@ -1,3 +1,6 @@
 #!/bin/bash
 
-elm-live Main.elm --output=elm.js
+# reload:
+# https://www.npmjs.com/package/reload
+
+./build/parallel_commands "reload" "./build/run_filewatcher.sh"
