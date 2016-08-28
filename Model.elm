@@ -21,8 +21,8 @@ type alias PieceDrag =
 defaultState =
     { pieceDrag = Nothing
     , piecePosition = vec2 400 400
-    , width = 8
-    , height = 6
+    , width = 4
+    , height = 5
     }
 
 

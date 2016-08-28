@@ -24,19 +24,54 @@ background =
         ]
         []
     ]
-        ++ List.map (space << add (vec2 400 400) << V2.scale 60)
-            [ (vec2 0 0)
-            , (vec2 1.5 hexagonHeightConstant)
-            , (vec2 0 <| 2 * hexagonHeightConstant)
-            , (vec2 1.5 <| 3 * hexagonHeightConstant)
-            ]
+
+
+
+-- ++ List.map (space << add (vec2 400 400) << V2.scale 60)
+--     [ (vec2 0 0)
+--     , (vec2 1.5 hexagonHeightConstant)
+--     , (vec2 0 <| 2 * hexagonHeightConstant)
+--     , (vec2 1.5 <| 3 * hexagonHeightConstant)
+--     ]
 
 
 view : Model -> Html Msg
 view model =
     svg [ width "600", height "600", viewBox "0 0 600 600" ]
         <| background
+        ++ (List.map (space << add (vec2 100 100) << V2.scale 60)
+                <| hexGridPoints model.width model.height
+           )
         ++ [ piece model.piecePosition ]
+
+
+hexagonHeightConstant =
+    (sqrt 3) / 2
+
+
+hexGridPoints : Int -> Int -> List Vec2
+hexGridPoints width height =
+    let
+        baseList =
+            [0..width * height - 1]
+    in
+        List.filterMap
+            (\index ->
+                let
+                    x =
+                        index % width
+
+                    y =
+                        index // width
+                in
+                    if (x + y) % 2 == 0 then
+                        Just
+                            <| vec2 (toFloat x * 1.5)
+                                (toFloat y * hexagonHeightConstant)
+                    else
+                        Nothing
+            )
+            baseList
 
 
 piece center =
@@ -68,10 +103,6 @@ space center =
         , strokeWidth "4"
         ]
         []
-
-
-hexagonHeightConstant =
-    (sqrt 3) / 2
 
 
 tau =
