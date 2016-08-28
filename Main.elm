@@ -4,8 +4,9 @@ import Html.App exposing (program)
 import View exposing (view)
 import Model exposing (init)
 import Update exposing (update)
-import Msg exposing (Msg(PieceDragMove, PieceDragEnd))
+import Msg exposing (Msg(PieceDragMove, PieceDragEnd, Animate))
 import Mouse
+import AnimationFrame
 
 
 main : Program Never
@@ -18,13 +19,20 @@ main =
         }
 
 
-subscriptions model =
-    case model.pieceDrag of
-        Nothing ->
-            Sub.none
+alwaysList =
+    [ AnimationFrame.diffs Animate ]
 
-        Just _ ->
-            Sub.batch
-                [ Mouse.moves PieceDragMove
-                , Mouse.ups PieceDragEnd
-                ]
+
+subscriptions model =
+    let
+        sometimesList =
+            case model.pieceDrag of
+                Nothing ->
+                    []
+
+                Just _ ->
+                    [ Mouse.moves PieceDragMove
+                    , Mouse.ups PieceDragEnd
+                    ]
+    in
+        Sub.batch <| alwaysList ++ sometimesList

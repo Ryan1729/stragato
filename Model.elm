@@ -5,23 +5,24 @@ import Math.Vector2 as V2 exposing (Vec2, vec2)
 
 
 type alias Model =
-    { pieceDrag :
-        Maybe PieceDrag
-        -- width = 8,
-        -- height = 6,
+    { pieceDrag : Maybe PieceDrag
     , piecePosition : Vec2
+    , width : Int
+    , height : Int
     }
 
 
 type alias PieceDrag =
     { --pieceID : Int
-      start : Mouse.Position
+      position : Mouse.Position
     }
 
 
 defaultState =
     { pieceDrag = Nothing
     , piecePosition = vec2 400 400
+    , width = 8
+    , height = 6
     }
 
 

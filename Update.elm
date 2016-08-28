@@ -19,26 +19,27 @@ update message model =
         PieceDragMove position ->
             case model.pieceDrag of
                 Just drag ->
-                    let
-                        oldPosition =
-                            drag.start
-
-                        newPosition =
-                            { x = position.x - oldPosition.x
-                            , y = position.y - oldPosition.y
-                            }
-                    in
-                        { model
-                            | pieceDrag = Just <| PieceDrag position
-                            , piecePosition = v2FromPosition position
-                        }
-                            ! []
+                    { model
+                        | pieceDrag = Just <| PieceDrag position
+                    }
+                        ! []
 
                 Nothing ->
                     model ! []
 
         PieceDragEnd _ ->
             { model | pieceDrag = Nothing } ! []
+
+        Animate _ ->
+            case model.pieceDrag of
+                Just drag ->
+                    { model
+                        | piecePosition = v2FromPosition drag.position
+                    }
+                        ! []
+
+                Nothing ->
+                    model ! []
 
 
 v2FromPosition : Mouse.Position -> Vec2

@@ -8,3 +8,4 @@ type Msg
     | PieceDragStart Mouse.Position
     | PieceDragMove Mouse.Position
     | PieceDragEnd Mouse.Position
+    | Animate Float
