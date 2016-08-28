@@ -1,6 +1,6 @@
 module Update exposing (..)
 
-import Model exposing (Model, PieceDrag)
+import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Ports
 import Mouse
@@ -13,33 +13,14 @@ update message model =
         PlayClack ->
             model ! [ Ports.sound "clack" ]
 
-        PieceDragStart position ->
-            { model | pieceDrag = Just <| PieceDrag <| Debug.log "pos" position } ! []
+        SelectPiece id ->
+            { model | pieceSelected = Just id } ! []
 
-        PieceDragMove position ->
-            case model.pieceDrag of
-                Just drag ->
-                    { model
-                        | pieceDrag = Just <| PieceDrag position
-                    }
-                        ! []
-
-                Nothing ->
-                    model ! []
-
-        PieceDragEnd _ ->
-            { model | pieceDrag = Nothing } ! []
+        SpaceClicked id ->
+            { model | pieceSelected = Nothing } ! []
 
         Animate _ ->
-            case model.pieceDrag of
-                Just drag ->
-                    { model
-                        | piecePosition = v2FromPosition drag.position
-                    }
-                        ! []
-
-                Nothing ->
-                    model ! []
+            model ! []
 
 
 v2FromPosition : Mouse.Position -> Vec2

@@ -4,7 +4,7 @@ import Html.App exposing (program)
 import View exposing (view)
 import Model exposing (init)
 import Update exposing (update)
-import Msg exposing (Msg(PieceDragMove, PieceDragEnd, Animate))
+import Msg exposing (Msg(Animate))
 import Mouse
 import AnimationFrame
 
@@ -26,13 +26,6 @@ alwaysList =
 subscriptions model =
     let
         sometimesList =
-            case model.pieceDrag of
-                Nothing ->
-                    []
-
-                Just _ ->
-                    [ Mouse.moves PieceDragMove
-                    , Mouse.ups PieceDragEnd
-                    ]
+            []
     in
         Sub.batch <| alwaysList ++ sometimesList

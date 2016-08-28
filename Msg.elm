@@ -5,7 +5,6 @@ import Mouse
 
 type Msg
     = PlayClack
-    | PieceDragStart Mouse.Position
-    | PieceDragMove Mouse.Position
-    | PieceDragEnd Mouse.Position
+    | SelectPiece Int
     | Animate Float
+    | SpaceClicked Int

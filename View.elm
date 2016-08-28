@@ -6,7 +6,7 @@ import Svg.Attributes exposing (..)
 import Svg.Events exposing (onClick, on)
 import Math.Vector2 as V2 exposing (Vec2, vec2, getX, getY, add, scale, fromRecord)
 import String
-import Msg exposing (Msg(PlayClack, PieceDragStart))
+import Msg exposing (Msg(PlayClack, SelectPiece))
 import Model exposing (Model)
 import Mouse
 import Json.Decode
@@ -37,12 +37,21 @@ background =
 
 view : Model -> Html Msg
 view model =
-    svg [ width "600", height "600", viewBox "0 0 600 600" ]
-        <| background
-        ++ (List.map (space << add (vec2 100 100) << V2.scale 60)
-                <| hexGridPoints model.width model.height
-           )
-        ++ [ piece model.piecePosition ]
+    let
+        pieces =
+            case model.pieceSelected of
+                Nothing ->
+                    [ piece False model.piecePosition ]
+
+                Just id ->
+                    [ piece True model.piecePosition ]
+    in
+        svg [ width "600", height "600", viewBox "0 0 600 600" ]
+            <| background
+            ++ (List.map (space << add (vec2 100 100) << V2.scale 60)
+                    <| hexGridPoints model.width model.height
+               )
+            ++ pieces
 
 
 hexagonHeightConstant =
@@ -74,25 +83,21 @@ hexGridPoints width height =
             baseList
 
 
-piece center =
+piece selected center =
     polygon
         [ fill "#fa0"
         , points <| piecePoints center
         , stroke "grey"
         , strokeWidth "4"
-        , onMouseDownWithPosition PieceDragStart
         , cursor "move"
+        , onClick <| SelectPiece 1
+        , fillOpacity
+            <| if selected then
+                "0.5"
+               else
+                "1.0"
         ]
         []
-
-
-onMouseDownWithPosition : (Mouse.Position -> Msg) -> Attribute Msg
-onMouseDownWithPosition msgConstructor =
-    let
-        msgDecoder =
-            Json.Decode.map msgConstructor Mouse.position
-    in
-        on "mousedown" msgDecoder
 
 
 space center =
@@ -101,6 +106,7 @@ space center =
         , points <| spacePoints center
         , stroke "grey"
         , strokeWidth "4"
+        , onClick <| Msg.SpaceClicked 1
         ]
         []
 
