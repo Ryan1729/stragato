@@ -1,10 +1,11 @@
 module Update exposing (..)
 
-import Model exposing (Model)
+import Model exposing (Model, Piece)
 import Msg exposing (Msg(..))
 import Ports
 import Mouse
 import Math.Vector2 as V2 exposing (Vec2, vec2)
+import Array
 
 
 update : Msg -> Model -> ( Model, Cmd msg )
@@ -16,11 +17,35 @@ update message model =
         SelectPiece id ->
             { model | pieceSelected = Just id } ! []
 
-        SpaceClicked id ->
-            { model | pieceSelected = Nothing } ! []
+        MovePiece pieceId spaceId ->
+            { model
+                | pieceSelected = Nothing
+                , pieceList =
+                    setPieceLocation model.pieceList pieceId
+                        <| Array.get spaceId model.spaces.positions
+            }
+                ! []
 
         Animate _ ->
             model ! []
+
+
+setPieceLocation : List Piece -> Int -> Maybe Vec2 -> List Piece
+setPieceLocation pieces pieceId maybePosition =
+    --TODO switch to arrays later
+    case maybePosition of
+        Just position ->
+            List.indexedMap
+                (\index piece ->
+                    if index == pieceId then
+                        { piece | position = position }
+                    else
+                        piece
+                )
+                pieces
+
+        Nothing ->
+            pieces
 
 
 v2FromPosition : Mouse.Position -> Vec2

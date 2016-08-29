@@ -7,4 +7,4 @@ type Msg
     = PlayClack
     | SelectPiece Int
     | Animate Float
-    | SpaceClicked Int
+    | MovePiece Int Int

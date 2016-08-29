@@ -10,6 +10,7 @@ import Model exposing (Model, Piece, PieceType(..))
 import Mouse
 import Json.Decode
 import Points
+import Array
 
 
 background =
@@ -28,21 +29,37 @@ background =
 
 view : Model -> Html Msg
 view model =
+    svg [ width "600", height "600", viewBox "0 0 600 600" ]
+        <| background
+        ++ getSpaces model
+        ++ getPieces model
+
+
+getPieces model =
     let
         selectedId =
-            case model.pieceSelected of
+            Maybe.withDefault -1 model.pieceSelected
+    in
+        List.indexedMap (getPieceView selectedId) model.pieceList
+
+
+getSpaces model =
+    Array.indexedMap (getSpaceView model.pieceSelected) model.spaces.positions
+        |> Array.toList
+
+
+getSpaceView : Maybe Int -> Int -> Vec2 -> Svg Msg
+getSpaceView pieceSelected index center =
+    let
+        extras =
+            case pieceSelected of
                 Nothing ->
-                    -1
+                    []
 
                 Just id ->
-                    id
+                    [ onClick <| Msg.MovePiece id index, cursor "pointer" ]
     in
-        svg [ width "600", height "600", viewBox "0 0 600 600" ]
-            <| background
-            ++ (List.map (space << add (vec2 100 100) << V2.scale 60)
-                    <| hexGridPoints model.width model.height
-               )
-            ++ List.indexedMap (getPieceView selectedId) model.pieceList
+        space extras center
 
 
 getPieceView : Int -> Int -> Piece -> Svg Msg
@@ -59,35 +76,6 @@ getPieceView selectedId currentId piece =
                 weirdThingPiece piece.position isSelected currentId
 
 
-hexagonHeightConstant =
-    (sqrt 3) / 2
-
-
-hexGridPoints : Int -> Int -> List Vec2
-hexGridPoints width height =
-    let
-        baseList =
-            [0..width * height - 1]
-    in
-        List.filterMap
-            (\index ->
-                let
-                    x =
-                        index % width
-
-                    y =
-                        index // width
-                in
-                    if (x + y) % 2 == 0 then
-                        Just
-                            <| vec2 (toFloat x * 1.5)
-                                (toFloat y * hexagonHeightConstant)
-                    else
-                        Nothing
-            )
-            baseList
-
-
 starPiece : Vec2 -> Bool -> Int -> Svg Msg
 starPiece center =
     piece <| Points.star center
@@ -100,28 +88,35 @@ weirdThingPiece center =
 
 piece : String -> Bool -> Int -> Svg Msg
 piece piecesPoints selected id =
-    polygon
-        [ fill "#fa0"
-        , points piecesPoints
-        , stroke "grey"
-        , strokeWidth "4"
-        , cursor "move"
-        , onClick <| SelectPiece id
-        , fillOpacity
-            <| if selected then
-                "0.5"
-               else
-                "1.0"
-        ]
-        []
+    let
+        attributes =
+            [ fill "#fa0"
+            , points piecesPoints
+            , stroke "grey"
+            , strokeWidth "4"
+            , cursor "move"
+            , onClick <| SelectPiece id
+            , fillOpacity
+                <| if selected then
+                    "0.5"
+                   else
+                    "1.0"
+            ]
+    in
+        polygon attributes
+            []
 
 
-space center =
-    polygon
-        [ fill "lime"
-        , points <| Points.space center
-        , stroke "grey"
-        , strokeWidth "4"
-        , onClick <| Msg.SpaceClicked 1
-        ]
-        []
+space : List (Attribute Msg) -> Vec2 -> Svg Msg
+space extras center =
+    let
+        attributes =
+            [ fill "lime"
+            , points <| Points.space center
+            , stroke "grey"
+            , strokeWidth "4"
+            ]
+                ++ extras
+    in
+        polygon attributes
+            []
