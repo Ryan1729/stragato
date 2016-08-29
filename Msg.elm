@@ -8,3 +8,4 @@ type Msg
     | SelectPiece Int
     | Animate Float
     | MovePiece Int Int
+    | GetSeed Float

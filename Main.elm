@@ -2,11 +2,13 @@ module Main exposing (..)
 
 import Html.App exposing (program)
 import View exposing (view)
-import Model exposing (init)
+import Model exposing (defaultState)
 import Update exposing (update)
-import Msg exposing (Msg(Animate))
+import Msg exposing (Msg(Animate, GetSeed))
 import Mouse
 import AnimationFrame
+import Time
+import Task
 
 
 main : Program Never
@@ -17,6 +19,10 @@ main =
         , subscriptions = subscriptions
         , view = view
         }
+
+
+init =
+    defaultState ! [ Task.perform (always <| GetSeed -1.0) GetSeed Time.now ]
 
 
 alwaysList =

@@ -6,6 +6,7 @@ import Ports
 import Mouse
 import Math.Vector2 as V2 exposing (Vec2, vec2)
 import Array
+import Random
 
 
 update : Msg -> Model -> ( Model, Cmd msg )
@@ -28,6 +29,12 @@ update message model =
 
         Animate _ ->
             model ! []
+
+        GetSeed time ->
+            { model
+                | seed = Random.initialSeed <| Debug.log "seed" <| round time
+            }
+                ! []
 
 
 setPieceLocation : List Piece -> Int -> Maybe Vec2 -> List Piece
