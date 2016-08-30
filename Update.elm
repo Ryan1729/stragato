@@ -5,8 +5,9 @@ import Msg exposing (Msg(..))
 import Ports
 import Mouse
 import Math.Vector2 as V2 exposing (Vec2, vec2)
-import Array
+import Array exposing (Array)
 import Random
+import Extras
 
 
 update : Msg -> Model -> ( Model, Cmd msg )
@@ -21,8 +22,8 @@ update message model =
         MovePiece pieceId spaceId ->
             { model
                 | pieceSelected = Nothing
-                , pieceList =
-                    setPieceLocation model.pieceList pieceId
+                , pieces =
+                    setPieceLocation model.pieces pieceId
                         <| Array.get spaceId model.spaces.positions
             }
                 ! []
@@ -37,17 +38,13 @@ update message model =
                 ! []
 
 
-setPieceLocation : List Piece -> Int -> Maybe Vec2 -> List Piece
+setPieceLocation : Array Piece -> Int -> Maybe Vec2 -> Array Piece
 setPieceLocation pieces pieceId maybePosition =
-    --TODO switch to arrays later
     case maybePosition of
         Just position ->
-            List.indexedMap
-                (\index piece ->
-                    if index == pieceId then
-                        { piece | position = position }
-                    else
-                        piece
+            Extras.update pieceId
+                (\piece ->
+                    { piece | position = position }
                 )
                 pieces
 

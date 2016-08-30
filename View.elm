@@ -56,7 +56,8 @@ getPieces model =
         selectedId =
             Maybe.withDefault -1 model.pieceSelected
     in
-        List.indexedMap (getPieceView selectedId) model.pieceList
+        Array.indexedMap (getPieceView selectedId) model.pieces
+            |> Array.toList
 
 
 getSpaces model =

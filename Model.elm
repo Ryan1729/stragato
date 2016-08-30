@@ -10,7 +10,7 @@ import Random exposing (Seed)
 type alias Model =
     { pieceSelected : Maybe Int
     , piecePosition : Vec2
-    , pieceList : List Piece
+    , pieces : Array Piece
     , spaces : Spaces
     , seed : Seed
     , debug : Bool
@@ -49,7 +49,7 @@ makeGridPoints width height =
 defaultState =
     { pieceSelected = Nothing
     , piecePosition = vec2 100 100
-    , pieceList = [ Piece Star (vec2 280 100), Piece WeirdThing (vec2 100 100) ]
+    , pieces = Array.fromList [ Piece Star (vec2 280 100), Piece WeirdThing (vec2 100 100) ]
     , spaces = makeSpaces 4 5 [ Green, Green, Red, Red, Empty ] (Random.initialSeed -42)
     , seed = (Random.initialSeed 42)
     , debug = True
