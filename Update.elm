@@ -28,6 +28,16 @@ update message model =
             }
                 ! []
 
+        GenerateBoard ->
+            let
+                ( spaces, newSeed ) =
+                    Model.makeSpaces model.gridWidth
+                        model.gridHeight
+                        model.spaceDeck
+                        model.seed
+            in
+                { model | seed = newSeed, spaces = spaces } ! []
+
         Animate _ ->
             model ! []
 

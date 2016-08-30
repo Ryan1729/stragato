@@ -2,11 +2,12 @@ module View exposing (..)
 
 import Html exposing (Html, div)
 import Html.Attributes as HA
+import Html.Events as HE
 import Svg exposing (Svg, svg, rect, polygon, Attribute)
 import Svg.Attributes exposing (..)
 import Svg.Events exposing (onClick, on)
 import Math.Vector2 as V2 exposing (Vec2, vec2, getX, getY, add, scale)
-import Msg exposing (Msg(PlayClack, SelectPiece))
+import Msg exposing (Msg(PlayClack, SelectPiece, GenerateBoard))
 import Model exposing (Model, Piece, PieceType(..), Spaces, SpaceType(..))
 import Mouse
 import Json.Decode
@@ -42,13 +43,14 @@ view model =
             if model.debug then
                 playfield
                     ++ [ Html.hr [] []
+                       , Html.button [ HE.onClick GenerateBoard ] [ Html.text "Generate Board" ]
                        , Html.text <| toString model
                        ]
             else
                 playfield
     in
         div [ HA.style [ ( "color", "#DDD" ) ] ]
-            playfield
+            elements
 
 
 getPieces model =
@@ -70,7 +72,7 @@ getSpaceView pieceSelected spaces index center =
     let
         spaceType =
             Array.get index spaces.types
-                |> Maybe.withDefault Empty
+                |> Maybe.withDefault EmptySpace
 
         extras =
             case pieceSelected of
@@ -145,7 +147,7 @@ space spaceType extras center =
                     , strokeWidth "4"
                     ]
 
-                Empty ->
+                EmptySpace ->
                     [ fillOpacity "0.0" ]
 
         attributes =

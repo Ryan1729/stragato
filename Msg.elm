@@ -9,3 +9,4 @@ type Msg
     | Animate Float
     | MovePiece Int Int
     | GetSeed Float
+    | GenerateBoard
