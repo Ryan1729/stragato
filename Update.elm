@@ -39,6 +39,9 @@ update message model =
             in
                 { model | seed = newSeed, spaces = spaces } ! []
 
+        SelectTab tabIndex ->
+            { model | tabIndex = tabIndex } ! []
+
         Animate _ ->
             model ! []
 

@@ -11,4 +11,5 @@ type Msg
     | MovePiece Int Int
     | GetSeed Float
     | GenerateBoard
+    | SelectTab Int
     | Mdl (Material.Msg Msg)

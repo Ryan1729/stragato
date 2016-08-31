@@ -17,6 +17,7 @@ type alias Model =
     , gridHeight : Int
     , spaceDeck : List SpaceType
     , seed : Seed
+    , tabIndex : Int
     , debug : Bool
     , mdl : Material.Model
     }
@@ -77,6 +78,7 @@ defaultState =
     , gridWidth = defaultWidth
     , gridHeight = defaultHeight
     , spaceDeck = defaultSpaceDeck
+    , tabIndex = 0
     , debug = True
     , mdl = Material.model
     }

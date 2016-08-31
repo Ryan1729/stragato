@@ -17,7 +17,9 @@ main =
         { init = init
         , update = update
         , subscriptions = subscriptions
-        , view = view
+        , view =
+            view
+            --TODO try (Html.lazy view) once we have perf concerns
         }
 
 
