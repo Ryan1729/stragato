@@ -72,7 +72,6 @@ view model =
         (div [ HA.style [ ( "color", "#DDD" ) ] ]
             elements
         )
-            |> Material.Scheme.top
 
 
 getPieces model =
