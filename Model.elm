@@ -46,6 +46,10 @@ type SpaceType
     | EmptySpace
 
 
+spaceTypePossibilities =
+    [ Green, Red, EmptySpace ]
+
+
 makeGridPoints width height =
     Points.hexGrid width height
         |> List.map (add (vec2 100 100) << V2.scale 60)
