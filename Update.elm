@@ -8,9 +8,10 @@ import Math.Vector2 as V2 exposing (Vec2, vec2)
 import Array exposing (Array)
 import Random
 import Extras
+import Material
 
 
-update : Msg -> Model -> ( Model, Cmd msg )
+update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
         PlayClack ->
@@ -46,6 +47,11 @@ update message model =
                 | seed = Random.initialSeed <| Debug.log "seed" <| round time
             }
                 ! []
+
+        -- When the `Mdl` messages come through, update appropriately.
+        Mdl msg' ->
+            -- Material.update msg'
+            model ! []
 
 
 setPieceLocation : Array Piece -> Int -> Maybe Vec2 -> Array Piece

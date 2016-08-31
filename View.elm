@@ -7,12 +7,17 @@ import Svg exposing (Svg, svg, rect, polygon, Attribute)
 import Svg.Attributes exposing (..)
 import Svg.Events exposing (onClick, on)
 import Math.Vector2 as V2 exposing (Vec2, vec2, getX, getY, add, scale)
-import Msg exposing (Msg(PlayClack, SelectPiece, GenerateBoard))
+import Msg exposing (Msg(PlayClack, SelectPiece, GenerateBoard, Mdl))
 import Model exposing (Model, Piece, PieceType(..), Spaces, SpaceType(..))
 import Mouse
 import Json.Decode
 import Points
 import Array
+import Material
+import Material.Scheme
+import Material.Options as Options exposing (css)
+import Material.Button as Button
+import Material.Icon as Icon
 
 
 background =
@@ -29,6 +34,10 @@ background =
     ]
 
 
+type alias Mdl =
+    Material.Model
+
+
 view : Model -> Html Msg
 view model =
     let
@@ -43,14 +52,27 @@ view model =
             if model.debug then
                 playfield
                     ++ [ Html.hr [] []
-                       , Html.button [ HE.onClick GenerateBoard ] [ Html.text "Generate Board" ]
+                         --  , Html.button [ HE.onClick GenerateBoard ] [ Html.text "Generate Board" ]
+                       , Button.render Mdl
+                            [ 0 ]
+                            model.mdl
+                            [ Button.onClick GenerateBoard
+                            , Button.raised
+                            , css "margin" "0 24px"
+                            ]
+                            [ --Icon.i "videogame_asset" ,
+                              Icon.i "cached"
+                            , Html.text "Generate Board"
+                            ]
                        , Html.text <| toString model
                        ]
             else
                 playfield
     in
-        div [ HA.style [ ( "color", "#DDD" ) ] ]
+        (div [ HA.style [ ( "color", "#DDD" ) ] ]
             elements
+        )
+            |> Material.Scheme.top
 
 
 getPieces model =

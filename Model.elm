@@ -5,6 +5,7 @@ import Math.Vector2 as V2 exposing (Vec2, vec2, getX, getY, add, scale)
 import Points
 import Array exposing (Array)
 import Random exposing (Seed)
+import Material
 
 
 type alias Model =
@@ -17,6 +18,7 @@ type alias Model =
     , spaceDeck : List SpaceType
     , seed : Seed
     , debug : Bool
+    , mdl : Material.Model
     }
 
 
@@ -76,6 +78,7 @@ defaultState =
     , gridHeight = defaultHeight
     , spaceDeck = defaultSpaceDeck
     , debug = True
+    , mdl = Material.model
     }
 
 

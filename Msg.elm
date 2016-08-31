@@ -1,6 +1,7 @@
 module Msg exposing (..)
 
 import Mouse
+import Material
 
 
 type Msg
@@ -10,3 +11,4 @@ type Msg
     | MovePiece Int Int
     | GetSeed Float
     | GenerateBoard
+    | Mdl (Material.Msg Msg)
