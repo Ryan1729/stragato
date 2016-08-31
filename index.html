@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>♜♞♝♟♙♗♘♖</title>
+    <style type="text/css">
+        html,
+        head,
+        body {
+            margin: 0;
+            height: 100%;
+            background-color: #212131;
+        }
+    </style>
+</head>
+
+<body>
+    <audio id="aud1" src="sounds/clack.wav" preload="auto" controls="none" style="display: none;"></audio>
+    <audio id="audspare" preload="auto" controls="none" style="display: none;"></audio>
+    <script src="elm.js"></script>
+    <script>
+        ;(function() {
+            var sounds = {
+                clack: document.getElementById("aud1"),
+                spare: document.getElementById("audspare")
+            }
+
+            var app = Elm.Main.fullscreen();
+
+            app.ports.sound.subscribe(function(name) {
+                var currentSound = sounds[name]
+
+                if (currentSound.paused) {
+                    currentSound.play()
+                } else {
+                    var spare = sounds["spare"]
+                    if (spare.paused) {
+                        spare.src = currentSound.src
+                        spare.play()
+                    }
+                }
+            });
+
+        }())
+    </script>
+
+</body>
+
+</html>
