@@ -54,6 +54,8 @@ make model =
                         model.mdl
                         Model.spaceTypePossibilities
                         model.spaceDeck
+                        Msg.SpaceDeckDecrement
+                        Msg.SpaceDeckIncrement
                     ]
 
             _ ->
@@ -62,8 +64,8 @@ make model =
     ]
 
 
-deckControl : List Int -> Mdl -> List a -> List a -> Html Msg
-deckControl index mdl possibilities currentDeck =
+deckControl : List Int -> Mdl -> List a -> List a -> (a -> Msg) -> (a -> Msg) -> Html Msg
+deckControl index mdl possibilities currentDeck addMessage removeMessage =
     Table.table []
         [ Table.thead []
             [ Table.tr []
@@ -79,11 +81,6 @@ deckControl index mdl possibilities currentDeck =
                 |> List.map
                     (\item ->
                         Table.tr []
-                            -- [ Table.td [] [ text "aaaaaaaaaaaaaaaaaaaaa" ]
-                            -- , Table.td [] [ text "aaaaaaaaaaaaaaaaaaaaa" ]
-                            -- , Table.td [] [ text "aaaaaaaaaaaaaaaaaaaaa" ]
-                            -- , Table.td [] [ text "aaaaaaaaaaaaaaaaaaaaaa" ]
-                            -- ]
                             [ Table.td []
                                 [ text <| toString item
                                   --TODO factor out view function for each thing and pass it in
@@ -92,12 +89,9 @@ deckControl index mdl possibilities currentDeck =
                                 [ Button.render Msg.Mdl
                                     (index ++ [ 0 ])
                                     mdl
-                                    [ Button.onClick Msg.GenerateBoard
-                                      --TODO DeckDecrement
-                                      -- , css "margin" "0 24px"
+                                    [ Button.onClick <| addMessage item
                                     ]
                                     [ Icon.i "remove"
-                                      --  , text "Generate Board"
                                     ]
                                 ]
                             , Table.td [] [ text <| toString <| amountOfItemInDeck item currentDeck ]
@@ -105,12 +99,9 @@ deckControl index mdl possibilities currentDeck =
                                 [ Button.render Msg.Mdl
                                     (index ++ [ 1 ])
                                     mdl
-                                    [ Button.onClick Msg.GenerateBoard
-                                      --TODO DeckIncrement
-                                      -- , css "margin" "0 24px"
+                                    [ Button.onClick <| removeMessage item
                                     ]
                                     [ Icon.i "add"
-                                      --  , text "Generate Board"
                                     ]
                                 ]
                             ]

@@ -42,6 +42,12 @@ update message model =
         SelectTab tabIndex ->
             { model | tabIndex = tabIndex } ! []
 
+        SpaceDeckIncrement item ->
+            { model | spaceDeck = item :: model.spaceDeck } ! []
+
+        SpaceDeckDecrement item ->
+            { model | spaceDeck = Extras.remove item model.spaceDeck } ! []
+
         Animate _ ->
             model ! []
 
