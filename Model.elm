@@ -34,17 +34,9 @@ defaultHeight =
 
 defaultSpaceDeck =
     [ Green
-      -- , Green
-      -- , Red
-      -- , Red
-    , EmptySpace
-    , EmptySpace
-    , EmptySpace
-    , EmptySpace
-    , EmptySpace
-    , EmptySpace
-    , EmptySpace
-    , EmptySpace
+    , Green
+    , Red
+    , Red
     , EmptySpace
     , EmptySpace
     , EmptySpace
@@ -62,14 +54,17 @@ defaultSpaces =
 
 defaultPieceDeck =
     [ Star
+    , Star
+    , Star
     , WeirdThing
-      -- , NoPiece
-      -- , NoPiece
-      -- , NoPiece
-      -- , NoPiece
-      -- , NoPiece
-      -- , NoPiece
-      -- , NoPiece
+    , WeirdThing
+    , NoPiece
+    , NoPiece
+    , NoPiece
+    , NoPiece
+    , NoPiece
+    , NoPiece
+    , NoPiece
     ]
 
 

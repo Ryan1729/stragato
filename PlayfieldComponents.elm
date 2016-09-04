@@ -57,8 +57,7 @@ makePieces : Spaces -> List PieceType -> Seed -> ( Array Piece, Seed )
 makePieces { positions, types } deck seed =
     let
         filteredPositions =
-            filterPositions (Debug.log "p" positions) (Debug.log "t" types)
-                |> Debug.log ""
+            filterPositions positions types
 
         ( pieceTypes, newSeed ) =
             fillArrayFromDeck NoPiece

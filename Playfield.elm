@@ -4,7 +4,7 @@ import Model exposing (Model)
 import Svg exposing (Svg, svg, rect, polygon, Attribute)
 import Svg.Attributes exposing (..)
 import Svg.Events exposing (onClick, on)
-import Msg exposing (Msg(SelectPiece, Mdl))
+import Msg exposing (Msg(SelectPiece, ClearPieceSelection, Mdl))
 import Math.Vector2 as V2 exposing (Vec2, vec2, getX, getY, add, scale)
 import Points
 import Array
@@ -47,8 +47,14 @@ getSpaceView pieceSelected spaces index center =
 
                 Just id ->
                     [ onClick <| Msg.MovePiece id index, cursor "pointer" ]
+
+        finalExtras =
+            if spaceType == EmptySpace then
+                extras ++ [ pointerEvents "none" ]
+            else
+                extras
     in
-        space extras center spaceType
+        space finalExtras center spaceType
 
 
 getPieceView : Int -> Int -> Piece -> Svg Msg
@@ -87,15 +93,20 @@ piece piecesPoints selected id =
             , stroke "grey"
             , strokeWidth "4"
             , cursor "move"
-            , onClick <| SelectPiece id
-            , fillOpacity
-                <| if selected then
-                    "0.5"
-                   else
-                    "1.0"
             ]
+
+        selectedAttributes =
+            if selected then
+                [ onClick ClearPieceSelection
+                , fillOpacity "0.5"
+                ]
+            else
+                [ onClick <| SelectPiece id ]
+
+        finalAttributes =
+            attributes ++ selectedAttributes
     in
-        polygon attributes
+        polygon finalAttributes
             []
 
 
@@ -117,7 +128,9 @@ space extras center spaceType =
                     ]
 
                 EmptySpace ->
-                    [ fillOpacity "0.0" ]
+                    [ fillOpacity "0.0"
+                    , strokeOpacity "0.0"
+                    ]
 
         attributes =
             [ points <| Points.space center

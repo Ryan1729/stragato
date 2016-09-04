@@ -22,6 +22,9 @@ update message model =
         SelectPiece id ->
             { model | pieceSelected = Just id } ! []
 
+        ClearPieceSelection ->
+            { model | pieceSelected = Nothing } ! []
+
         MovePiece pieceId spaceId ->
             { model
                 | pieceSelected = Nothing
