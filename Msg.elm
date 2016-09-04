@@ -2,7 +2,7 @@ module Msg exposing (..)
 
 import Mouse
 import Material
-import PlayfieldComponents exposing (SpaceType)
+import PlayfieldComponents exposing (SpaceType, PieceType)
 
 
 type Msg
@@ -17,3 +17,5 @@ type Msg
     | Mdl (Material.Msg Msg)
     | SpaceDeckIncrement SpaceType
     | SpaceDeckDecrement SpaceType
+    | PieceDeckIncrement PieceType
+    | PieceDeckDecrement PieceType

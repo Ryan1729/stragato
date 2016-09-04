@@ -25,6 +25,10 @@ type PieceType
     | NoPiece
 
 
+pieceTypePossibilities =
+    [ Star, WeirdThing, NoPiece ]
+
+
 type alias Spaces =
     { positions : Array Vec2
     , types : Array SpaceType

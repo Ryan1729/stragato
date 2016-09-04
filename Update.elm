@@ -58,6 +58,12 @@ update message model =
         SpaceDeckDecrement item ->
             { model | spaceDeck = Extras.remove item model.spaceDeck } ! []
 
+        PieceDeckIncrement item ->
+            { model | pieceDeck = item :: model.pieceDeck } ! []
+
+        PieceDeckDecrement item ->
+            { model | pieceDeck = Extras.remove item model.pieceDeck } ! []
+
         Animate _ ->
             model ! []
 

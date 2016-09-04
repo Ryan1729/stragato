@@ -11,14 +11,6 @@ import Array
 import PlayfieldComponents exposing (Piece, PieceType(..), Spaces, SpaceType(..))
 
 
-{- TODO can we eliminate the need for this? -}
-
-
-emptySvg : Svg Msg
-emptySvg =
-    rect [] []
-
-
 getPieces model =
     let
         selectedId =
@@ -58,35 +50,36 @@ getSpaceView pieceSelected spaces index center =
 
 
 getPieceView : Int -> Int -> Piece -> Svg Msg
-getPieceView selectedId currentId piece =
+getPieceView selectedId currentId currentPiece =
     let
         isSelected =
             selectedId == currentId
+
+        selectedAttributes =
+            if isSelected then
+                [ onClick ClearPieceSelection
+                , fillOpacity "0.5"
+                ]
+            else
+                [ onClick <| SelectPiece currentId ]
     in
-        case piece.pieceType of
-            Star ->
-                starPiece piece.position isSelected currentId
-
-            WeirdThing ->
-                weirdThingPiece piece.position isSelected currentId
-
-            NoPiece ->
-                emptySvg
+        piece selectedAttributes currentPiece.position currentPiece.pieceType
 
 
-starPiece : Vec2 -> Bool -> Int -> Svg Msg
-starPiece center =
-    piece <| Points.star center
-
-
-weirdThingPiece : Vec2 -> Bool -> Int -> Svg Msg
-weirdThingPiece center =
-    piece <| Points.weirdThing center
-
-
-piece : String -> Bool -> Int -> Svg Msg
-piece piecesPoints selected id =
+piece : List (Attribute Msg) -> Vec2 -> PieceType -> Svg Msg
+piece extras center pieceType =
     let
+        piecesPoints =
+            case pieceType of
+                Star ->
+                    Points.star center
+
+                WeirdThing ->
+                    Points.weirdThing center
+
+                NoPiece ->
+                    ""
+
         attributes =
             [ fill "#fa0"
             , points piecesPoints
@@ -95,16 +88,8 @@ piece piecesPoints selected id =
             , cursor "move"
             ]
 
-        selectedAttributes =
-            if selected then
-                [ onClick ClearPieceSelection
-                , fillOpacity "0.5"
-                ]
-            else
-                [ onClick <| SelectPiece id ]
-
         finalAttributes =
-            attributes ++ selectedAttributes
+            attributes ++ extras
     in
         polygon finalAttributes
             []

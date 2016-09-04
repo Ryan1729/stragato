@@ -63,6 +63,13 @@ make model =
                         Msg.SpaceDeckDecrement
                         Msg.SpaceDeckIncrement
                         (positionedSvgMakerToHtmlMaker <| Playfield.space [])
+                    , deckControl [ 3 ]
+                        model.mdl
+                        PlayfieldComponents.pieceTypePossibilities
+                        model.pieceDeck
+                        Msg.PieceDeckDecrement
+                        Msg.PieceDeckIncrement
+                        (positionedSvgMakerToHtmlMaker <| Playfield.piece [])
                     ]
 
             _ ->
