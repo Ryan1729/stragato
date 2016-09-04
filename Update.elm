@@ -40,7 +40,7 @@ update message model =
                         model.seed
 
                 ( pieces, newSeed ) =
-                    PlayfieldComponents.makePieces model.spaces
+                    PlayfieldComponents.makePieces spaces
                         model.pieceDeck
                         postSpacesSeed
             in
