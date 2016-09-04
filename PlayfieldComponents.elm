@@ -22,11 +22,12 @@ type alias Piece =
 type PieceType
     = Star
     | WeirdThing
+    | Triangle
     | NoPiece
 
 
 pieceTypePossibilities =
-    [ Star, WeirdThing, NoPiece ]
+    [ Star, WeirdThing, Triangle, NoPiece ]
 
 
 type alias Spaces =
@@ -38,11 +39,12 @@ type alias Spaces =
 type SpaceType
     = Green
     | Red
+    | Yellow
     | EmptySpace
 
 
 spaceTypePossibilities =
-    [ Green, Red, EmptySpace ]
+    [ Green, Red, Yellow, EmptySpace ]
 
 
 makeSpaces : Int -> Int -> List SpaceType -> Seed -> ( Spaces, Seed )

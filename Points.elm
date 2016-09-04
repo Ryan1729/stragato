@@ -1,4 +1,4 @@
-module Points exposing (space, star, weirdThing, hexGrid)
+module Points exposing (space, star, weirdThing, triangle, hexGrid)
 
 import Math.Vector2 as V2 exposing (Vec2, vec2, getX, getY, add, scale)
 import String
@@ -93,10 +93,25 @@ starPointsList =
         ]
 
 
+trianglePointsList : List Vec2
+trianglePointsList =
+    List.map ((+) (7 / 48) >> fractionToPointOnCircle)
+        [ 0
+        , 1 / 5
+        , 3 / 5
+        ]
+
+
 starPiecePointsList : List Vec2
 starPiecePointsList =
     List.map (V2.scale 40)
         starPointsList
+
+
+trianglePiecePointsList : List Vec2
+trianglePiecePointsList =
+    List.map (V2.scale 40)
+        trianglePointsList
 
 
 v2ToSVGString : Vec2 -> String
@@ -131,3 +146,8 @@ star =
 weirdThing : Vec2 -> String
 weirdThing =
     pointsListToSVGString weirdThingPiecePointsList
+
+
+triangle : Vec2 -> String
+triangle =
+    pointsListToSVGString trianglePiecePointsList

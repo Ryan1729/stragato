@@ -77,6 +77,9 @@ piece extras center pieceType =
                 WeirdThing ->
                     Points.weirdThing center
 
+                Triangle ->
+                    Points.triangle center
+
                 NoPiece ->
                     ""
 
@@ -108,6 +111,12 @@ space extras center spaceType =
 
                 Red ->
                     [ fill "red"
+                    , stroke "grey"
+                    , strokeWidth "4"
+                    ]
+
+                Yellow ->
+                    [ fill "#FFDC00"
                     , stroke "grey"
                     , strokeWidth "4"
                     ]
