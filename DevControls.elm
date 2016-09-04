@@ -11,6 +11,10 @@ import Material.Button as Button
 import Material.Icon as Icon
 import Material.Tabs as Tabs
 import Material.Table as Table
+import Math.Vector2 as V2 exposing (Vec2, vec2)
+import Svg exposing (Svg, svg)
+import Svg.Attributes exposing (height, width, viewBox)
+import Playfield
 
 
 type alias Mdl =
@@ -57,6 +61,7 @@ make model =
                         model.spaceDeck
                         Msg.SpaceDeckDecrement
                         Msg.SpaceDeckIncrement
+                        (positionedSvgMakerToHtmlMaker <| Playfield.space [])
                     ]
 
             _ ->
@@ -65,12 +70,26 @@ make model =
     ]
 
 
+positionedSvgMakerToHtmlMaker : (Vec2 -> a -> Svg Msg) -> a -> Html Msg
+positionedSvgMakerToHtmlMaker svgMaker identifier =
+    svg [ width "50", height "50", viewBox "0 0 150 150" ]
+        [ svgMaker (vec2 75 75) identifier ]
+
+
 tup =
     (,)
 
 
-deckControl : List Int -> Mdl -> List a -> List a -> (a -> Msg) -> (a -> Msg) -> Html Msg
-deckControl index mdl possibilities currentDeck addMessage removeMessage =
+deckControl :
+    List Int
+    -> Mdl
+    -> List a
+    -> List a
+    -> (a -> Msg)
+    -> (a -> Msg)
+    -> (a -> Html Msg)
+    -> Html Msg
+deckControl index mdl possibilities currentDeck addMessage removeMessage elementView =
     Table.table [ css "background-color" "#DDDDDD" ]
         [ Table.thead []
             [ Table.tr []
@@ -87,8 +106,7 @@ deckControl index mdl possibilities currentDeck addMessage removeMessage =
                     (\item ->
                         Table.tr []
                             [ Table.td []
-                                [ text <| toString item
-                                  --TODO factor out view function for each thing and pass it in
+                                [ elementView item
                                 ]
                             , Table.td []
                                 [ Button.render Msg.Mdl
@@ -99,7 +117,11 @@ deckControl index mdl possibilities currentDeck addMessage removeMessage =
                                     [ Icon.i "remove"
                                     ]
                                 ]
-                            , Table.td [] [ text <| toString <| amountOfItemInDeck item currentDeck ]
+                            , Table.td []
+                                [ text
+                                    <| toString
+                                    <| amountOfItemInDeck item currentDeck
+                                ]
                             , Table.td []
                                 [ Button.render Msg.Mdl
                                     (index ++ [ 1 ])
