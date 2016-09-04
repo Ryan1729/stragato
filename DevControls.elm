@@ -1,6 +1,7 @@
 module DevControls exposing (make)
 
 import Html exposing (Html, div, text)
+import Html.Attributes exposing (style)
 import Model exposing (Model)
 import Msg exposing (Msg)
 import Material
@@ -64,9 +65,13 @@ make model =
     ]
 
 
+tup =
+    (,)
+
+
 deckControl : List Int -> Mdl -> List a -> List a -> (a -> Msg) -> (a -> Msg) -> Html Msg
 deckControl index mdl possibilities currentDeck addMessage removeMessage =
-    Table.table []
+    Table.table [ css "background-color" "#DDDDDD" ]
         [ Table.thead []
             [ Table.tr []
                 [ Table.th [{- Table.onClick Reorder -}]

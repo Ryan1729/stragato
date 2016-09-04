@@ -46,7 +46,7 @@ view model =
             else
                 playfield
     in
-        (div [ HA.style [ ( "color", "#DDD" ) ] ]
+        (div [ HA.style [ ( "color", "#111" ) ] ]
             elements
         )
 
