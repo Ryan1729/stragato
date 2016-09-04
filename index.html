@@ -24,12 +24,14 @@
 
 <body>
     <audio id="aud1" src="sounds/clack.wav" preload="auto" controls="none" style="display: none;"></audio>
+    <audio id="aud2" src="sounds/tableHit.wav" preload="auto" controls="none" style="display: none;"></audio>
     <audio id="audspare" preload="auto" controls="none" style="display: none;"></audio>
     <script src="elm.js"></script>
     <script>
         ;(function() {
             var sounds = {
                 clack: document.getElementById("aud1"),
+                tableHit: document.getElementById("aud2"),
                 spare: document.getElementById("audspare")
             }
 

@@ -5,7 +5,7 @@ import Html.Attributes as HA
 import Svg exposing (Svg, svg, rect, polygon, Attribute)
 import Svg.Attributes exposing (..)
 import Svg.Events exposing (onClick, on)
-import Msg exposing (Msg(PlayClack))
+import Msg exposing (Msg(HitTable))
 import Mouse
 import Json.Decode
 import DevControls
@@ -20,7 +20,7 @@ background =
         , width "100%"
         , height "100%"
         , fill "#08f"
-        , onClick PlayClack
+        , onClick HitTable
         , cursor "pointer"
         ]
         []

@@ -16,8 +16,8 @@ import PlayfieldComponents exposing (Piece, PieceType(..), Spaces, SpaceType(..)
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
-        PlayClack ->
-            model ! [ Ports.sound "clack" ]
+        HitTable ->
+            model ! [ Ports.sound "tableHit" ]
 
         SelectPiece id ->
             { model | pieceSelected = Just id } ! []
@@ -32,7 +32,7 @@ update message model =
                     setPieceLocation model.pieces pieceId
                         <| Array.get spaceId model.spaces.positions
             }
-                ! []
+                ! [ Ports.sound "clack" ]
 
         GenerateBoard ->
             let
