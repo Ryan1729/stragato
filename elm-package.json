@@ -9,6 +9,7 @@
     "exposed-modules": [],
     "dependencies": {
         "debois/elm-mdl": "7.5.0 <= v < 8.0.0",
+        "elm-community/array-extra": "1.0.1 <= v < 2.0.0",
         "elm-community/elm-linear-algebra": "2.0.3 <= v < 3.0.0",
         "elm-lang/animation-frame": "1.0.0 <= v < 2.0.0",
         "elm-lang/core": "4.0.5 <= v < 5.0.0",

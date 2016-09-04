@@ -1,14 +1,16 @@
 module Update exposing (..)
 
-import Model exposing (Model, Piece)
+import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Ports
 import Mouse
 import Math.Vector2 as V2 exposing (Vec2, vec2)
 import Array exposing (Array)
+import Array.Extra
 import Random
 import Extras
 import Material
+import PlayfieldComponents exposing (Piece, PieceType(..), Spaces, SpaceType(..))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -31,13 +33,18 @@ update message model =
 
         GenerateBoard ->
             let
-                ( spaces, newSeed ) =
-                    Model.makeSpaces model.gridWidth
+                ( spaces, postSpacesSeed ) =
+                    PlayfieldComponents.makeSpaces model.gridWidth
                         model.gridHeight
                         model.spaceDeck
                         model.seed
+
+                ( pieces, newSeed ) =
+                    PlayfieldComponents.makePieces model.spaces
+                        model.pieceDeck
+                        postSpacesSeed
             in
-                { model | seed = newSeed, spaces = spaces } ! []
+                { model | seed = newSeed, spaces = spaces, pieces = pieces } ! []
 
         SelectTab tabIndex ->
             { model | tabIndex = tabIndex } ! []
@@ -67,7 +74,7 @@ setPieceLocation : Array Piece -> Int -> Maybe Vec2 -> Array Piece
 setPieceLocation pieces pieceId maybePosition =
     case maybePosition of
         Just position ->
-            Extras.update pieceId
+            Array.Extra.update pieceId
                 (\piece ->
                     { piece | position = position }
                 )

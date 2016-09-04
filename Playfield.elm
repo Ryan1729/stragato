@@ -1,6 +1,6 @@
 module Playfield exposing (..)
 
-import Model exposing (Model, Piece, PieceType(..), Spaces, SpaceType(..))
+import Model exposing (Model)
 import Svg exposing (Svg, svg, rect, polygon, Attribute)
 import Svg.Attributes exposing (..)
 import Svg.Events exposing (onClick, on)
@@ -8,6 +8,15 @@ import Msg exposing (Msg(SelectPiece, Mdl))
 import Math.Vector2 as V2 exposing (Vec2, vec2, getX, getY, add, scale)
 import Points
 import Array
+import PlayfieldComponents exposing (Piece, PieceType(..), Spaces, SpaceType(..))
+
+
+{- TODO can we eliminate the need for this? -}
+
+
+emptySvg : Svg Msg
+emptySvg =
+    rect [] []
 
 
 getPieces model =
@@ -54,6 +63,9 @@ getPieceView selectedId currentId piece =
 
             WeirdThing ->
                 weirdThingPiece piece.position isSelected currentId
+
+            NoPiece ->
+                emptySvg
 
 
 starPiece : Vec2 -> Bool -> Int -> Svg Msg
