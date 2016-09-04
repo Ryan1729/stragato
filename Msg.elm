@@ -19,3 +19,7 @@ type Msg
     | SpaceDeckDecrement SpaceType
     | PieceDeckIncrement PieceType
     | PieceDeckDecrement PieceType
+    | IncrementGridWidth
+    | DecrementGridWidth
+    | IncrementGridHeight
+    | DecrementGridHeight

@@ -31,7 +31,11 @@ view : Model -> Html Msg
 view model =
     let
         playfield =
-            [ svg [ width "600", height "400", viewBox "0 0 600 400" ]
+            [ svg
+                [ width "600"
+                , height "400"
+                  -- , viewBox "0 0 600 400"
+                ]
                 <| background
                 ++ Playfield.getSpaces model
                 ++ Playfield.getPieces model

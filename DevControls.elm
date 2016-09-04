@@ -3,7 +3,7 @@ module DevControls exposing (make)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (style)
 import Model exposing (Model)
-import Msg exposing (Msg)
+import Msg exposing (Msg(..))
 import Material
 import Material.Scheme
 import Material.Options as Options exposing (css)
@@ -11,6 +11,7 @@ import Material.Button as Button
 import Material.Icon as Icon
 import Material.Tabs as Tabs
 import Material.Table as Table
+import Material.Grid exposing (grid, cell, size, offset, Device(All, Tablet))
 import Math.Vector2 as V2 exposing (Vec2, vec2)
 import Svg exposing (Svg, svg)
 import Svg.Attributes exposing (height, width, viewBox)
@@ -35,7 +36,7 @@ make model =
         [ Tabs.label [ Options.center ]
             [ Icon.i "edit"
             , Options.span [ css "width" "4px" ] []
-            , text "reset"
+            , text "edit"
             ]
         , Tabs.label [ Options.center ]
             [ Icon.i "info_outline"
@@ -45,37 +46,86 @@ make model =
         ]
         [ case model.tabIndex of
             0 ->
-                div []
-                    [ Button.render Msg.Mdl
-                        [ 1 ]
-                        model.mdl
-                        [ Button.onClick Msg.GenerateBoard
-                        , css "margin" "0 24px"
-                        ]
-                        [ Icon.i "cached"
-                        , Options.span [ css "width" "4px" ] []
-                        , text "Generate Board"
-                        ]
-                    , deckControl [ 2 ]
-                        model.mdl
-                        PlayfieldComponents.spaceTypePossibilities
-                        model.spaceDeck
-                        Msg.SpaceDeckDecrement
-                        Msg.SpaceDeckIncrement
-                        (positionedSvgMakerToHtmlMaker <| Playfield.space [])
-                    , deckControl [ 3 ]
-                        model.mdl
-                        PlayfieldComponents.pieceTypePossibilities
-                        model.pieceDeck
-                        Msg.PieceDeckDecrement
-                        Msg.PieceDeckIncrement
-                        (positionedSvgMakerToHtmlMaker <| Playfield.piece [])
-                    ]
+                editTab model
 
             _ ->
                 div [] [ text (toString model) ]
         ]
     ]
+
+
+editTab : Model -> Html Msg
+editTab model =
+    grid []
+        [ cell [ size All 4 ]
+            [ Button.render Msg.Mdl
+                [ 1 ]
+                model.mdl
+                [ Button.onClick Msg.GenerateBoard
+                , css "margin" "0 24px"
+                ]
+                [ Icon.i "cached"
+                , Options.span [ css "width" "4px" ] []
+                , text "Generate Board"
+                ]
+            ]
+        , cell [ offset All 1, size All 4 ]
+            [ text "gridWidth"
+            , Button.render Msg.Mdl
+                [ 4 ]
+                model.mdl
+                [ Button.onClick DecrementGridWidth
+                ]
+                [ Icon.i "remove"
+                ]
+            , text
+                <| toString model.gridWidth
+            , Button.render Msg.Mdl
+                [ 5 ]
+                model.mdl
+                [ Button.onClick IncrementGridWidth
+                ]
+                [ Icon.i "add"
+                ]
+            ]
+        , cell [ offset All 1, size All 4 ]
+            [ text "gridHeight"
+            , Button.render Msg.Mdl
+                [ 6 ]
+                model.mdl
+                [ Button.onClick DecrementGridHeight
+                ]
+                [ Icon.i "remove"
+                ]
+            , text
+                <| toString model.gridHeight
+            , Button.render Msg.Mdl
+                [ 7 ]
+                model.mdl
+                [ Button.onClick IncrementGridHeight
+                ]
+                [ Icon.i "add"
+                ]
+            ]
+        , cell [ size All 6 ]
+            [ deckControl [ 2 ]
+                model.mdl
+                PlayfieldComponents.spaceTypePossibilities
+                model.spaceDeck
+                Msg.SpaceDeckDecrement
+                Msg.SpaceDeckIncrement
+                (positionedSvgMakerToHtmlMaker <| Playfield.space [])
+            ]
+        , cell [ size All 6 ]
+            [ deckControl [ 3 ]
+                model.mdl
+                PlayfieldComponents.pieceTypePossibilities
+                model.pieceDeck
+                Msg.PieceDeckDecrement
+                Msg.PieceDeckIncrement
+                (positionedSvgMakerToHtmlMaker <| Playfield.piece [])
+            ]
+        ]
 
 
 positionedSvgMakerToHtmlMaker : (Vec2 -> a -> Svg Msg) -> a -> Html Msg

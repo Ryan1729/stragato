@@ -64,6 +64,18 @@ update message model =
         PieceDeckDecrement item ->
             { model | pieceDeck = Extras.remove item model.pieceDeck } ! []
 
+        IncrementGridWidth ->
+            { model | gridWidth = model.gridWidth + 1 } ! []
+
+        DecrementGridWidth ->
+            { model | gridWidth = max 0 (model.gridWidth - 1) } ! []
+
+        IncrementGridHeight ->
+            { model | gridHeight = model.gridHeight + 1 } ! []
+
+        DecrementGridHeight ->
+            { model | gridHeight = max 0 (model.gridHeight - 1) } ! []
+
         Animate _ ->
             model ! []
 
