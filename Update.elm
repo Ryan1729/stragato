@@ -76,6 +76,9 @@ update message model =
         DecrementGridHeight ->
             { model | gridHeight = max 0 (model.gridHeight - 1) } ! []
 
+        ToggleSpaceOutlines ->
+            { model | showSpaceOutlines = not model.showSpaceOutlines } ! []
+
         Animate _ ->
             model ! []
 

@@ -20,6 +20,7 @@ type alias Model =
     , seed : Seed
     , tabIndex : Int
     , debug : Bool
+    , showSpaceOutlines : Bool
     , mdl : Material.Model
     }
 
@@ -83,5 +84,6 @@ defaultState =
     , pieceDeck = defaultPieceDeck
     , tabIndex = 0
     , debug = True
+    , showSpaceOutlines = False
     , mdl = Material.model
     }

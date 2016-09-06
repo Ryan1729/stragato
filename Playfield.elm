@@ -21,12 +21,12 @@ getPieces model =
 
 
 getSpaces model =
-    Array.indexedMap (getSpaceView model.pieceSelected model.spaces) model.spaces.positions
+    Array.indexedMap (getSpaceView model.showSpaceOutlines model.pieceSelected model.spaces) model.spaces.positions
         |> Array.toList
 
 
-getSpaceView : Maybe Int -> Spaces -> Int -> Vec2 -> Svg Msg
-getSpaceView pieceSelected spaces index center =
+getSpaceView : Bool -> Maybe Int -> Spaces -> Int -> Vec2 -> Svg Msg
+getSpaceView showOutlines pieceSelected spaces index center =
     let
         spaceType =
             Array.get index spaces.types
@@ -46,7 +46,7 @@ getSpaceView pieceSelected spaces index center =
             else
                 extras
     in
-        space finalExtras center spaceType
+        space showOutlines finalExtras center spaceType
 
 
 getPieceView : Int -> Int -> Piece -> Svg Msg
@@ -98,8 +98,8 @@ piece extras center pieceType =
             []
 
 
-space : List (Attribute Msg) -> Vec2 -> SpaceType -> Svg Msg
-space extras center spaceType =
+space : Bool -> List (Attribute Msg) -> Vec2 -> SpaceType -> Svg Msg
+space showOutlines extras center spaceType =
     let
         appearance =
             case spaceType of
@@ -122,9 +122,12 @@ space extras center spaceType =
                     ]
 
                 EmptySpace ->
-                    [ fillOpacity "0.0"
-                    , strokeOpacity "0.0"
-                    ]
+                    [ fillOpacity "0.0" ]
+                        ++ if showOutlines then
+                            []
+                           else
+                            [ strokeOpacity "0.0"
+                            ]
 
         attributes =
             [ points <| Points.space center

@@ -15668,6 +15668,7 @@ var _user$project$Model$defaultState = {
 	pieceDeck: _user$project$Model$defaultPieceDeck,
 	tabIndex: 0,
 	debug: true,
+	showSpaceOutlines: false,
 	mdl: _debois$elm_mdl$Material$model
 };
 var _user$project$Model$Model = function (a) {
@@ -15681,7 +15682,9 @@ var _user$project$Model$Model = function (a) {
 								return function (i) {
 									return function (j) {
 										return function (k) {
-											return {pieceSelected: a, pieces: b, spaces: c, gridWidth: d, gridHeight: e, spaceDeck: f, pieceDeck: g, seed: h, tabIndex: i, debug: j, mdl: k};
+											return function (l) {
+												return {pieceSelected: a, pieces: b, spaces: c, gridWidth: d, gridHeight: e, spaceDeck: f, pieceDeck: g, seed: h, tabIndex: i, debug: j, showSpaceOutlines: k, mdl: l};
+											};
 										};
 									};
 								};
@@ -15694,6 +15697,7 @@ var _user$project$Model$Model = function (a) {
 	};
 };
 
+var _user$project$Msg$ToggleSpaceOutlines = {ctor: 'ToggleSpaceOutlines'};
 var _user$project$Msg$DecrementGridHeight = {ctor: 'DecrementGridHeight'};
 var _user$project$Msg$IncrementGridHeight = {ctor: 'IncrementGridHeight'};
 var _user$project$Msg$DecrementGridWidth = {ctor: 'DecrementGridWidth'};
@@ -15733,8 +15737,8 @@ var _user$project$Msg$SelectPiece = function (a) {
 };
 var _user$project$Msg$HitTable = {ctor: 'HitTable'};
 
-var _user$project$Playfield$space = F3(
-	function (extras, center, spaceType) {
+var _user$project$Playfield$space = F4(
+	function (showOutlines, extras, center, spaceType) {
 		var appearance = function () {
 			var _p0 = spaceType;
 			switch (_p0.ctor) {
@@ -15760,11 +15764,17 @@ var _user$project$Playfield$space = F3(
 							_elm_lang$svg$Svg_Attributes$strokeWidth('4')
 						]);
 				default:
-					return _elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$svg$Svg_Attributes$fillOpacity('0.0'),
-							_elm_lang$svg$Svg_Attributes$strokeOpacity('0.0')
-						]);
+					return A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$svg$Svg_Attributes$fillOpacity('0.0')
+							]),
+						showOutlines ? _elm_lang$core$Native_List.fromArray(
+							[]) : _elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$svg$Svg_Attributes$strokeOpacity('0.0')
+							]));
 			}
 		}();
 		var attributes = A2(
@@ -15827,8 +15837,8 @@ var _user$project$Playfield$getPieceView = F3(
 			]);
 		return A3(_user$project$Playfield$piece, selectedAttributes, currentPiece.position, currentPiece.pieceType);
 	});
-var _user$project$Playfield$getSpaceView = F4(
-	function (pieceSelected, spaces, index, center) {
+var _user$project$Playfield$getSpaceView = F5(
+	function (showOutlines, pieceSelected, spaces, index, center) {
 		var extras = function () {
 			var _p2 = pieceSelected;
 			if (_p2.ctor === 'Nothing') {
@@ -15854,13 +15864,13 @@ var _user$project$Playfield$getSpaceView = F4(
 				[
 					_elm_lang$svg$Svg_Attributes$pointerEvents('none')
 				])) : extras;
-		return A3(_user$project$Playfield$space, finalExtras, center, spaceType);
+		return A4(_user$project$Playfield$space, showOutlines, finalExtras, center, spaceType);
 	});
 var _user$project$Playfield$getSpaces = function (model) {
 	return _elm_lang$core$Array$toList(
 		A2(
 			_elm_lang$core$Array$indexedMap,
-			A2(_user$project$Playfield$getSpaceView, model.pieceSelected, model.spaces),
+			A3(_user$project$Playfield$getSpaceView, model.showSpaceOutlines, model.pieceSelected, model.spaces),
 			model.spaces.positions));
 };
 var _user$project$Playfield$getPieces = function (model) {
@@ -16091,6 +16101,31 @@ var _user$project$DevControls$editTab = function (model) {
 				_debois$elm_mdl$Material_Grid$cell,
 				_elm_lang$core$Native_List.fromArray(
 					[
+						A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 4)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A5(
+						_debois$elm_mdl$Material_Toggles$switch,
+						_user$project$Msg$Mdl,
+						_elm_lang$core$Native_List.fromArray(
+							[8]),
+						model.mdl,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_debois$elm_mdl$Material_Toggles$onClick(_user$project$Msg$ToggleSpaceOutlines),
+								_debois$elm_mdl$Material_Toggles$ripple,
+								_debois$elm_mdl$Material_Toggles$value(model.showSpaceOutlines)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('Show outlines of empty spaces')
+							]))
+					])),
+				A2(
+				_debois$elm_mdl$Material_Grid$cell,
+				_elm_lang$core$Native_List.fromArray(
+					[
 						A2(_debois$elm_mdl$Material_Grid$offset, _debois$elm_mdl$Material_Grid$All, 1),
 						A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 4)
 					]),
@@ -16187,7 +16222,9 @@ var _user$project$DevControls$editTab = function (model) {
 						_user$project$Msg$SpaceDeckDecrement,
 						_user$project$Msg$SpaceDeckIncrement,
 						_user$project$DevControls$positionedSvgMakerToHtmlMaker(
-							_user$project$Playfield$space(
+							A2(
+								_user$project$Playfield$space,
+								model.showSpaceOutlines,
 								_elm_lang$core$Native_List.fromArray(
 									[]))))
 					])),
@@ -16534,6 +16571,16 @@ var _user$project$Update$update = F2(
 						model,
 						{
 							gridHeight: A2(_elm_lang$core$Basics$max, 0, model.gridHeight - 1)
+						}),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			case 'ToggleSpaceOutlines':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{
+							showSpaceOutlines: _elm_lang$core$Basics$not(model.showSpaceOutlines)
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));

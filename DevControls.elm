@@ -11,6 +11,7 @@ import Material.Button as Button
 import Material.Icon as Icon
 import Material.Tabs as Tabs
 import Material.Table as Table
+import Material.Toggles as Toggles
 import Material.Grid exposing (grid, cell, size, offset, Device(All, Tablet))
 import Math.Vector2 as V2 exposing (Vec2, vec2)
 import Svg exposing (Svg, svg)
@@ -69,6 +70,16 @@ editTab model =
                 , text "Generate Board"
                 ]
             ]
+        , cell [ size All 4 ]
+            [ Toggles.switch Mdl
+                [ 8 ]
+                model.mdl
+                [ Toggles.onClick Msg.ToggleSpaceOutlines
+                , Toggles.ripple
+                , Toggles.value model.showSpaceOutlines
+                ]
+                [ text "Show outlines of empty spaces" ]
+            ]
         , cell [ offset All 1, size All 4 ]
             [ text "gridWidth"
             , Button.render Msg.Mdl
@@ -114,7 +125,9 @@ editTab model =
                 model.spaceDeck
                 Msg.SpaceDeckDecrement
                 Msg.SpaceDeckIncrement
-                (positionedSvgMakerToHtmlMaker <| Playfield.space [])
+                (positionedSvgMakerToHtmlMaker
+                    <| Playfield.space model.showSpaceOutlines []
+                )
             ]
         , cell [ size All 6 ]
             [ deckControl [ 3 ]
