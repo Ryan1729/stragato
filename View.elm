@@ -11,6 +11,7 @@ import Json.Decode
 import DevControls
 import Playfield
 import Model exposing (Model)
+import Points
 
 
 background =
@@ -30,11 +31,21 @@ background =
 view : Model -> Html Msg
 view model =
     let
+        viewWidth =
+            600 * model.viewScale
+
+        viewHeight =
+            400 * model.viewScale
+
         playfield =
             [ svg
                 [ width "600"
                 , height "400"
-                  -- , viewBox "0 0 600 400"
+                , viewBox
+                    <| "0 0 "
+                    ++ toString viewWidth
+                    ++ " "
+                    ++ toString viewHeight
                 ]
                 <| background
                 ++ Playfield.getSpaces model

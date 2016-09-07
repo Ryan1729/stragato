@@ -21,6 +21,7 @@ type alias Model =
     , tabIndex : Int
     , debug : Bool
     , showSpaceOutlines : Bool
+    , viewScale : Float
     , mdl : Material.Model
     }
 
@@ -85,5 +86,6 @@ defaultState =
     , tabIndex = 0
     , debug = True
     , showSpaceOutlines = False
+    , viewScale = 1.0
     , mdl = Material.model
     }

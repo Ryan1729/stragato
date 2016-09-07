@@ -1,4 +1,4 @@
-module Points exposing (space, star, weirdThing, triangle, hexGrid)
+module Points exposing (space, star, weirdThing, triangle, hexGrid, spaceWidth)
 
 import Math.Vector2 as V2 exposing (Vec2, vec2, getX, getY, add, scale)
 import String
@@ -76,10 +76,18 @@ weirdThingPiecePointsList =
         weirdThingPointsList
 
 
+spaceScale =
+    60
+
+
 spacePointsList : List Vec2
 spacePointsList =
-    List.map (V2.scale 60)
+    List.map (V2.scale spaceScale)
         hexagonPointsList
+
+
+spaceWidth =
+    spaceScale * 2
 
 
 starPointsList : List Vec2

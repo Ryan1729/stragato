@@ -9,6 +9,7 @@ import Material.Scheme
 import Material.Options as Options exposing (css)
 import Material.Button as Button
 import Material.Icon as Icon
+import Material.Slider as Slider
 import Material.Tabs as Tabs
 import Material.Table as Table
 import Material.Toggles as Toggles
@@ -81,43 +82,26 @@ editTab model =
                 [ text "Show outlines of empty spaces" ]
             ]
         , cell [ offset All 1, size All 4 ]
-            [ text "gridWidth"
-            , Button.render Msg.Mdl
-                [ 4 ]
+            <| makeStepper [ 5 ]
                 model.mdl
-                [ Button.onClick DecrementGridWidth
-                ]
-                [ Icon.i "remove"
-                ]
-            , text
-                <| toString model.gridWidth
-            , Button.render Msg.Mdl
-                [ 5 ]
-                model.mdl
-                [ Button.onClick IncrementGridWidth
-                ]
-                [ Icon.i "add"
-                ]
-            ]
+                "gridWidth"
+                DecrementGridWidth
+                IncrementGridWidth
+                (toString model.gridWidth)
         , cell [ offset All 1, size All 4 ]
-            [ text "gridHeight"
-            , Button.render Msg.Mdl
-                [ 6 ]
+            <| makeStepper [ 6 ]
                 model.mdl
-                [ Button.onClick DecrementGridHeight
-                ]
-                [ Icon.i "remove"
-                ]
-            , text
-                <| toString model.gridHeight
-            , Button.render Msg.Mdl
-                [ 7 ]
+                "gridHeight"
+                DecrementGridHeight
+                IncrementGridHeight
+                (toString model.gridHeight)
+        , cell [ offset All 1, size All 4 ]
+            <| makeStepper [ 9 ]
                 model.mdl
-                [ Button.onClick IncrementGridHeight
-                ]
-                [ Icon.i "add"
-                ]
-            ]
+                "scale"
+                DecrementViewScale
+                IncrementViewScale
+                (toString model.viewScale)
         , cell [ size All 6 ]
             [ deckControl [ 2 ]
                 model.mdl
@@ -139,6 +123,27 @@ editTab model =
                 (positionedSvgMakerToHtmlMaker <| Playfield.piece [])
             ]
         ]
+
+
+makeStepper : List Int -> Mdl -> String -> Msg -> Msg -> String -> List (Html Msg)
+makeStepper index mdl label decrementMsg incrementMsg value =
+    [ text label
+    , Button.render Msg.Mdl
+        (index ++ [ 0 ])
+        mdl
+        [ Button.onClick decrementMsg
+        ]
+        [ Icon.i "remove"
+        ]
+    , text value
+    , Button.render Msg.Mdl
+        (index ++ [ 1 ])
+        mdl
+        [ Button.onClick incrementMsg
+        ]
+        [ Icon.i "add"
+        ]
+    ]
 
 
 positionedSvgMakerToHtmlMaker : (Vec2 -> a -> Svg Msg) -> a -> Html Msg

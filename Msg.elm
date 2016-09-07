@@ -23,4 +23,6 @@ type Msg
     | DecrementGridWidth
     | IncrementGridHeight
     | DecrementGridHeight
+    | IncrementViewScale
+    | DecrementViewScale
     | ToggleSpaceOutlines

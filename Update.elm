@@ -79,12 +79,21 @@ update message model =
         ToggleSpaceOutlines ->
             { model | showSpaceOutlines = not model.showSpaceOutlines } ! []
 
+        IncrementViewScale ->
+            { model | viewScale = higherScale model.viewScale } ! []
+
+        DecrementViewScale ->
+            { model | viewScale = lowerScale model.viewScale } ! []
+
         Animate _ ->
             model ! []
 
         GetSeed time ->
             { model
-                | seed = Random.initialSeed <| Debug.log "seed" <| round time
+                | seed =
+                    Random.initialSeed
+                        <| Debug.log "seed"
+                        <| round time
             }
                 ! []
 
@@ -92,6 +101,19 @@ update message model =
         Mdl msg' ->
             -- Material.update msg'
             model ! []
+
+
+higherScale : Float -> Float
+higherScale oldScale =
+    oldScale + 0.5
+
+
+lowerScale : Float -> Float
+lowerScale oldScale =
+    if oldScale > 1 then
+        oldScale - 0.5
+    else
+        oldScale
 
 
 setPieceLocation : Array Piece -> Int -> Maybe Vec2 -> Array Piece
