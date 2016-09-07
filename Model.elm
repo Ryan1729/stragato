@@ -85,7 +85,7 @@ defaultState =
     , pieceDeck = defaultPieceDeck
     , tabIndex = 0
     , debug = True
-    , showSpaceOutlines = False
+    , showSpaceOutlines = True
     , viewScale = 1.0
     , mdl = Material.model
     }
