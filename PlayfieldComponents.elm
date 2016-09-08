@@ -5,6 +5,7 @@ import Array.Extra
 import Math.Vector2 as V2 exposing (Vec2, vec2, add)
 import Random exposing (Seed)
 import Points
+import Extras
 
 
 makeGridPoints width height =
@@ -19,15 +20,42 @@ type alias Piece =
     }
 
 
+type PieceControllability
+    = Player
+    | Computer
+    | Both
+    | None
+
+
+pieceControllabilityPossibilities =
+    [ Player
+    , Computer
+    , Both
+    , None
+    ]
+
+
 type PieceType
-    = Star
-    | WeirdThing
-    | Triangle
+    = Star PieceControllability
+    | WeirdThing PieceControllability
+    | Triangle PieceControllability
     | NoPiece
 
 
+controllablePossibilities =
+    List.concatMap
+        (\f ->
+            List.concatMap
+                (\x ->
+                    [ f x ]
+                )
+                pieceControllabilityPossibilities
+        )
+        [ Star, WeirdThing, Triangle ]
+
+
 pieceTypePossibilities =
-    [ Star, WeirdThing, Triangle, NoPiece ]
+    controllablePossibilities ++ [ NoPiece ]
 
 
 isActualPiece : Piece -> Bool

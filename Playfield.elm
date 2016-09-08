@@ -8,7 +8,7 @@ import Msg exposing (Msg(SelectPiece, ClearPieceSelection, Mdl))
 import Math.Vector2 as V2 exposing (Vec2, vec2, getX, getY, add, scale)
 import Points
 import Array
-import PlayfieldComponents exposing (Piece, PieceType(..), Spaces, SpaceType(..))
+import PlayfieldComponents exposing (Piece, PieceType(..), Spaces, SpaceType(..), PieceControllability(..))
 
 
 getPieces model =
@@ -69,22 +69,22 @@ getPieceView selectedId currentId currentPiece =
 piece : List (Attribute Msg) -> Vec2 -> PieceType -> Svg Msg
 piece extras center pieceType =
     let
-        piecesPoints =
+        ( piecesPoints, pieceFill ) =
             case pieceType of
-                Star ->
-                    Points.star center
+                Star control ->
+                    ( Points.star center, getFill control )
 
-                WeirdThing ->
-                    Points.weirdThing center
+                WeirdThing control ->
+                    ( Points.weirdThing center, getFill control )
 
-                Triangle ->
-                    Points.triangle center
+                Triangle control ->
+                    ( Points.triangle center, getFill control )
 
                 NoPiece ->
-                    ""
+                    ( "", "" )
 
         attributes =
-            [ fill "#fa0"
+            [ fill pieceFill
             , points piecesPoints
             , stroke "grey"
             , strokeWidth "4"
@@ -96,6 +96,21 @@ piece extras center pieceType =
     in
         polygon finalAttributes
             []
+
+
+getFill control =
+    case control of
+        Player ->
+            "#fa0"
+
+        Computer ->
+            "#0af"
+
+        Both ->
+            "#faf"
+
+        None ->
+            "#0a0"
 
 
 space : Bool -> List (Attribute Msg) -> Vec2 -> SpaceType -> Svg Msg

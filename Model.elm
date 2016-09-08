@@ -55,16 +55,12 @@ defaultSpaces =
 
 
 defaultPieceDeck =
-    [ Star
-    , Star
-    , Star
-    , WeirdThing
-    , WeirdThing
-    , NoPiece
-    , NoPiece
-    , NoPiece
-    , NoPiece
-    ]
+    PlayfieldComponents.pieceTypePossibilities
+        ++ [ NoPiece
+           , NoPiece
+           , NoPiece
+           , NoPiece
+           ]
 
 
 defaultPieces =
