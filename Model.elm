@@ -64,9 +64,6 @@ defaultPieceDeck =
     , NoPiece
     , NoPiece
     , NoPiece
-    , NoPiece
-    , NoPiece
-    , NoPiece
     ]
 
 

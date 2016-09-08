@@ -30,6 +30,11 @@ pieceTypePossibilities =
     [ Star, WeirdThing, Triangle, NoPiece ]
 
 
+isActualPiece : Piece -> Bool
+isActualPiece piece =
+    piece.pieceType /= NoPiece
+
+
 type alias Spaces =
     { positions : Array Vec2
     , types : Array SpaceType

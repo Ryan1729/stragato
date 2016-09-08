@@ -28,9 +28,7 @@ update message model =
         MovePiece pieceId spaceId ->
             { model
                 | pieceSelected = Nothing
-                , pieces =
-                    setPieceLocation model.pieces pieceId
-                        <| Array.get spaceId model.spaces.positions
+                , pieces = getNewPieces model pieceId spaceId
             }
                 ! [ Ports.sound "clack" ]
 
@@ -103,6 +101,34 @@ update message model =
             model ! []
 
 
+getNewPieces : Model -> Int -> Int -> Array Piece
+getNewPieces model pieceId spaceId =
+    case Array.get spaceId model.spaces.positions of
+        Just spacePosition ->
+            if canMoveTo model pieceId spacePosition then
+                setPieceLocation model.pieces pieceId spacePosition
+            else
+                model.pieces
+
+        Nothing ->
+            model.pieces
+
+
+canMoveTo model pieceId spacePosition =
+    let
+        piecesOnSpace =
+            Debug.log "" <| getPiecesOnSpace model spacePosition
+    in
+        Array.length piecesOnSpace <= 0
+
+
+getPiecesOnSpace model spacePosition =
+    model.pieces
+        |> Array.filter (PlayfieldComponents.isActualPiece)
+        |> Array.map .position
+        |> Array.filter ((==) spacePosition)
+
+
 higherScale : Float -> Float
 higherScale oldScale =
     oldScale + 0.5
@@ -116,18 +142,13 @@ lowerScale oldScale =
         oldScale
 
 
-setPieceLocation : Array Piece -> Int -> Maybe Vec2 -> Array Piece
-setPieceLocation pieces pieceId maybePosition =
-    case maybePosition of
-        Just position ->
-            Array.Extra.update pieceId
-                (\piece ->
-                    { piece | position = position }
-                )
-                pieces
-
-        Nothing ->
-            pieces
+setPieceLocation : Array Piece -> Int -> Vec2 -> Array Piece
+setPieceLocation pieces pieceId position =
+    Array.Extra.update pieceId
+        (\piece ->
+            { piece | position = position }
+        )
+        pieces
 
 
 v2FromPosition : Mouse.Position -> Vec2
