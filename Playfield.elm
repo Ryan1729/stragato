@@ -9,6 +9,7 @@ import Math.Vector2 as V2 exposing (Vec2, vec2, getX, getY, add, scale)
 import Points
 import Array
 import PlayfieldComponents exposing (Piece, PieceType(..), Spaces, SpaceType(..), PieceControllability(..))
+import Dict exposing (Dict)
 
 
 getPieces model =
@@ -16,8 +17,8 @@ getPieces model =
         selectedId =
             Maybe.withDefault -1 model.pieceSelected
     in
-        Array.indexedMap (getPieceView selectedId) model.pieces
-            |> Array.toList
+        Dict.map (getPieceView selectedId) model.pieces
+            |> Dict.values
 
 
 getSpaces model =

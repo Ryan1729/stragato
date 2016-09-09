@@ -11,6 +11,7 @@ import Random
 import Extras
 import Material
 import PlayfieldComponents exposing (Piece, PieceType(..), Spaces, SpaceType(..))
+import Dict exposing (Dict)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -101,32 +102,60 @@ update message model =
             model ! []
 
 
-getNewPieces : Model -> Int -> Int -> Array Piece
+getNewPieces : Model -> Int -> Int -> Dict Int Piece
 getNewPieces model pieceId spaceId =
-    case Array.get spaceId model.spaces.positions of
-        Just spacePosition ->
-            if canMoveTo model pieceId spacePosition then
-                setPieceLocation model.pieces pieceId spacePosition
-            else
-                model.pieces
+    case
+        ( Dict.get pieceId model.pieces
+        , Array.get spaceId model.spaces.positions
+        )
+    of
+        ( Just piece, Just spacePosition ) ->
+            case
+                ( piece.pieceType
+                , getPiecesOnSpace model spacePosition
+                )
+            of
 
-        Nothing ->
+                _ ->
+                    if spaceIsEmpty model spacePosition then
+                        let
+                            newPieces =
+                                setPieceLocation pieceId spacePosition model.pieces
+                        in
+                            Dict.filter (Extras.ignoreFirstArg PlayfieldComponents.isActualPiece)
+                                newPieces
+                    else
+                        model.pieces
+
+        _ ->
             model.pieces
 
 
-canMoveTo model pieceId spacePosition =
+
+-- canMoveTo model pieceId spacePosition =
+--     let
+--         piecesOnSpace =
+--             getPiecesOnSpace model spacePosition
+--     in
+--         Array.length piecesOnSpace <= 0
+
+
+spaceIsEmpty model spacePosition =
     let
         piecesOnSpace =
-            Debug.log "" <| getPiecesOnSpace model spacePosition
+            getPiecesOnSpace model spacePosition
     in
-        Array.length piecesOnSpace <= 0
+        piecesOnSpace
+            |> List.filter (PlayfieldComponents.isActualPiece)
+            |> (==) []
 
 
+getPiecesOnSpace : Model -> Vec2 -> List Piece
 getPiecesOnSpace model spacePosition =
     model.pieces
-        |> Array.filter (PlayfieldComponents.isActualPiece)
-        |> Array.map .position
-        |> Array.filter ((==) spacePosition)
+        |> Dict.toList
+        |> List.map snd
+        |> List.filter (.position >> (==) spacePosition)
 
 
 higherScale : Float -> Float
@@ -142,11 +171,13 @@ lowerScale oldScale =
         oldScale
 
 
-setPieceLocation : Array Piece -> Int -> Vec2 -> Array Piece
-setPieceLocation pieces pieceId position =
-    Array.Extra.update pieceId
-        (\piece ->
-            { piece | position = position }
+setPieceLocation : Int -> Vec2 -> Dict Int Piece -> Dict Int Piece
+setPieceLocation pieceId position pieces =
+    Dict.update pieceId
+        (Maybe.map
+            (\piece ->
+                { piece | position = position }
+            )
         )
         pieces
 

@@ -19,3 +19,13 @@ remove x xs =
                 ys
             else
                 y :: remove x ys
+
+
+
+--wrote myself since apparently a function that does the argument ignoring like
+--this, isn't on package.elm-lang.org
+
+
+ignoreFirstArg : (a -> b) -> (c -> a -> b)
+ignoreFirstArg f =
+    (\c a -> f a)

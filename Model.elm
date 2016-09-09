@@ -7,11 +7,12 @@ import Array.Extra
 import Random exposing (Seed)
 import Material
 import PlayfieldComponents exposing (Piece, PieceType(..), Spaces, SpaceType(..))
+import Dict exposing (Dict)
 
 
 type alias Model =
     { pieceSelected : Maybe Int
-    , pieces : Array Piece
+    , pieces : Dict Int Piece
     , spaces : Spaces
     , gridWidth : Int
     , gridHeight : Int
@@ -63,8 +64,10 @@ defaultPieceDeck =
            ]
 
 
+defaultPieces : Dict Int Piece
 defaultPieces =
-    fst <| PlayfieldComponents.makePieces defaultSpaces defaultPieceDeck (Random.initialSeed -421)
+    PlayfieldComponents.makePieces defaultSpaces defaultPieceDeck (Random.initialSeed -421)
+        |> fst
 
 
 defaultState =

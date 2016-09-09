@@ -6,6 +6,7 @@ import Math.Vector2 as V2 exposing (Vec2, vec2, add)
 import Random exposing (Seed)
 import Points
 import Extras
+import Dict exposing (Dict)
 
 
 makeGridPoints width height =
@@ -92,7 +93,7 @@ makeSpaces width height deck seed =
         ( Spaces gridPoints spaceTypes, newSeed )
 
 
-makePieces : Spaces -> List PieceType -> Seed -> ( Array Piece, Seed )
+makePieces : Spaces -> List PieceType -> Seed -> ( Dict Int Piece, Seed )
 makePieces { positions, types } deck seed =
     let
         filteredPositions =
@@ -101,14 +102,20 @@ makePieces { positions, types } deck seed =
         ( pieceTypes, newSeed ) =
             fillArrayFromDeck NoPiece
                 deck
-                (Array.length filteredPositions)
+                (List.length filteredPositions)
                 seed
+
+        pieces =
+            List.map2 Piece (Array.toList pieceTypes) filteredPositions
+                |> List.indexedMap (,)
+                |> Dict.fromList
     in
-        ( Array.Extra.map2 Piece pieceTypes filteredPositions
+        ( pieces
         , newSeed
         )
 
 
+filterPositions : Array Vec2 -> Array SpaceType -> List Vec2
 filterPositions positions types =
     let
         maxIndex =
@@ -120,7 +127,6 @@ filterPositions positions types =
                     positions
                     types
                 )
-            |> Array.fromList
 
 
 getFromArrayPredicatedOnOtherArray : (b -> Bool) -> Array a -> Array b -> Int -> Maybe a
