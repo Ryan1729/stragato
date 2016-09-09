@@ -13783,6 +13783,186 @@ var _debois$elm_mdl$Material_Scheme$top = function (content) {
 	return A3(_debois$elm_mdl$Material_Scheme$topWithScheme, _debois$elm_mdl$Material_Color$Grey, _debois$elm_mdl$Material_Color$Grey, content);
 };
 
+var _debois$elm_mdl$Material_Slider$floatVal = A2(
+	_elm_lang$core$Json_Decode$at,
+	_elm_lang$core$Native_List.fromArray(
+		['target', 'valueAsNumber']),
+	_elm_lang$core$Json_Decode$float);
+var _debois$elm_mdl$Material_Slider$onChange = function (l) {
+	return _debois$elm_mdl$Material_Options$set(
+		function (options) {
+			return _elm_lang$core$Native_Utils.update(
+				options,
+				{
+					listener: _elm_lang$core$Maybe$Just(l)
+				});
+		});
+};
+var _debois$elm_mdl$Material_Slider$disabled = _debois$elm_mdl$Material_Options$set(
+	function (options) {
+		return _elm_lang$core$Native_Utils.update(
+			options,
+			{disabled: true});
+	});
+var _debois$elm_mdl$Material_Slider$step = function (v) {
+	return _debois$elm_mdl$Material_Options$set(
+		function (options) {
+			return _elm_lang$core$Native_Utils.update(
+				options,
+				{step: v});
+		});
+};
+var _debois$elm_mdl$Material_Slider$max = function (v) {
+	return _debois$elm_mdl$Material_Options$set(
+		function (options) {
+			return _elm_lang$core$Native_Utils.update(
+				options,
+				{max: v});
+		});
+};
+var _debois$elm_mdl$Material_Slider$min = function (v) {
+	return _debois$elm_mdl$Material_Options$set(
+		function (options) {
+			return _elm_lang$core$Native_Utils.update(
+				options,
+				{min: v});
+		});
+};
+var _debois$elm_mdl$Material_Slider$value = function (v) {
+	return _debois$elm_mdl$Material_Options$set(
+		function (options) {
+			return _elm_lang$core$Native_Utils.update(
+				options,
+				{value: v});
+		});
+};
+var _debois$elm_mdl$Material_Slider$defaultConfig = {
+	value: 50,
+	min: 0,
+	max: 100,
+	step: 1,
+	listener: _elm_lang$core$Maybe$Nothing,
+	disabled: false,
+	inner: _elm_lang$core$Native_List.fromArray(
+		[])
+};
+var _debois$elm_mdl$Material_Slider$view = function (options) {
+	var summary = A2(_debois$elm_mdl$Material_Options$collect, _debois$elm_mdl$Material_Slider$defaultConfig, options);
+	var config = summary.config;
+	var fraction = (config.value - config.min) / (config.max - config.min);
+	var lower = A2(
+		_elm_lang$core$Basics_ops['++'],
+		_elm_lang$core$Basics$toString(fraction),
+		' 1 0%');
+	var upper = A2(
+		_elm_lang$core$Basics_ops['++'],
+		_elm_lang$core$Basics$toString(1 - fraction),
+		' 1 0%');
+	var background = A3(
+		_debois$elm_mdl$Material_Options$styled,
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_debois$elm_mdl$Material_Options$cs('mdl-slider__background-flex')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A3(
+				_debois$elm_mdl$Material_Options$styled,
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_debois$elm_mdl$Material_Options$cs('mdl-slider__background-lower'),
+						A2(_debois$elm_mdl$Material_Options$css, 'flex', lower)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A3(
+				_debois$elm_mdl$Material_Options$styled,
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_debois$elm_mdl$Material_Options$cs('mdl-slider__background-upper'),
+						A2(_debois$elm_mdl$Material_Options$css, 'flex', upper)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[]))
+			]));
+	var listeners = A2(
+		_elm_lang$core$Maybe$withDefault,
+		_debois$elm_mdl$Material_Options$nop,
+		A2(
+			_elm_lang$core$Maybe$map,
+			function (f) {
+				return _debois$elm_mdl$Material_Options$many(
+					A2(
+						_elm_lang$core$List$map,
+						_debois$elm_mdl$Material_Options_Internal$attribute,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								A2(
+								_elm_lang$html$Html_Events$on,
+								'change',
+								A2(_elm_lang$core$Json_Decode$map, f, _debois$elm_mdl$Material_Slider$floatVal)),
+								A2(
+								_elm_lang$html$Html_Events$on,
+								'input',
+								A2(_elm_lang$core$Json_Decode$map, f, _debois$elm_mdl$Material_Slider$floatVal))
+							])));
+			},
+			config.listener));
+	return A5(
+		_debois$elm_mdl$Material_Options$apply,
+		summary,
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_debois$elm_mdl$Material_Options$cs('mdl-slider__container')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A4(
+				_debois$elm_mdl$Material_Options$styled$,
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_debois$elm_mdl$Material_Options$cs('mdl-slider'),
+						_debois$elm_mdl$Material_Options$cs('mdl-js-slider'),
+						_debois$elm_mdl$Material_Options$cs('is-upgraded'),
+						A2(
+						_debois$elm_mdl$Material_Options$when,
+						_debois$elm_mdl$Material_Options$cs('is-lowest-value'),
+						_elm_lang$core$Native_Utils.eq(fraction, 0)),
+						listeners,
+						_debois$elm_mdl$Material_Options$disabled(config.disabled),
+						A2(_debois$elm_mdl$Material_Options$css, 'padding', '8px 0'),
+						_debois$elm_mdl$Material_Options$many(config.inner)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$type$('range'),
+						_elm_lang$html$Html_Attributes$max(
+						_elm_lang$core$Basics$toString(config.max)),
+						_elm_lang$html$Html_Attributes$min(
+						_elm_lang$core$Basics$toString(config.min)),
+						_elm_lang$html$Html_Attributes$step(
+						_elm_lang$core$Basics$toString(config.step)),
+						_elm_lang$html$Html_Attributes$value(
+						_elm_lang$core$Basics$toString(config.value)),
+						_debois$elm_mdl$Material_Helpers$blurOn('mouseup')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				background
+			]));
+};
+var _debois$elm_mdl$Material_Slider$Config = F7(
+	function (a, b, c, d, e, f, g) {
+		return {value: a, min: b, max: c, step: d, listener: e, disabled: f, inner: g};
+	});
+
 var _debois$elm_mdl$Material_Table$defaultCell = {numeric: false};
 var _debois$elm_mdl$Material_Table$td = F2(
 	function (options, html) {
@@ -15382,6 +15562,8 @@ var _user$project$Points$pointsListToSVGString = F2(
 				},
 				pointsList));
 	});
+var _user$project$Points$spaceScale = 60;
+var _user$project$Points$spaceWidth = _user$project$Points$spaceScale * 2;
 var _user$project$Points$tau = 2 * _elm_lang$core$Basics$pi;
 var _user$project$Points$fractionToPointOnCircle = function (fraction) {
 	var angle = _user$project$Points$tau * fraction;
@@ -15397,7 +15579,7 @@ var _user$project$Points$hexagonPointsList = A2(
 		[0, 1 / 6, 2 / 6, 3 / 6, 4 / 6, 5 / 6]));
 var _user$project$Points$spacePointsList = A2(
 	_elm_lang$core$List$map,
-	_elm_community$elm_linear_algebra$Math_Vector2$scale(60),
+	_elm_community$elm_linear_algebra$Math_Vector2$scale(_user$project$Points$spaceScale),
 	_user$project$Points$hexagonPointsList);
 var _user$project$Points$space = _user$project$Points$pointsListToSVGString(_user$project$Points$spacePointsList);
 var _user$project$Points$weirdThingPointsList = A2(
@@ -15466,6 +15648,26 @@ var _user$project$Points$hexGrid = F2(
 						_elm_lang$core$Basics$toFloat(y) * _user$project$Points$hexagonHeightConstant)) : _elm_lang$core$Maybe$Nothing;
 			},
 			baseList);
+	});
+
+var _user$project$Extras$ignoreFirstArg = F3(
+	function (f, c, a) {
+		return f(a);
+	});
+var _user$project$Extras$remove = F2(
+	function (x, xs) {
+		var _p0 = xs;
+		if (_p0.ctor === '[]') {
+			return _elm_lang$core$Native_List.fromArray(
+				[]);
+		} else {
+			var _p2 = _p0._1;
+			var _p1 = _p0._0;
+			return _elm_lang$core$Native_Utils.eq(x, _p1) ? _p2 : A2(
+				_elm_lang$core$List_ops['::'],
+				_p1,
+				A2(_user$project$Extras$remove, x, _p2));
+		}
 	});
 
 var _user$project$PlayfieldComponents$maybeFromDeck = F2(
@@ -15571,12 +15773,45 @@ var _user$project$PlayfieldComponents$Spaces = F2(
 	function (a, b) {
 		return {positions: a, types: b};
 	});
+var _user$project$PlayfieldComponents$None = {ctor: 'None'};
+var _user$project$PlayfieldComponents$Both = {ctor: 'Both'};
+var _user$project$PlayfieldComponents$Computer = {ctor: 'Computer'};
+var _user$project$PlayfieldComponents$Player = {ctor: 'Player'};
+var _user$project$PlayfieldComponents$pieceControllabilityPossibilities = _elm_lang$core$Native_List.fromArray(
+	[_user$project$PlayfieldComponents$Player, _user$project$PlayfieldComponents$Computer, _user$project$PlayfieldComponents$Both, _user$project$PlayfieldComponents$None]);
 var _user$project$PlayfieldComponents$NoPiece = {ctor: 'NoPiece'};
-var _user$project$PlayfieldComponents$Triangle = {ctor: 'Triangle'};
-var _user$project$PlayfieldComponents$WeirdThing = {ctor: 'WeirdThing'};
-var _user$project$PlayfieldComponents$Star = {ctor: 'Star'};
-var _user$project$PlayfieldComponents$pieceTypePossibilities = _elm_lang$core$Native_List.fromArray(
-	[_user$project$PlayfieldComponents$Star, _user$project$PlayfieldComponents$WeirdThing, _user$project$PlayfieldComponents$Triangle, _user$project$PlayfieldComponents$NoPiece]);
+var _user$project$PlayfieldComponents$isActualPiece = function (piece) {
+	return !_elm_lang$core$Native_Utils.eq(piece.pieceType, _user$project$PlayfieldComponents$NoPiece);
+};
+var _user$project$PlayfieldComponents$Triangle = function (a) {
+	return {ctor: 'Triangle', _0: a};
+};
+var _user$project$PlayfieldComponents$WeirdThing = function (a) {
+	return {ctor: 'WeirdThing', _0: a};
+};
+var _user$project$PlayfieldComponents$Star = function (a) {
+	return {ctor: 'Star', _0: a};
+};
+var _user$project$PlayfieldComponents$controllablePossibilities = A2(
+	_elm_lang$core$List$concatMap,
+	function (f) {
+		return A2(
+			_elm_lang$core$List$concatMap,
+			function (x) {
+				return _elm_lang$core$Native_List.fromArray(
+					[
+						f(x)
+					]);
+			},
+			_user$project$PlayfieldComponents$pieceControllabilityPossibilities);
+	},
+	_elm_lang$core$Native_List.fromArray(
+		[_user$project$PlayfieldComponents$Star, _user$project$PlayfieldComponents$WeirdThing, _user$project$PlayfieldComponents$Triangle]));
+var _user$project$PlayfieldComponents$pieceTypePossibilities = A2(
+	_elm_lang$core$Basics_ops['++'],
+	_user$project$PlayfieldComponents$controllablePossibilities,
+	_elm_lang$core$Native_List.fromArray(
+		[_user$project$PlayfieldComponents$NoPiece]));
 var _user$project$PlayfieldComponents$EmptySpace = {ctor: 'EmptySpace'};
 var _user$project$PlayfieldComponents$makeSpaces = F4(
 	function (width, height, deck, seed) {
@@ -15601,18 +15836,17 @@ var _user$project$PlayfieldComponents$filterPositions = F2(
 			_elm_lang$core$Basics$min,
 			_elm_lang$core$Array$length(positions),
 			_elm_lang$core$Array$length(types)) - 1;
-		return _elm_lang$core$Array$fromList(
-			A2(
-				_elm_lang$core$List$filterMap,
-				A3(
-					_user$project$PlayfieldComponents$getFromArrayPredicatedOnOtherArray,
-					F2(
-						function (x, y) {
-							return !_elm_lang$core$Native_Utils.eq(x, y);
-						})(_user$project$PlayfieldComponents$EmptySpace),
-					positions,
-					types),
-				_elm_lang$core$Native_List.range(0, maxIndex)));
+		return A2(
+			_elm_lang$core$List$filterMap,
+			A3(
+				_user$project$PlayfieldComponents$getFromArrayPredicatedOnOtherArray,
+				F2(
+					function (x, y) {
+						return !_elm_lang$core$Native_Utils.eq(x, y);
+					})(_user$project$PlayfieldComponents$EmptySpace),
+				positions,
+				types),
+			_elm_lang$core$Native_List.range(0, maxIndex));
 	});
 var _user$project$PlayfieldComponents$makePieces = F3(
 	function (_p7, deck, seed) {
@@ -15622,15 +15856,23 @@ var _user$project$PlayfieldComponents$makePieces = F3(
 			_user$project$PlayfieldComponents$fillArrayFromDeck,
 			_user$project$PlayfieldComponents$NoPiece,
 			deck,
-			_elm_lang$core$Array$length(filteredPositions),
+			_elm_lang$core$List$length(filteredPositions),
 			seed);
 		var pieceTypes = _p9._0;
 		var newSeed = _p9._1;
-		return {
-			ctor: '_Tuple2',
-			_0: A3(_elm_community$array_extra$Array_Extra$map2, _user$project$PlayfieldComponents$Piece, pieceTypes, filteredPositions),
-			_1: newSeed
-		};
+		var pieces = _elm_lang$core$Dict$fromList(
+			A2(
+				_elm_lang$core$List$indexedMap,
+				F2(
+					function (v0, v1) {
+						return {ctor: '_Tuple2', _0: v0, _1: v1};
+					}),
+				A3(
+					_elm_lang$core$List$map2,
+					_user$project$PlayfieldComponents$Piece,
+					_elm_lang$core$Array$toList(pieceTypes),
+					filteredPositions)));
+		return {ctor: '_Tuple2', _0: pieces, _1: newSeed};
 	});
 var _user$project$PlayfieldComponents$Yellow = {ctor: 'Yellow'};
 var _user$project$PlayfieldComponents$Red = {ctor: 'Red'};
@@ -15638,8 +15880,11 @@ var _user$project$PlayfieldComponents$Green = {ctor: 'Green'};
 var _user$project$PlayfieldComponents$spaceTypePossibilities = _elm_lang$core$Native_List.fromArray(
 	[_user$project$PlayfieldComponents$Green, _user$project$PlayfieldComponents$Red, _user$project$PlayfieldComponents$Yellow, _user$project$PlayfieldComponents$EmptySpace]);
 
-var _user$project$Model$defaultPieceDeck = _elm_lang$core$Native_List.fromArray(
-	[_user$project$PlayfieldComponents$Star, _user$project$PlayfieldComponents$Star, _user$project$PlayfieldComponents$Star, _user$project$PlayfieldComponents$WeirdThing, _user$project$PlayfieldComponents$WeirdThing, _user$project$PlayfieldComponents$NoPiece, _user$project$PlayfieldComponents$NoPiece, _user$project$PlayfieldComponents$NoPiece, _user$project$PlayfieldComponents$NoPiece, _user$project$PlayfieldComponents$NoPiece, _user$project$PlayfieldComponents$NoPiece, _user$project$PlayfieldComponents$NoPiece]);
+var _user$project$Model$defaultPieceDeck = A2(
+	_elm_lang$core$Basics_ops['++'],
+	_user$project$PlayfieldComponents$pieceTypePossibilities,
+	_elm_lang$core$Native_List.fromArray(
+		[_user$project$PlayfieldComponents$NoPiece, _user$project$PlayfieldComponents$NoPiece, _user$project$PlayfieldComponents$NoPiece, _user$project$PlayfieldComponents$NoPiece]));
 var _user$project$Model$defaultSpaceDeck = _elm_lang$core$Native_List.fromArray(
 	[_user$project$PlayfieldComponents$Green, _user$project$PlayfieldComponents$Green, _user$project$PlayfieldComponents$Red, _user$project$PlayfieldComponents$Red, _user$project$PlayfieldComponents$EmptySpace, _user$project$PlayfieldComponents$EmptySpace, _user$project$PlayfieldComponents$EmptySpace, _user$project$PlayfieldComponents$EmptySpace]);
 var _user$project$Model$defaultHeight = 5;
@@ -15668,7 +15913,8 @@ var _user$project$Model$defaultState = {
 	pieceDeck: _user$project$Model$defaultPieceDeck,
 	tabIndex: 0,
 	debug: true,
-	showSpaceOutlines: false,
+	showSpaceOutlines: true,
+	viewScale: 1.0,
 	mdl: _debois$elm_mdl$Material$model
 };
 var _user$project$Model$Model = function (a) {
@@ -15683,7 +15929,9 @@ var _user$project$Model$Model = function (a) {
 									return function (j) {
 										return function (k) {
 											return function (l) {
-												return {pieceSelected: a, pieces: b, spaces: c, gridWidth: d, gridHeight: e, spaceDeck: f, pieceDeck: g, seed: h, tabIndex: i, debug: j, showSpaceOutlines: k, mdl: l};
+												return function (m) {
+													return {pieceSelected: a, pieces: b, spaces: c, gridWidth: d, gridHeight: e, spaceDeck: f, pieceDeck: g, seed: h, tabIndex: i, debug: j, showSpaceOutlines: k, viewScale: l, mdl: m};
+												};
 											};
 										};
 									};
@@ -15698,6 +15946,8 @@ var _user$project$Model$Model = function (a) {
 };
 
 var _user$project$Msg$ToggleSpaceOutlines = {ctor: 'ToggleSpaceOutlines'};
+var _user$project$Msg$DecrementViewScale = {ctor: 'DecrementViewScale'};
+var _user$project$Msg$IncrementViewScale = {ctor: 'IncrementViewScale'};
 var _user$project$Msg$DecrementGridHeight = {ctor: 'DecrementGridHeight'};
 var _user$project$Msg$IncrementGridHeight = {ctor: 'IncrementGridHeight'};
 var _user$project$Msg$DecrementGridWidth = {ctor: 'DecrementGridWidth'};
@@ -15793,24 +16043,51 @@ var _user$project$Playfield$space = F4(
 			_elm_lang$core$Native_List.fromArray(
 				[]));
 	});
+var _user$project$Playfield$getFill = function (control) {
+	var _p1 = control;
+	switch (_p1.ctor) {
+		case 'Player':
+			return '#fa0';
+		case 'Computer':
+			return '#0af';
+		case 'Both':
+			return '#faf';
+		default:
+			return '#0a0';
+	}
+};
 var _user$project$Playfield$piece = F3(
 	function (extras, center, pieceType) {
-		var piecesPoints = function () {
-			var _p1 = pieceType;
-			switch (_p1.ctor) {
+		var _p2 = function () {
+			var _p3 = pieceType;
+			switch (_p3.ctor) {
 				case 'Star':
-					return _user$project$Points$star(center);
+					return {
+						ctor: '_Tuple2',
+						_0: _user$project$Points$star(center),
+						_1: _user$project$Playfield$getFill(_p3._0)
+					};
 				case 'WeirdThing':
-					return _user$project$Points$weirdThing(center);
+					return {
+						ctor: '_Tuple2',
+						_0: _user$project$Points$weirdThing(center),
+						_1: _user$project$Playfield$getFill(_p3._0)
+					};
 				case 'Triangle':
-					return _user$project$Points$triangle(center);
+					return {
+						ctor: '_Tuple2',
+						_0: _user$project$Points$triangle(center),
+						_1: _user$project$Playfield$getFill(_p3._0)
+					};
 				default:
-					return '';
+					return {ctor: '_Tuple2', _0: '', _1: ''};
 			}
 		}();
+		var piecesPoints = _p2._0;
+		var pieceFill = _p2._1;
 		var attributes = _elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$svg$Svg_Attributes$fill('#fa0'),
+				_elm_lang$svg$Svg_Attributes$fill(pieceFill),
 				_elm_lang$svg$Svg_Attributes$points(piecesPoints),
 				_elm_lang$svg$Svg_Attributes$stroke('grey'),
 				_elm_lang$svg$Svg_Attributes$strokeWidth('4'),
@@ -15840,15 +16117,15 @@ var _user$project$Playfield$getPieceView = F3(
 var _user$project$Playfield$getSpaceView = F5(
 	function (showOutlines, pieceSelected, spaces, index, center) {
 		var extras = function () {
-			var _p2 = pieceSelected;
-			if (_p2.ctor === 'Nothing') {
+			var _p4 = pieceSelected;
+			if (_p4.ctor === 'Nothing') {
 				return _elm_lang$core$Native_List.fromArray(
 					[]);
 			} else {
 				return _elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$svg$Svg_Events$onClick(
-						A2(_user$project$Msg$MovePiece, _p2._0, index)),
+						A2(_user$project$Msg$MovePiece, _p4._0, index)),
 						_elm_lang$svg$Svg_Attributes$cursor('pointer')
 					]);
 			}
@@ -15875,9 +16152,9 @@ var _user$project$Playfield$getSpaces = function (model) {
 };
 var _user$project$Playfield$getPieces = function (model) {
 	var selectedId = A2(_elm_lang$core$Maybe$withDefault, -1, model.pieceSelected);
-	return _elm_lang$core$Array$toList(
+	return _elm_lang$core$Dict$values(
 		A2(
-			_elm_lang$core$Array$indexedMap,
+			_elm_lang$core$Dict$map,
 			_user$project$Playfield$getPieceView(selectedId),
 			model.pieces));
 };
@@ -16057,6 +16334,48 @@ var _user$project$DevControls$positionedSvgMakerToHtmlMaker = F2(
 					identifier)
 				]));
 	});
+var _user$project$DevControls$makeStepper = F6(
+	function (index, mdl, label, decrementMsg, incrementMsg, value) {
+		return _elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text(label),
+				A5(
+				_debois$elm_mdl$Material_Button$render,
+				_user$project$Msg$Mdl,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					index,
+					_elm_lang$core$Native_List.fromArray(
+						[0])),
+				mdl,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_debois$elm_mdl$Material_Button$onClick(decrementMsg)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_debois$elm_mdl$Material_Icon$i('remove')
+					])),
+				_elm_lang$html$Html$text(value),
+				A5(
+				_debois$elm_mdl$Material_Button$render,
+				_user$project$Msg$Mdl,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					index,
+					_elm_lang$core$Native_List.fromArray(
+						[1])),
+				mdl,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_debois$elm_mdl$Material_Button$onClick(incrementMsg)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_debois$elm_mdl$Material_Icon$i('add')
+					]))
+			]);
+	});
 var _user$project$DevControls$editTab = function (model) {
 	return A2(
 		_debois$elm_mdl$Material_Grid$grid,
@@ -16129,40 +16448,15 @@ var _user$project$DevControls$editTab = function (model) {
 						A2(_debois$elm_mdl$Material_Grid$offset, _debois$elm_mdl$Material_Grid$All, 1),
 						A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 4)
 					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text('gridWidth'),
-						A5(
-						_debois$elm_mdl$Material_Button$render,
-						_user$project$Msg$Mdl,
-						_elm_lang$core$Native_List.fromArray(
-							[4]),
-						model.mdl,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_debois$elm_mdl$Material_Button$onClick(_user$project$Msg$DecrementGridWidth)
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_debois$elm_mdl$Material_Icon$i('remove')
-							])),
-						_elm_lang$html$Html$text(
-						_elm_lang$core$Basics$toString(model.gridWidth)),
-						A5(
-						_debois$elm_mdl$Material_Button$render,
-						_user$project$Msg$Mdl,
-						_elm_lang$core$Native_List.fromArray(
-							[5]),
-						model.mdl,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_debois$elm_mdl$Material_Button$onClick(_user$project$Msg$IncrementGridWidth)
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_debois$elm_mdl$Material_Icon$i('add')
-							]))
-					])),
+				A6(
+					_user$project$DevControls$makeStepper,
+					_elm_lang$core$Native_List.fromArray(
+						[5]),
+					model.mdl,
+					'gridWidth',
+					_user$project$Msg$DecrementGridWidth,
+					_user$project$Msg$IncrementGridWidth,
+					_elm_lang$core$Basics$toString(model.gridWidth))),
 				A2(
 				_debois$elm_mdl$Material_Grid$cell,
 				_elm_lang$core$Native_List.fromArray(
@@ -16170,40 +16464,31 @@ var _user$project$DevControls$editTab = function (model) {
 						A2(_debois$elm_mdl$Material_Grid$offset, _debois$elm_mdl$Material_Grid$All, 1),
 						A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 4)
 					]),
+				A6(
+					_user$project$DevControls$makeStepper,
+					_elm_lang$core$Native_List.fromArray(
+						[6]),
+					model.mdl,
+					'gridHeight',
+					_user$project$Msg$DecrementGridHeight,
+					_user$project$Msg$IncrementGridHeight,
+					_elm_lang$core$Basics$toString(model.gridHeight))),
+				A2(
+				_debois$elm_mdl$Material_Grid$cell,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html$text('gridHeight'),
-						A5(
-						_debois$elm_mdl$Material_Button$render,
-						_user$project$Msg$Mdl,
-						_elm_lang$core$Native_List.fromArray(
-							[6]),
-						model.mdl,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_debois$elm_mdl$Material_Button$onClick(_user$project$Msg$DecrementGridHeight)
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_debois$elm_mdl$Material_Icon$i('remove')
-							])),
-						_elm_lang$html$Html$text(
-						_elm_lang$core$Basics$toString(model.gridHeight)),
-						A5(
-						_debois$elm_mdl$Material_Button$render,
-						_user$project$Msg$Mdl,
-						_elm_lang$core$Native_List.fromArray(
-							[7]),
-						model.mdl,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_debois$elm_mdl$Material_Button$onClick(_user$project$Msg$IncrementGridHeight)
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_debois$elm_mdl$Material_Icon$i('add')
-							]))
-					])),
+						A2(_debois$elm_mdl$Material_Grid$offset, _debois$elm_mdl$Material_Grid$All, 1),
+						A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 4)
+					]),
+				A6(
+					_user$project$DevControls$makeStepper,
+					_elm_lang$core$Native_List.fromArray(
+						[9]),
+					model.mdl,
+					'scale',
+					_user$project$Msg$DecrementViewScale,
+					_user$project$Msg$IncrementViewScale,
+					_elm_lang$core$Basics$toString(model.viewScale))),
 				A2(
 				_debois$elm_mdl$Material_Grid$cell,
 				_elm_lang$core$Native_List.fromArray(
@@ -16332,22 +16617,6 @@ var _user$project$DevControls$make = function (model) {
 		]);
 };
 
-var _user$project$Extras$remove = F2(
-	function (x, xs) {
-		var _p0 = xs;
-		if (_p0.ctor === '[]') {
-			return _elm_lang$core$Native_List.fromArray(
-				[]);
-		} else {
-			var _p2 = _p0._1;
-			var _p1 = _p0._0;
-			return _elm_lang$core$Native_Utils.eq(x, _p1) ? _p2 : A2(
-				_elm_lang$core$List_ops['::'],
-				_p1,
-				A2(_user$project$Extras$remove, x, _p2));
-		}
-	});
-
 var _user$project$View$background = _elm_lang$core$Native_List.fromArray(
 	[
 		A2(
@@ -16366,6 +16635,8 @@ var _user$project$View$background = _elm_lang$core$Native_List.fromArray(
 			[]))
 	]);
 var _user$project$View$view = function (model) {
+	var viewHeight = 400 * model.viewScale;
+	var viewWidth = 600 * model.viewScale;
 	var playfield = _elm_lang$core$Native_List.fromArray(
 		[
 			A2(
@@ -16373,7 +16644,18 @@ var _user$project$View$view = function (model) {
 			_elm_lang$core$Native_List.fromArray(
 				[
 					_elm_lang$svg$Svg_Attributes$width('600'),
-					_elm_lang$svg$Svg_Attributes$height('400')
+					_elm_lang$svg$Svg_Attributes$height('400'),
+					_elm_lang$svg$Svg_Attributes$viewBox(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'0 0 ',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(viewWidth),
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								' ',
+								_elm_lang$core$Basics$toString(viewHeight)))))
 				]),
 			A2(
 				_elm_lang$core$Basics_ops['++'],
@@ -16413,26 +16695,105 @@ var _user$project$Update$v2FromPosition = function (position) {
 		_elm_lang$core$Basics$toFloat(position.y));
 };
 var _user$project$Update$setPieceLocation = F3(
-	function (pieces, pieceId, maybePosition) {
-		var _p0 = maybePosition;
-		if (_p0.ctor === 'Just') {
-			return A3(
-				_elm_community$array_extra$Array_Extra$update,
-				pieceId,
+	function (pieceId, position, pieces) {
+		return A3(
+			_elm_lang$core$Dict$update,
+			pieceId,
+			_elm_lang$core$Maybe$map(
 				function (piece) {
 					return _elm_lang$core$Native_Utils.update(
 						piece,
-						{position: _p0._0});
-				},
-				pieces);
+						{position: position});
+				}),
+			pieces);
+	});
+var _user$project$Update$lowerScale = function (oldScale) {
+	return (_elm_lang$core$Native_Utils.cmp(oldScale, 1) > 0) ? (oldScale - 0.5) : oldScale;
+};
+var _user$project$Update$higherScale = function (oldScale) {
+	return oldScale + 0.5;
+};
+var _user$project$Update$getPiecesOnSpace = F2(
+	function (model, spacePosition) {
+		return A2(
+			_elm_lang$core$List$filter,
+			function (_p0) {
+				return A2(
+					F2(
+						function (x, y) {
+							return _elm_lang$core$Native_Utils.eq(x, y);
+						}),
+					spacePosition,
+					function (_) {
+						return _.position;
+					}(_p0));
+			},
+			A2(
+				_elm_lang$core$List$map,
+				_elm_lang$core$Basics$snd,
+				_elm_lang$core$Dict$toList(model.pieces)));
+	});
+var _user$project$Update$spaceIsEmpty = F2(
+	function (model, spacePosition) {
+		var piecesOnSpace = A2(_user$project$Update$getPiecesOnSpace, model, spacePosition);
+		return A2(
+			F2(
+				function (x, y) {
+					return _elm_lang$core$Native_Utils.eq(x, y);
+				}),
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			A2(_elm_lang$core$List$filter, _user$project$PlayfieldComponents$isActualPiece, piecesOnSpace));
+	});
+var _user$project$Update$getNewPieces = F3(
+	function (model, pieceId, spaceId) {
+		var _p1 = {
+			ctor: '_Tuple2',
+			_0: A2(_elm_lang$core$Dict$get, pieceId, model.pieces),
+			_1: A2(_elm_lang$core$Array$get, spaceId, model.spaces.positions)
+		};
+		if (((_p1.ctor === '_Tuple2') && (_p1._0.ctor === 'Just')) && (_p1._1.ctor === 'Just')) {
+			var _p3 = _p1._1._0;
+			var _p2 = {
+				ctor: '_Tuple2',
+				_0: _p1._0._0.pieceType,
+				_1: A2(_user$project$Update$getPiecesOnSpace, model, _p3)
+			};
+			if ((_p2.ctor === '_Tuple2') && (_p2._0.ctor === 'Triangle')) {
+				return A3(
+					_user$project$Update$setPieceLocation,
+					pieceId,
+					_p3,
+					A2(
+						_elm_lang$core$Debug$log,
+						'',
+						A2(
+							_elm_lang$core$Dict$filter,
+							F2(
+								function (index, piece) {
+									return _elm_lang$core$Basics$not(
+										A3(_elm_lang$core$Basics$flip, _elm_lang$core$List$member, _p2._1, piece));
+								}),
+							model.pieces)));
+			} else {
+				if (A2(_user$project$Update$spaceIsEmpty, model, _p3)) {
+					var newPieces = A3(_user$project$Update$setPieceLocation, pieceId, _p3, model.pieces);
+					return A2(
+						_elm_lang$core$Dict$filter,
+						_user$project$Extras$ignoreFirstArg(_user$project$PlayfieldComponents$isActualPiece),
+						newPieces);
+				} else {
+					return model.pieces;
+				}
+			}
 		} else {
-			return pieces;
+			return model.pieces;
 		}
 	});
 var _user$project$Update$update = F2(
 	function (message, model) {
-		var _p1 = message;
-		switch (_p1.ctor) {
+		var _p4 = message;
+		switch (_p4.ctor) {
 			case 'HitTable':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
@@ -16447,7 +16808,7 @@ var _user$project$Update$update = F2(
 					_elm_lang$core$Native_Utils.update(
 						model,
 						{
-							pieceSelected: _elm_lang$core$Maybe$Just(_p1._0)
+							pieceSelected: _elm_lang$core$Maybe$Just(_p4._0)
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -16466,23 +16827,19 @@ var _user$project$Update$update = F2(
 						model,
 						{
 							pieceSelected: _elm_lang$core$Maybe$Nothing,
-							pieces: A3(
-								_user$project$Update$setPieceLocation,
-								model.pieces,
-								_p1._0,
-								A2(_elm_lang$core$Array$get, _p1._1, model.spaces.positions))
+							pieces: A3(_user$project$Update$getNewPieces, model, _p4._0, _p4._1)
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[
 							_user$project$Ports$sound('clack')
 						]));
 			case 'GenerateBoard':
-				var _p2 = A4(_user$project$PlayfieldComponents$makeSpaces, model.gridWidth, model.gridHeight, model.spaceDeck, model.seed);
-				var spaces = _p2._0;
-				var postSpacesSeed = _p2._1;
-				var _p3 = A3(_user$project$PlayfieldComponents$makePieces, spaces, model.pieceDeck, postSpacesSeed);
-				var pieces = _p3._0;
-				var newSeed = _p3._1;
+				var _p5 = A4(_user$project$PlayfieldComponents$makeSpaces, model.gridWidth, model.gridHeight, model.spaceDeck, model.seed);
+				var spaces = _p5._0;
+				var postSpacesSeed = _p5._1;
+				var _p6 = A3(_user$project$PlayfieldComponents$makePieces, spaces, model.pieceDeck, postSpacesSeed);
+				var pieces = _p6._0;
+				var newSeed = _p6._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -16495,7 +16852,7 @@ var _user$project$Update$update = F2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						model,
-						{tabIndex: _p1._0}),
+						{tabIndex: _p4._0}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
 			case 'SpaceDeckIncrement':
@@ -16504,7 +16861,7 @@ var _user$project$Update$update = F2(
 					_elm_lang$core$Native_Utils.update(
 						model,
 						{
-							spaceDeck: A2(_elm_lang$core$List_ops['::'], _p1._0, model.spaceDeck)
+							spaceDeck: A2(_elm_lang$core$List_ops['::'], _p4._0, model.spaceDeck)
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -16514,7 +16871,7 @@ var _user$project$Update$update = F2(
 					_elm_lang$core$Native_Utils.update(
 						model,
 						{
-							spaceDeck: A2(_user$project$Extras$remove, _p1._0, model.spaceDeck)
+							spaceDeck: A2(_user$project$Extras$remove, _p4._0, model.spaceDeck)
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -16524,7 +16881,7 @@ var _user$project$Update$update = F2(
 					_elm_lang$core$Native_Utils.update(
 						model,
 						{
-							pieceDeck: A2(_elm_lang$core$List_ops['::'], _p1._0, model.pieceDeck)
+							pieceDeck: A2(_elm_lang$core$List_ops['::'], _p4._0, model.pieceDeck)
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -16534,7 +16891,7 @@ var _user$project$Update$update = F2(
 					_elm_lang$core$Native_Utils.update(
 						model,
 						{
-							pieceDeck: A2(_user$project$Extras$remove, _p1._0, model.pieceDeck)
+							pieceDeck: A2(_user$project$Extras$remove, _p4._0, model.pieceDeck)
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -16584,6 +16941,26 @@ var _user$project$Update$update = F2(
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
+			case 'IncrementViewScale':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{
+							viewScale: _user$project$Update$higherScale(model.viewScale)
+						}),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			case 'DecrementViewScale':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{
+							viewScale: _user$project$Update$lowerScale(model.viewScale)
+						}),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
 			case 'Animate':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
@@ -16600,7 +16977,7 @@ var _user$project$Update$update = F2(
 								A2(
 									_elm_lang$core$Debug$log,
 									'seed',
-									_elm_lang$core$Basics$round(_p1._0)))
+									_elm_lang$core$Basics$round(_p4._0)))
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
