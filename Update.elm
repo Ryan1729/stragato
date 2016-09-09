@@ -115,6 +115,17 @@ getNewPieces model pieceId spaceId =
                 , getPiecesOnSpace model spacePosition
                 )
             of
+                {- They have a fight, Triangle wins. Triangle man! -}
+                ( Triangle _, piecesOnSpace ) ->
+                    model.pieces
+                        |> Dict.filter
+                            (\index piece ->
+                                piece
+                                    |> (flip List.member) piecesOnSpace
+                                    |> not
+                            )
+                        |> Debug.log ""
+                        |> setPieceLocation pieceId spacePosition
 
                 _ ->
                     if spaceIsEmpty model spacePosition then
