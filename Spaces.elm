@@ -33,3 +33,15 @@ getPosition id spaces =
 getSpaceType : ( Int, Int ) -> Spaces -> Maybe SpaceType
 getSpaceType id spaces =
     Maybe.map .spaceType (Dict.get id spaces)
+
+
+getActualSpacePositions : Spaces -> List Vec2
+getActualSpacePositions spaces =
+    Dict.values spaces
+        |> List.filterMap
+            (\space ->
+                if space.spaceType /= EmptySpace then
+                    Just space.position
+                else
+                    Nothing
+            )

@@ -8,13 +8,8 @@ import Msg exposing (Msg(SelectPiece, ClearPieceSelection, Mdl))
 import Math.Vector2 as V2 exposing (Vec2, vec2, getX, getY, add, scale)
 import Points
 import Array
-import PlayfieldComponents
-    exposing
-        ( Piece
-        , PieceType(..)
-        , PieceControllability(..)
-        )
 import Spaces exposing (Spaces, Space, SpaceType(..))
+import Pieces exposing (Piece, PieceType(..), PieceControllability(..))
 import Dict exposing (Dict)
 
 

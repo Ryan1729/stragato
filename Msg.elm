@@ -2,8 +2,8 @@ module Msg exposing (..)
 
 import Mouse
 import Material
-import PlayfieldComponents exposing (PieceType)
 import Spaces exposing (SpaceType)
+import Pieces exposing (PieceType)
 
 
 type Msg

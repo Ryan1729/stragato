@@ -18,7 +18,7 @@ import Math.Vector2 as V2 exposing (Vec2, vec2)
 import Svg exposing (Svg, svg)
 import Svg.Attributes exposing (height, width, viewBox)
 import Playfield
-import PlayfieldComponents
+import Pieces
 import Spaces
 
 
@@ -117,7 +117,7 @@ editTab model =
         , cell [ size All 6 ]
             [ deckControl [ 3 ]
                 model.mdl
-                PlayfieldComponents.pieceTypePossibilities
+                Pieces.pieceTypePossibilities
                 model.pieceDeck
                 Msg.PieceDeckDecrement
                 Msg.PieceDeckIncrement

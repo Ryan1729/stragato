@@ -5,13 +5,11 @@ import Msg exposing (Msg(..))
 import Ports
 import Mouse
 import Math.Vector2 as V2 exposing (Vec2, vec2)
-import Array exposing (Array)
-import Array.Extra
 import Random
 import Extras
 import Material
-import PlayfieldComponents exposing (Piece, PieceType(..))
 import Spaces exposing (Spaces, SpaceType(..))
+import Pieces exposing (Piece, PieceType(..))
 import Dict exposing (Dict)
 
 
@@ -37,13 +35,13 @@ update message model =
         GenerateBoard ->
             let
                 ( spaces, postSpacesSeed ) =
-                    PlayfieldComponents.makeSpaces model.gridWidth
+                    Model.makeSpaces model.gridWidth
                         model.gridHeight
                         model.spaceDeck
                         model.seed
 
                 ( pieces, newSeed ) =
-                    PlayfieldComponents.makePieces spaces
+                    Model.makePieces spaces
                         model.pieceDeck
                         postSpacesSeed
             in
@@ -133,7 +131,7 @@ getNewPieces model pieceId spaceId =
                             newPieces =
                                 setPieceLocation pieceId spacePosition model.pieces
                         in
-                            Dict.filter (Extras.ignoreFirstArg PlayfieldComponents.isActualPiece)
+                            Dict.filter (Extras.ignoreFirstArg Pieces.isActualPiece)
                                 newPieces
                     else
                         model.pieces
@@ -214,7 +212,7 @@ spaceIsEmpty model spacePosition =
             getPiecesOnSpace model.pieces spacePosition
     in
         piecesOnSpace
-            |> List.filter (PlayfieldComponents.isActualPiece)
+            |> List.filter (Pieces.isActualPiece)
             |> (==) []
 
 
