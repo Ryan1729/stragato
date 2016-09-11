@@ -9,7 +9,7 @@ import Random
 import Extras
 import Material
 import Spaces exposing (Spaces, SpaceType(..))
-import Pieces exposing (Piece, PieceType(..))
+import Pieces exposing (Pieces, Piece, PieceType(..))
 import Dict exposing (Dict)
 
 
@@ -101,7 +101,7 @@ update message model =
             model ! []
 
 
-getNewPieces : Model -> Int -> ( Int, Int ) -> Dict Int Piece
+getNewPieces : Model -> Int -> ( Int, Int ) -> Pieces
 getNewPieces model pieceId spaceId =
     case
         ( Dict.get pieceId model.pieces
@@ -111,25 +111,25 @@ getNewPieces model pieceId spaceId =
         ( Just piece, Just spacePosition ) ->
             case
                 ( piece.pieceType
-                , getPiecesOnSpace model.pieces spacePosition
+                , Pieces.getPiecesOnSpace model.pieces spacePosition
                 )
             of
                 {- They have a fight, Triangle wins. Triangle man! -}
                 ( Triangle _, piecesOnSpace ) ->
                     model.pieces
                         |> removePiecesinList piecesOnSpace
-                        |> setPieceLocation pieceId spacePosition
+                        |> Pieces.setPieceLocation pieceId spacePosition
 
                 ( WeirdThing _, piecesOnSpace ) ->
                     model.pieces
                         |> bumpPieces model.spaces piece.position spacePosition
-                        |> setPieceLocation pieceId spacePosition
+                        |> Pieces.setPieceLocation pieceId spacePosition
 
                 _ ->
                     if spaceIsEmpty model spacePosition then
                         let
                             newPieces =
-                                setPieceLocation pieceId spacePosition model.pieces
+                                Pieces.setPieceLocation pieceId spacePosition model.pieces
                         in
                             Dict.filter (Extras.ignoreFirstArg Pieces.isActualPiece)
                                 newPieces
@@ -140,7 +140,7 @@ getNewPieces model pieceId spaceId =
             model.pieces
 
 
-removePiecesinList : List Piece -> Dict Int Piece -> Dict Int Piece
+removePiecesinList : List Piece -> Pieces -> Pieces
 removePiecesinList piecesToRemove pieces =
     Dict.filter
         (\index piece ->
@@ -151,24 +151,27 @@ removePiecesinList piecesToRemove pieces =
         pieces
 
 
-bumpPieces : Spaces -> Vec2 -> Vec2 -> Dict Int Piece -> Dict Int Piece
+bumpPieces : Spaces -> Vec2 -> Vec2 -> Pieces -> Pieces
 bumpPieces spaces piecePosition spacePosition pieces =
     case getTargetSpacePosition spaces piecePosition spacePosition of
         Just targetSpacePosition ->
-            movePieces spacePosition targetSpacePosition pieces
+            if Spaces.positionIsOnActualSpace spaces targetSpacePosition then
+                Pieces.movePieces spacePosition targetSpacePosition pieces
+            else
+                Pieces.removePiecesAtPosition spacePosition pieces
 
         Nothing ->
-            pieces
+            Pieces.removePiecesAtPosition spacePosition pieces
 
 
 getTargetSpacePosition : Spaces -> Vec2 -> Vec2 -> Maybe Vec2
 getTargetSpacePosition spaces piecePosition spacePosition =
     let
         maybeBumpingSpaceID =
-            getSpaceFromPosition spaces piecePosition
+            Spaces.getSpaceFromPosition spaces piecePosition
 
         maybeBumpedSpaceID =
-            getSpaceFromPosition spaces spacePosition
+            Spaces.getSpaceFromPosition spaces spacePosition
     in
         Maybe.map2 getTargetID maybeBumpingSpaceID maybeBumpedSpaceID
             `Maybe.andThen` (\targetID -> Dict.get targetID spaces)
@@ -179,48 +182,14 @@ getTargetID ( bumpingX, bumpingY ) ( bumpedX, bumpedY ) =
     ( bumpedX + (bumpedX - bumpingX), bumpedY + (bumpedY - bumpingY) )
 
 
-getSpaceFromPosition : Spaces -> Vec2 -> Maybe ( Int, Int )
-getSpaceFromPosition spaces targetPosition =
-    spaces
-        |> Dict.toList
-        |> List.filterMap
-            (\( index, space ) ->
-                --TODO epsilon here?
-                if space.position == targetPosition then
-                    Just index
-                else
-                    Nothing
-            )
-        |> List.head
-
-
-movePieces sourcePos targetPos pieces =
-    Dict.map
-        (\index piece ->
-            --TODO should this be within epsilon?
-            if piece.position == sourcePos then
-                { piece | position = targetPos }
-            else
-                piece
-        )
-        pieces
-
-
 spaceIsEmpty model spacePosition =
     let
         piecesOnSpace =
-            getPiecesOnSpace model.pieces spacePosition
+            Pieces.getPiecesOnSpace model.pieces spacePosition
     in
         piecesOnSpace
             |> List.filter (Pieces.isActualPiece)
             |> (==) []
-
-
-getPiecesOnSpace : Dict Int Piece -> Vec2 -> List Piece
-getPiecesOnSpace pieces spacePosition =
-    pieces
-        |> Dict.values
-        |> List.filter (.position >> (==) spacePosition)
 
 
 higherScale : Float -> Float
@@ -234,19 +203,3 @@ lowerScale oldScale =
         oldScale - 0.5
     else
         oldScale
-
-
-setPieceLocation : Int -> Vec2 -> Dict Int Piece -> Dict Int Piece
-setPieceLocation pieceId position pieces =
-    Dict.update pieceId
-        (Maybe.map
-            (\piece ->
-                { piece | position = position }
-            )
-        )
-        pieces
-
-
-v2FromPosition : Mouse.Position -> Vec2
-v2FromPosition position =
-    vec2 (toFloat position.x) (toFloat position.y)

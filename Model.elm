@@ -8,13 +8,13 @@ import Points
 import Extras
 import Dict exposing (Dict)
 import Spaces exposing (Spaces, Space, SpaceType(..))
-import Pieces exposing (Piece, PieceType(..))
+import Pieces exposing (Pieces, Piece, PieceType(..))
 import Deck
 
 
 type alias Model =
     { pieceSelected : Maybe Int
-    , pieces : Dict Int Piece
+    , pieces : Pieces
     , spaces : Spaces
     , gridWidth : Int
     , gridHeight : Int
@@ -66,7 +66,7 @@ defaultPieceDeck =
            ]
 
 
-defaultPieces : Dict Int Piece
+defaultPieces : Pieces
 defaultPieces =
     makePieces defaultSpaces defaultPieceDeck (Random.initialSeed -421)
         |> fst
@@ -123,7 +123,7 @@ makeGridPoints width height =
             )
 
 
-makePieces : Spaces -> List PieceType -> Seed -> ( Dict Int Piece, Seed )
+makePieces : Spaces -> List PieceType -> Seed -> ( Pieces, Seed )
 makePieces spaces deck seed =
     let
         filteredPositions =
