@@ -10,7 +10,8 @@ import Array.Extra
 import Random
 import Extras
 import Material
-import PlayfieldComponents exposing (Piece, PieceType(..), Spaces, SpaceType(..))
+import PlayfieldComponents exposing (Piece, PieceType(..))
+import Spaces exposing (Spaces, SpaceType(..))
 import Dict exposing (Dict)
 
 
@@ -106,7 +107,7 @@ getNewPieces : Model -> Int -> ( Int, Int ) -> Dict Int Piece
 getNewPieces model pieceId spaceId =
     case
         ( Dict.get pieceId model.pieces
-        , PlayfieldComponents.getPosition spaceId model.spaces
+        , Spaces.getPosition spaceId model.spaces
         )
     of
         ( Just piece, Just spacePosition ) ->

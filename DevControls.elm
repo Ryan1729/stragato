@@ -19,6 +19,7 @@ import Svg exposing (Svg, svg)
 import Svg.Attributes exposing (height, width, viewBox)
 import Playfield
 import PlayfieldComponents
+import Spaces
 
 
 type alias Mdl =
@@ -105,7 +106,7 @@ editTab model =
         , cell [ size All 6 ]
             [ deckControl [ 2 ]
                 model.mdl
-                PlayfieldComponents.spaceTypePossibilities
+                Spaces.spaceTypePossibilities
                 model.spaceDeck
                 Msg.SpaceDeckDecrement
                 Msg.SpaceDeckIncrement

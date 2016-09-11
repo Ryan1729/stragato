@@ -6,8 +6,9 @@ import Array exposing (Array)
 import Array.Extra
 import Random exposing (Seed)
 import Material
-import PlayfieldComponents exposing (Piece, PieceType(..), Spaces, SpaceType(..))
+import PlayfieldComponents exposing (Piece, PieceType(..))
 import Dict exposing (Dict)
+import Spaces exposing (Spaces, Space, SpaceType(..))
 
 
 type alias Model =

@@ -12,11 +12,9 @@ import PlayfieldComponents
     exposing
         ( Piece
         , PieceType(..)
-        , Spaces
-        , Space
-        , SpaceType(..)
         , PieceControllability(..)
         )
+import Spaces exposing (Spaces, Space, SpaceType(..))
 import Dict exposing (Dict)
 
 

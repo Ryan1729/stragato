@@ -7,6 +7,7 @@ import Random exposing (Seed)
 import Points
 import Extras
 import Dict exposing (Dict)
+import Spaces exposing (Spaces, Space, SpaceType(..))
 
 
 type alias Piece =
@@ -56,37 +57,6 @@ pieceTypePossibilities =
 isActualPiece : Piece -> Bool
 isActualPiece piece =
     piece.pieceType /= NoPiece
-
-
-type alias Spaces =
-    Dict ( Int, Int ) Space
-
-
-type alias Space =
-    { position : Vec2
-    , spaceType : SpaceType
-    }
-
-
-type SpaceType
-    = Green
-    | Red
-    | Yellow
-    | EmptySpace
-
-
-spaceTypePossibilities =
-    [ Green, Red, Yellow, EmptySpace ]
-
-
-getPosition : ( Int, Int ) -> Spaces -> Maybe Vec2
-getPosition id spaces =
-    Maybe.map .position (Dict.get id spaces)
-
-
-getSpaceType : ( Int, Int ) -> Spaces -> Maybe SpaceType
-getSpaceType id spaces =
-    Maybe.map .spaceType (Dict.get id spaces)
 
 
 makeSpaces : Int -> Int -> List SpaceType -> Seed -> ( Spaces, Seed )
