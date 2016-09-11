@@ -10,7 +10,7 @@ type Msg
     | SelectPiece Int
     | ClearPieceSelection
     | Animate Float
-    | MovePiece Int Int
+    | MovePiece Int ( Int, Int )
     | GetSeed Float
     | GenerateBoard
     | SelectTab Int

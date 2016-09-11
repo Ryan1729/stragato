@@ -102,11 +102,11 @@ update message model =
             model ! []
 
 
-getNewPieces : Model -> Int -> Int -> Dict Int Piece
+getNewPieces : Model -> Int -> ( Int, Int ) -> Dict Int Piece
 getNewPieces model pieceId spaceId =
     case
         ( Dict.get pieceId model.pieces
-        , Array.get spaceId model.spaces.positions
+        , PlayfieldComponents.getPosition spaceId model.spaces
         )
     of
         ( Just piece, Just spacePosition ) ->
@@ -162,10 +162,37 @@ bumpPieces spaces piecePosition spacePosition pieces =
             pieces
 
 
-getTargetSpacePosition : Spaces -> Vec2 -> Vec2 -> Vec2
+getTargetSpacePosition : Spaces -> Vec2 -> Vec2 -> Maybe Vec2
 getTargetSpacePosition spaces piecePosition spacePosition =
-    --TODO Prima facie
-    Nothing
+    let
+        maybeBumpingSpaceID =
+            getSpaceFromPosition spaces piecePosition
+
+        maybeBumpedSpaceID =
+            getSpaceFromPosition spaces spacePosition
+    in
+        Maybe.map2 getTargetID maybeBumpingSpaceID maybeBumpedSpaceID
+            `Maybe.andThen` (\targetID -> Dict.get targetID spaces)
+            |> Maybe.map .position
+
+
+getTargetID ( bumpingX, bumpingY ) ( bumpedX, bumpedY ) =
+    ( bumpedX + (bumpedX - bumpingX), bumpedY + (bumpedY - bumpingY) )
+
+
+getSpaceFromPosition : Spaces -> Vec2 -> Maybe ( Int, Int )
+getSpaceFromPosition spaces targetPosition =
+    spaces
+        |> Dict.toList
+        |> List.filterMap
+            (\( index, space ) ->
+                --TODO epsilon here?
+                if space.position == targetPosition then
+                    Just index
+                else
+                    Nothing
+            )
+        |> List.head
 
 
 movePieces sourcePos targetPos pieces =

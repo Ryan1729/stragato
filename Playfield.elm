@@ -8,7 +8,15 @@ import Msg exposing (Msg(SelectPiece, ClearPieceSelection, Mdl))
 import Math.Vector2 as V2 exposing (Vec2, vec2, getX, getY, add, scale)
 import Points
 import Array
-import PlayfieldComponents exposing (Piece, PieceType(..), Spaces, SpaceType(..), PieceControllability(..))
+import PlayfieldComponents
+    exposing
+        ( Piece
+        , PieceType(..)
+        , Spaces
+        , Space
+        , SpaceType(..)
+        , PieceControllability(..)
+        )
 import Dict exposing (Dict)
 
 
@@ -22,16 +30,15 @@ getPieces model =
 
 
 getSpaces model =
-    Array.indexedMap (getSpaceView model.showSpaceOutlines model.pieceSelected model.spaces) model.spaces.positions
-        |> Array.toList
+    Dict.toList model.spaces
+        |> List.map (getSpaceView model.showSpaceOutlines model.pieceSelected)
 
 
-getSpaceView : Bool -> Maybe Int -> Spaces -> Int -> Vec2 -> Svg Msg
-getSpaceView showOutlines pieceSelected spaces index center =
+getSpaceView : Bool -> Maybe Int -> ( ( Int, Int ), Space ) -> Svg Msg
+getSpaceView showOutlines pieceSelected ( index, currentSpace ) =
     let
         spaceType =
-            Array.get index spaces.types
-                |> Maybe.withDefault EmptySpace
+            currentSpace.spaceType
 
         extras =
             case pieceSelected of
@@ -47,7 +54,7 @@ getSpaceView showOutlines pieceSelected spaces index center =
             else
                 extras
     in
-        space showOutlines finalExtras center spaceType
+        space showOutlines finalExtras (currentSpace.position) spaceType
 
 
 getPieceView : Int -> Int -> Piece -> Svg Msg

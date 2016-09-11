@@ -9,12 +9,6 @@ import Extras
 import Dict exposing (Dict)
 
 
-makeGridPoints width height =
-    Points.hexGrid width height
-        |> List.map (add (vec2 100 100) << V2.scale 60)
-        |> Array.fromList
-
-
 type alias Piece =
     { pieceType : PieceType
     , position : Vec2
@@ -65,8 +59,12 @@ isActualPiece piece =
 
 
 type alias Spaces =
-    { positions : Array Vec2
-    , types : Array SpaceType
+    Dict ( Int, Int ) Space
+
+
+type alias Space =
+    { position : Vec2
+    , spaceType : SpaceType
     }
 
 
@@ -81,6 +79,16 @@ spaceTypePossibilities =
     [ Green, Red, Yellow, EmptySpace ]
 
 
+getPosition : ( Int, Int ) -> Spaces -> Maybe Vec2
+getPosition id spaces =
+    Maybe.map .position (Dict.get id spaces)
+
+
+getSpaceType : ( Int, Int ) -> Spaces -> Maybe SpaceType
+getSpaceType id spaces =
+    Maybe.map .spaceType (Dict.get id spaces)
+
+
 makeSpaces : Int -> Int -> List SpaceType -> Seed -> ( Spaces, Seed )
 makeSpaces width height deck seed =
     let
@@ -88,25 +96,47 @@ makeSpaces width height deck seed =
             makeGridPoints width height
 
         ( spaceTypes, newSeed ) =
-            fillArrayFromDeck EmptySpace deck (Array.length gridPoints) seed
+            fillListFromDeck EmptySpace deck (List.length gridPoints) seed
+
+        spaces =
+            List.map2 putSpaceTogether gridPoints spaceTypes
+                |> Dict.fromList
     in
-        ( Spaces gridPoints spaceTypes, newSeed )
+        ( spaces, newSeed )
+
+
+putSpaceTogether : ( ( Int, Int ), Vec2 ) -> SpaceType -> ( ( Int, Int ), Space )
+putSpaceTogether ( index, position ) spaceType =
+    ( index, Space position spaceType )
+
+
+makeGridPoints : Int -> Int -> List ( ( Int, Int ), Vec2 )
+makeGridPoints width height =
+    Points.hexGrid width height
+        |> List.map
+            (\( pair, vector ) ->
+                ( pair
+                , vector
+                    |> V2.scale 60
+                    |> add (vec2 100 100)
+                )
+            )
 
 
 makePieces : Spaces -> List PieceType -> Seed -> ( Dict Int Piece, Seed )
-makePieces { positions, types } deck seed =
+makePieces spaces deck seed =
     let
         filteredPositions =
-            filterPositions positions types
+            filterPositions spaces
 
         ( pieceTypes, newSeed ) =
-            fillArrayFromDeck NoPiece
+            fillListFromDeck NoPiece
                 deck
                 (List.length filteredPositions)
                 seed
 
         pieces =
-            List.map2 Piece (Array.toList pieceTypes) filteredPositions
+            List.map2 Piece pieceTypes filteredPositions
                 |> List.indexedMap (,)
                 |> Dict.fromList
     in
@@ -115,40 +145,25 @@ makePieces { positions, types } deck seed =
         )
 
 
-filterPositions : Array Vec2 -> Array SpaceType -> List Vec2
-filterPositions positions types =
-    let
-        maxIndex =
-            min (Array.length positions) (Array.length types) - 1
-    in
-        [0..maxIndex]
-            |> List.filterMap
-                (getFromArrayPredicatedOnOtherArray ((/=) EmptySpace)
-                    positions
-                    types
-                )
-
-
-getFromArrayPredicatedOnOtherArray : (b -> Bool) -> Array a -> Array b -> Int -> Maybe a
-getFromArrayPredicatedOnOtherArray predicate array predicatedArray index =
-    Array.get index predicatedArray
-        |> Maybe.map predicate
-        |> (flip Maybe.andThen)
-            (\passes ->
-                if passes then
-                    Array.get index array
+filterPositions : Spaces -> List Vec2
+filterPositions spaces =
+    Dict.values spaces
+        |> List.filterMap
+            (\space ->
+                if space.spaceType /= EmptySpace then
+                    Just space.position
                 else
                     Nothing
             )
 
 
-fillArrayFromDeck : a -> List a -> Int -> Seed -> ( Array a, Seed )
-fillArrayFromDeck default deck length seed =
-    fillArrayFromDeckHelper default deck deck length seed Array.empty
+fillListFromDeck : a -> List a -> Int -> Seed -> ( List a, Seed )
+fillListFromDeck default deck length seed =
+    fillListFromDeckHelper default deck deck length seed []
 
 
-fillArrayFromDeckHelper : a -> List a -> List a -> Int -> Seed -> Array a -> ( Array a, Seed )
-fillArrayFromDeckHelper default deck currentDeck remainingLength seed result =
+fillListFromDeckHelper : a -> List a -> List a -> Int -> Seed -> List a -> ( List a, Seed )
+fillListFromDeckHelper default deck currentDeck remainingLength seed result =
     if remainingLength == 0 then
         ( result, seed )
     else
@@ -156,12 +171,12 @@ fillArrayFromDeckHelper default deck currentDeck remainingLength seed result =
             ( drawnElement, newDeck, newSeed ) =
                 drawFromDeck default deck currentDeck seed
         in
-            fillArrayFromDeckHelper default
+            fillListFromDeckHelper default
                 deck
                 newDeck
                 (remainingLength - 1)
                 newSeed
-                (Array.push drawnElement result)
+                (drawnElement :: result)
 
 
 drawFromDeck : a -> List a -> List a -> Seed -> ( a, List a, Seed )

@@ -8,7 +8,7 @@ hexagonHeightConstant =
     (sqrt 3) / 2
 
 
-hexGrid : Int -> Int -> List Vec2
+hexGrid : Int -> Int -> List ( ( Int, Int ), Vec2 )
 hexGrid width height =
     let
         baseList =
@@ -24,9 +24,12 @@ hexGrid width height =
                         index // width
                 in
                     if (x + y) % 2 == 0 then
-                        Just
-                            <| vec2 (toFloat x * 1.5)
-                                (toFloat y * hexagonHeightConstant)
+                        let
+                            vector =
+                                vec2 (toFloat x * 1.5)
+                                    (toFloat y * hexagonHeightConstant)
+                        in
+                            Just ( ( x, y ), vector )
                     else
                         Nothing
             )
