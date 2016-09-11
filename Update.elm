@@ -97,8 +97,8 @@ update message model =
 
         -- When the `Mdl` messages come through, update appropriately.
         Mdl msg' ->
-            -- Material.update msg'
-            model ! []
+            Material.update msg'
+                model
 
 
 getNewPieces : Model -> Int -> ( Int, Int ) -> Pieces
