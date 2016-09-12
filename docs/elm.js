@@ -15741,7 +15741,7 @@ var _user$project$Model$defaultPieceDeck = A2(
 	_elm_lang$core$Basics_ops['++'],
 	_user$project$Pieces$pieceTypePossibilities,
 	_elm_lang$core$Native_List.fromArray(
-		[_user$project$Pieces$NoPiece, _user$project$Pieces$NoPiece]));
+		[_user$project$Pieces$NoPiece]));
 var _user$project$Model$defaultSpaceDeck = _elm_lang$core$Native_List.fromArray(
 	[_user$project$Spaces$Green, _user$project$Spaces$Green, _user$project$Spaces$Red, _user$project$Spaces$Red, _user$project$Spaces$EmptySpace]);
 var _user$project$Model$defaultHeight = 5;
