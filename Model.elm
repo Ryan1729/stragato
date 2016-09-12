@@ -57,7 +57,7 @@ defaultSpaces =
 defaultPieceDeck =
     Pieces.pieceTypePossibilities
         ++ [ NoPiece
-             --  , NoPiece
+           , NoPiece
            ]
 
 
