@@ -8,7 +8,7 @@ import Points
 import Extras
 import Dict exposing (Dict)
 import Spaces exposing (Spaces, Space, SpaceType(..))
-import Pieces exposing (Pieces, Piece, PieceType(..))
+import Pieces exposing (Pieces, Piece, PieceType(..), PieceControllability(..))
 import Deck
 
 
@@ -30,7 +30,7 @@ type alias Model =
 
 
 defaultWidth =
-    4
+    5
 
 
 defaultHeight =
@@ -42,9 +42,6 @@ defaultSpaceDeck =
     , Green
     , Red
     , Red
-    , EmptySpace
-    , EmptySpace
-    , EmptySpace
     , EmptySpace
     ]
 
@@ -61,8 +58,11 @@ defaultPieceDeck =
     Pieces.pieceTypePossibilities
         ++ [ NoPiece
            , NoPiece
-           , NoPiece
-           , NoPiece
+           , Eye None
+           , Eye None
+           , Eye None
+           , Eye None
+           , Eye None
            ]
 
 

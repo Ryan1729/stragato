@@ -33,6 +33,7 @@ type PieceType
     = Star PieceControllability
     | WeirdThing PieceControllability
     | Triangle PieceControllability
+    | Eye PieceControllability
     | NoPiece
 
 
@@ -45,7 +46,7 @@ controllablePossibilities =
                 )
                 pieceControllabilityPossibilities
         )
-        [ Star, WeirdThing, Triangle ]
+        [ Star, WeirdThing, Triangle, Eye ]
 
 
 pieceTypePossibilities =

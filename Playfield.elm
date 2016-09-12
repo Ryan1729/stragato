@@ -1,7 +1,7 @@
 module Playfield exposing (..)
 
 import Model exposing (Model)
-import Svg exposing (Svg, svg, rect, polygon, Attribute)
+import Svg exposing (Svg, svg, rect, polygon, circle, g, defs, Attribute)
 import Svg.Attributes exposing (..)
 import Svg.Events exposing (onClick, on)
 import Msg exposing (Msg(SelectPiece, ClearPieceSelection, Mdl))
@@ -20,6 +20,10 @@ getPieces model =
     in
         Dict.map (getPieceView selectedId) model.pieces
             |> Dict.values
+
+
+
+-- [ eyePiece [ fill "#00F" ] <| vec2 100 100 ]
 
 
 getSpaces model =
@@ -67,36 +71,101 @@ getPieceView selectedId currentId currentPiece =
         piece selectedAttributes currentPiece.position currentPiece.pieceType
 
 
+noPiece =
+    polygon [] []
+
+
 piece : List (Attribute Msg) -> Vec2 -> PieceType -> Svg Msg
 piece extras center pieceType =
     let
-        ( piecesPoints, pieceFill ) =
-            case pieceType of
-                Star control ->
-                    ( Points.star center, getFill control )
+        otherAttributes =
+            basicPieceAttributes ++ extras
+    in
+        case pieceType of
+            Star control ->
+                polygonPiece
+                    <| [ fill (getFill control)
+                       , points (Points.star center)
+                       ]
+                    ++ otherAttributes
 
-                WeirdThing control ->
-                    ( Points.weirdThing center, getFill control )
+            WeirdThing control ->
+                polygonPiece
+                    <| [ fill (getFill control)
+                       , points (Points.weirdThing center)
+                       ]
+                    ++ otherAttributes
 
-                Triangle control ->
-                    ( Points.triangle center, getFill control )
+            Triangle control ->
+                polygonPiece
+                    <| [ fill (getFill control)
+                       , points (Points.triangle center)
+                       ]
+                    ++ otherAttributes
 
-                NoPiece ->
-                    ( "", "" )
+            Eye control ->
+                eyePiece
+                    (fill (getFill control)
+                        :: otherAttributes
+                    )
+                    center
 
-        attributes =
-            [ fill pieceFill
-            , points piecesPoints
-            , stroke "grey"
-            , strokeWidth "4"
-            , cursor "move"
+            NoPiece ->
+                noPiece
+
+
+basicPieceAttributes =
+    [ stroke "grey"
+    , strokeWidth "4"
+    , cursor "move"
+    ]
+
+
+polygonPiece finalAttributes =
+    polygon finalAttributes
+        []
+
+
+eyePiece : List (Attribute Msg) -> Vec2 -> Svg Msg
+eyePiece attributes center =
+    let
+        xString =
+            getX center |> toString
+
+        yString =
+            getY center |> toString
+
+        {- graphical glitches can occur if these IDs aren't unique -}
+        idString =
+            "sclera" ++ xString ++ "_" ++ yString
+    in
+        g []
+            [ Svg.defs []
+                [ Svg.mask [ id idString ]
+                    [ rect [ width "100%", height "100%", fill "white" ] []
+                    , circle
+                        [ cx xString
+                        , cy yString
+                        , r <| toString <| Points.circleRadius / 2
+                        , fill "#000"
+                        ]
+                        []
+                    ]
+                ]
+            , circle
+                ([ cx xString
+                 , cy yString
+                 , r <| toString Points.circleRadius
+                 , mask ("url(#" ++ idString ++ ")")
+                 ]
+                    ++ attributes
+                )
+                []
             ]
 
-        finalAttributes =
-            attributes ++ extras
-    in
-        polygon finalAttributes
-            []
+
+defs =
+    []
 
 
 getFill control =
