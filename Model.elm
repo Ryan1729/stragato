@@ -58,11 +58,6 @@ defaultPieceDeck =
     Pieces.pieceTypePossibilities
         ++ [ NoPiece
            , NoPiece
-           , Eye None
-           , Eye None
-           , Eye None
-           , Eye None
-           , Eye None
            ]
 
 

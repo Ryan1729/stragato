@@ -129,24 +129,56 @@ polygonPiece finalAttributes =
 eyePiece : List (Attribute Msg) -> Vec2 -> Svg Msg
 eyePiece attributes center =
     let
+        centerX =
+            getX center
+
         xString =
-            getX center |> toString
+            centerX |> toString
+
+        centerY =
+            getY center
 
         yString =
-            getY center |> toString
+            centerY |> toString
 
         {- graphical glitches can occur if these IDs aren't unique -}
         idString =
             "sclera" ++ xString ++ "_" ++ yString
+
+        leftSideString =
+            toString (centerX - Points.circleRadius)
+                ++ " "
+                ++ yString
+
+        controlPointString =
+            xString ++ " " ++ toString (centerY - Points.circleRadius)
+
+        secondControlPointString =
+            xString ++ " " ++ toString (centerY + Points.circleRadius)
+
+        rightSideString =
+            toString (centerX + Points.circleRadius) ++ " " ++ yString
+
+        dString =
+            "M"
+                ++ leftSideString
+                ++ " "
+                ++ "Q"
+                ++ controlPointString
+                ++ " "
+                ++ rightSideString
+                ++ " "
+                ++ "Q"
+                ++ secondControlPointString
+                ++ " "
+                ++ leftSideString
     in
         g []
             [ Svg.defs []
                 [ Svg.mask [ id idString ]
                     [ rect [ width "100%", height "100%", fill "white" ] []
-                    , circle
-                        [ cx xString
-                        , cy yString
-                        , r <| toString <| Points.circleRadius / 2
+                    , Svg.path
+                        [ d dString
                         , fill "#000"
                         ]
                         []
@@ -157,6 +189,14 @@ eyePiece attributes center =
                  , cy yString
                  , r <| toString Points.circleRadius
                  , mask ("url(#" ++ idString ++ ")")
+                 ]
+                    ++ attributes
+                )
+                []
+            , circle
+                ([ cx xString
+                 , cy yString
+                 , r <| toString (Points.circleRadius / 2.25)
                  ]
                     ++ attributes
                 )
