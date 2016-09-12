@@ -11,6 +11,7 @@ import Array
 import Spaces exposing (Spaces, Space, SpaceType(..))
 import Pieces exposing (Piece, PieceType(..), PieceControllability(..))
 import Dict exposing (Dict)
+import String
 
 
 getPieces model =
@@ -20,10 +21,6 @@ getPieces model =
     in
         Dict.map (getPieceView selectedId) model.pieces
             |> Dict.values
-
-
-
--- [ eyePiece [ fill "#00F" ] <| vec2 100 100 ]
 
 
 getSpaces model =
@@ -160,18 +157,16 @@ eyePiece attributes center =
             toString (centerX + Points.circleRadius) ++ " " ++ yString
 
         dString =
-            "M"
-                ++ leftSideString
-                ++ " "
-                ++ "Q"
-                ++ controlPointString
-                ++ " "
-                ++ rightSideString
-                ++ " "
-                ++ "Q"
-                ++ secondControlPointString
-                ++ " "
-                ++ leftSideString
+            String.join " "
+                [ "M"
+                , leftSideString
+                , "Q"
+                , controlPointString
+                , rightSideString
+                , "Q"
+                , secondControlPointString
+                , leftSideString
+                ]
     in
         g []
             [ Svg.defs []
@@ -187,8 +182,7 @@ eyePiece attributes center =
             , circle
                 ([ cx xString
                  , cy yString
-                 , r <| toString Points.circleRadius
-                 , mask ("url(#" ++ idString ++ ")")
+                 , r <| toString (Points.circleRadius / 2.25)
                  ]
                     ++ attributes
                 )
@@ -196,7 +190,8 @@ eyePiece attributes center =
             , circle
                 ([ cx xString
                  , cy yString
-                 , r <| toString (Points.circleRadius / 2.25)
+                 , r <| toString Points.circleRadius
+                 , mask ("url(#" ++ idString ++ ")")
                  ]
                     ++ attributes
                 )
