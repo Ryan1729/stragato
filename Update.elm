@@ -125,6 +125,11 @@ getNewPieces model pieceId spaceId =
                         |> bumpPieces model.spaces piece.position spacePosition
                         |> Pieces.setPieceLocation pieceId spacePosition
 
+                ( Eye _, piecesOnSpace ) ->
+                    model.pieces
+                        |> Pieces.movePieces spacePosition piece.position
+                        |> Pieces.setPieceLocation pieceId spacePosition
+
                 _ ->
                     if spaceIsEmpty model spacePosition then
                         let
