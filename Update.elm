@@ -17,7 +17,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
         HitTable ->
-            model ! [ Ports.sound "tableHit" ]
+            { model | pieceSelected = Nothing } ! [ Ports.sound "tableHit" ]
 
         SelectPiece id ->
             { model | pieceSelected = Just id } ! []
@@ -25,10 +25,10 @@ update message model =
         ClearPieceSelection ->
             { model | pieceSelected = Nothing } ! []
 
-        MovePiece pieceId spaceId ->
+        MovePiece pieceID spaceID ->
             { model
                 | pieceSelected = Nothing
-                , pieces = getNewPieces model pieceId spaceId
+                , pieces = getNewPieces model pieceID spaceID
             }
                 ! [ Ports.sound "clack" ]
 
@@ -102,10 +102,10 @@ update message model =
 
 
 getNewPieces : Model -> Int -> ( Int, Int ) -> Pieces
-getNewPieces model pieceId spaceId =
+getNewPieces model pieceID spaceID =
     case
-        ( Dict.get pieceId model.pieces
-        , Spaces.getPosition spaceId model.spaces
+        ( Dict.get pieceID model.pieces
+        , Spaces.getPosition spaceID model.spaces
         )
     of
         ( Just piece, Just spacePosition ) ->
@@ -118,23 +118,23 @@ getNewPieces model pieceId spaceId =
                 ( Triangle _, piecesOnSpace ) ->
                     model.pieces
                         |> removePiecesinList piecesOnSpace
-                        |> Pieces.setPieceLocation pieceId spacePosition
+                        |> Pieces.setPieceLocation pieceID spacePosition
 
                 ( WeirdThing _, piecesOnSpace ) ->
                     model.pieces
                         |> bumpPieces model.spaces piece.position spacePosition
-                        |> Pieces.setPieceLocation pieceId spacePosition
+                        |> Pieces.setPieceLocation pieceID spacePosition
 
                 ( Eye _, piecesOnSpace ) ->
                     model.pieces
                         |> Pieces.movePieces spacePosition piece.position
-                        |> Pieces.setPieceLocation pieceId spacePosition
+                        |> Pieces.setPieceLocation pieceID spacePosition
 
                 _ ->
                     if spaceIsEmpty model spacePosition then
                         let
                             newPieces =
-                                Pieces.setPieceLocation pieceId spacePosition model.pieces
+                                Pieces.setPieceLocation pieceID spacePosition model.pieces
                         in
                             Dict.filter (Extras.ignoreFirstArg Pieces.isActualPiece)
                                 newPieces

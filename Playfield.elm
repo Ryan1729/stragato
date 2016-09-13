@@ -15,12 +15,8 @@ import String
 
 
 getPieces model =
-    let
-        selectedId =
-            Maybe.withDefault -1 model.pieceSelected
-    in
-        Dict.map (getPieceView selectedId) model.pieces
-            |> Dict.values
+    Dict.map (getPieceView model) model.pieces
+        |> Dict.values
 
 
 getSpaces model =
@@ -51,21 +47,36 @@ getSpaceView showOutlines pieceSelected ( index, currentSpace ) =
         space showOutlines finalExtras (currentSpace.position) spaceType
 
 
-getPieceView : Int -> Int -> Piece -> Svg Msg
-getPieceView selectedId currentId currentPiece =
+getPieceView : Model -> Int -> Piece -> Svg Msg
+getPieceView model currentID currentPiece =
     let
-        isSelected =
-            selectedId == currentId
-
         selectedAttributes =
-            if isSelected then
+            getPieceAttributes model currentID currentPiece
+    in
+        piece selectedAttributes currentPiece.position currentPiece.pieceType
+
+
+getPieceAttributes model currentID currentPiece =
+    case model.pieceSelected of
+        Just selectedID ->
+            if selectedID == currentID then
                 [ onClick ClearPieceSelection
                 , fillOpacity "0.5"
                 ]
             else
-                [ onClick <| SelectPiece currentId ]
-    in
-        piece selectedAttributes currentPiece.position currentPiece.pieceType
+                case Spaces.getSpaceFromPosition model.spaces currentPiece.position of
+                    Just spaceIndex ->
+                        [ onClick
+                            <| Msg.MovePiece selectedID
+                                spaceIndex
+                        , cursor "pointer"
+                        ]
+
+                    Nothing ->
+                        [ cursor "not-allowed" ]
+
+        Nothing ->
+            [ onClick <| SelectPiece currentID ]
 
 
 noPiece =
@@ -141,39 +152,13 @@ eyePiece attributes center =
         {- graphical glitches can occur if these IDs aren't unique -}
         idString =
             "sclera" ++ xString ++ "_" ++ yString
-
-        leftSideString =
-            toString (centerX - Points.circleRadius)
-                ++ " "
-                ++ yString
-
-        controlPointString =
-            xString ++ " " ++ toString (centerY - Points.circleRadius)
-
-        secondControlPointString =
-            xString ++ " " ++ toString (centerY + Points.circleRadius)
-
-        rightSideString =
-            toString (centerX + Points.circleRadius) ++ " " ++ yString
-
-        dString =
-            String.join " "
-                [ "M"
-                , leftSideString
-                , "Q"
-                , controlPointString
-                , rightSideString
-                , "Q"
-                , secondControlPointString
-                , leftSideString
-                ]
     in
         g []
             [ Svg.defs []
                 [ Svg.mask [ id idString ]
                     [ rect [ width "100%", height "100%", fill "white" ] []
                     , Svg.path
-                        [ d dString
+                        [ d <| eyePieceSclera centerX xString centerY yString
                         , fill "#000"
                         ]
                         []
@@ -196,6 +181,34 @@ eyePiece attributes center =
                     ++ attributes
                 )
                 []
+            ]
+
+
+eyePieceSclera centerX xString centerY yString =
+    let
+        leftSideString =
+            toString (centerX - Points.circleRadius)
+                ++ " "
+                ++ yString
+
+        controlPointString =
+            xString ++ " " ++ toString (centerY - Points.circleRadius)
+
+        secondControlPointString =
+            xString ++ " " ++ toString (centerY + Points.circleRadius)
+
+        rightSideString =
+            toString (centerX + Points.circleRadius) ++ " " ++ yString
+    in
+        String.join " "
+            [ "M"
+            , leftSideString
+            , "Q"
+            , controlPointString
+            , rightSideString
+            , "Q"
+            , secondControlPointString
+            , leftSideString
             ]
 
 

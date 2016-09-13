@@ -73,10 +73,14 @@ weirdThingPointsList =
         ]
 
 
+pointsListToPiecePointsList : List Vec2 -> List Vec2
+pointsListToPiecePointsList =
+    List.map (V2.scale 40)
+
+
 weirdThingPiecePointsList : List Vec2
 weirdThingPiecePointsList =
-    List.map (V2.scale 40)
-        weirdThingPointsList
+    pointsListToPiecePointsList weirdThingPointsList
 
 
 spaceScale =
@@ -99,7 +103,7 @@ spaceWidth =
 
 starPointsList : List Vec2
 starPointsList =
-    List.map ((+) (7 / 48) >> fractionToPointOnCircle)
+    List.map ((+) (-1 / 4) >> fractionToPointOnCircle)
         [ 0
         , 2 / 5
         , 4 / 5
@@ -110,23 +114,21 @@ starPointsList =
 
 trianglePointsList : List Vec2
 trianglePointsList =
-    List.map ((+) (7 / 48) >> fractionToPointOnCircle)
+    List.map ((+) (-1 / 4) >> fractionToPointOnCircle)
         [ 0
-        , 1 / 5
+        , 2 / 5
         , 3 / 5
         ]
 
 
 starPiecePointsList : List Vec2
 starPiecePointsList =
-    List.map (V2.scale 40)
-        starPointsList
+    pointsListToPiecePointsList starPointsList
 
 
 trianglePiecePointsList : List Vec2
 trianglePiecePointsList =
-    List.map (V2.scale 40)
-        trianglePointsList
+    pointsListToPiecePointsList trianglePointsList
 
 
 v2ToSVGString : Vec2 -> String

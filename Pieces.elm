@@ -59,8 +59,8 @@ isActualPiece piece =
 
 
 setPieceLocation : Int -> Vec2 -> Pieces -> Pieces
-setPieceLocation pieceId position pieces =
-    Dict.update pieceId
+setPieceLocation pieceID position pieces =
+    Dict.update pieceID
         (Maybe.map
             (\piece ->
                 { piece | position = position }
