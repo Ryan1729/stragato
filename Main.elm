@@ -4,7 +4,8 @@ import Html.App exposing (program)
 import View exposing (view)
 import Model exposing (defaultState)
 import Update exposing (update)
-import Msg exposing (Msg(Animate, GetSeed))
+import Msg exposing (Msg(Animate, GetSeed, Resize))
+import Window
 import Mouse
 import AnimationFrame
 import Time
@@ -24,11 +25,16 @@ main =
 
 
 init =
-    defaultState ! [ Task.perform (always <| GetSeed -1.0) GetSeed Time.now ]
+    defaultState
+        ! [ Task.perform (always <| GetSeed -1.0) GetSeed Time.now
+          , Task.perform (always <| Resize { width = 600, height = 600 }) Resize Window.size
+          ]
 
 
 alwaysList =
-    [ AnimationFrame.diffs Animate ]
+    [ --AnimationFrame.diffs Animate,
+      Window.resizes Resize
+    ]
 
 
 subscriptions model =

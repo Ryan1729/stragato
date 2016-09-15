@@ -27,3 +27,4 @@ type Msg
     | IncrementViewScale
     | DecrementViewScale
     | ToggleSpaceOutlines
+    | Resize { width : Int, height : Int }

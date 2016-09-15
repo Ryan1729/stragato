@@ -1,6 +1,6 @@
 module View exposing (..)
 
-import Html exposing (Html, div)
+import Html exposing (Html, div, text)
 import Html.Attributes as HA
 import Svg exposing (Svg, svg, rect, polygon, Attribute)
 import Svg.Attributes exposing (..)
@@ -28,19 +28,42 @@ background =
     ]
 
 
+playfieldWidth =
+    600
+
+
+playfieldHeight =
+    400
+
+
+playfieldWidthString =
+    toString playfieldWidth
+
+
+playfieldHeightString =
+    toString playfieldHeight
+
+
+px thing =
+    (toString thing) ++ "px"
+
+
 view : Model -> Html Msg
 view model =
     let
+        -- size = model.windowSize
+        -- windowWidth = size.width
+        -- windowHeight = size.height
         viewWidth =
-            600 * model.viewScale
+            playfieldWidth * model.viewScale
 
         viewHeight =
-            400 * model.viewScale
+            playfieldHeight * model.viewScale
 
         playfield =
             [ svg
-                [ width "600"
-                , height "400"
+                [ width playfieldWidthString
+                , height playfieldHeightString
                 , viewBox
                     <| "0 0 "
                     ++ toString viewWidth
@@ -50,6 +73,18 @@ view model =
                 <| background
                 ++ Playfield.getSpaces model
                 ++ Playfield.getPieces model
+            , Html.button
+                [ onClick Msg.ClearPieceSelection
+                , HA.style
+                    <| [ ( "font-size", "xx-large" )
+                       , ( "padding", "0px" )
+                       , ( "margin", "0px" )
+                       , ( "width", px playfieldWidth )
+                       , ( "height", px (playfieldHeight // 8) )
+                       , ( "pointer-events", "auto" )
+                       ]
+                ]
+                [ text "End turn" ]
             ]
 
         elements =

@@ -25,6 +25,7 @@ type alias Model =
     , debug : Bool
     , showSpaceOutlines : Bool
     , viewScale : Float
+    , windowSize : { width : Int, height : Int }
     , mdl : Material.Model
     }
 
@@ -80,6 +81,7 @@ defaultState =
     , debug = True
     , showSpaceOutlines = True
     , viewScale = 1.0
+    , windowSize = { width = 600, height = 600 }
     , mdl = Material.model
     }
 

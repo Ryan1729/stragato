@@ -83,8 +83,12 @@ update message model =
         DecrementViewScale ->
             { model | viewScale = lowerScale model.viewScale } ! []
 
+        --TODO animate something or remove this!
         Animate _ ->
             model ! []
+
+        Resize size ->
+            { model | windowSize = size } ! []
 
         GetSeed time ->
             { model
