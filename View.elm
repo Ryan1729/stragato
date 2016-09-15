@@ -5,7 +5,7 @@ import Html.Attributes as HA
 import Svg exposing (Svg, svg, rect, polygon, Attribute)
 import Svg.Attributes exposing (..)
 import Svg.Events exposing (onClick, on)
-import Msg exposing (Msg(HitTable))
+import Msg exposing (Msg(HitTable, MakeAIMove))
 import Mouse
 import Json.Decode
 import DevControls
@@ -74,7 +74,7 @@ view model =
                 ++ Playfield.getSpaces model
                 ++ Playfield.getPieces model
             , Html.button
-                [ onClick Msg.ClearPieceSelection
+                [ onClick MakeAIMove
                 , HA.style
                     <| [ ( "font-size", "xx-large" )
                        , ( "padding", "0px" )

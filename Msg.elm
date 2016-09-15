@@ -28,3 +28,4 @@ type Msg
     | DecrementViewScale
     | ToggleSpaceOutlines
     | Resize { width : Int, height : Int }
+    | MakeAIMove

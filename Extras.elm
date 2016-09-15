@@ -1,13 +1,11 @@
 module Extras exposing (..)
 
-import Array exposing (Array)
-
+{-| Remove the first occurrence of a value from a list.
+-}
 
 {- from elm-community/list-extra -}
 
 
-{-| Remove the first occurrence of a value from a list.
--}
 remove : a -> List a -> List a
 remove x xs =
     case xs of
@@ -19,6 +17,11 @@ remove x xs =
                 ys
             else
                 y :: remove x ys
+
+
+andThen : List a -> (a -> List b) -> List b
+andThen =
+    flip List.concatMap
 
 
 

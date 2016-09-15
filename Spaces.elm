@@ -5,8 +5,12 @@ import Dict exposing (Dict)
 import Extras
 
 
+type alias SpaceIndex =
+    ( Int, Int )
+
+
 type alias Spaces =
-    Dict ( Int, Int ) Space
+    Dict SpaceIndex Space
 
 
 type alias Space =
@@ -30,16 +34,17 @@ isActualSpace space =
     space.spaceType /= EmptySpace
 
 
-getPosition : ( Int, Int ) -> Spaces -> Maybe Vec2
+getPosition : SpaceIndex -> Spaces -> Maybe Vec2
 getPosition id spaces =
     Maybe.map .position (Dict.get id spaces)
 
 
-getSpaceType : ( Int, Int ) -> Spaces -> Maybe SpaceType
+getSpaceType : SpaceIndex -> Spaces -> Maybe SpaceType
 getSpaceType id spaces =
     Maybe.map .spaceType (Dict.get id spaces)
 
 
+getActualSpaces : Spaces -> Spaces
 getActualSpaces spaces =
     Dict.filter (Extras.ignoreFirstArg isActualSpace) spaces
 
@@ -60,7 +65,7 @@ getActualSpacePositions spaces =
             )
 
 
-getSpaceFromPosition : Spaces -> Vec2 -> Maybe ( Int, Int )
+getSpaceFromPosition : Spaces -> Vec2 -> Maybe SpaceIndex
 getSpaceFromPosition spaces targetPosition =
     spaces
         |> Dict.toList

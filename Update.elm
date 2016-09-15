@@ -8,9 +8,10 @@ import Math.Vector2 as V2 exposing (Vec2, vec2)
 import Random
 import Extras
 import Material
-import Spaces exposing (Spaces, SpaceType(..))
+import Spaces exposing (Spaces, SpaceType(..), SpaceIndex)
 import Pieces exposing (Pieces, Piece, PieceType(..))
 import Dict exposing (Dict)
+import Deck
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -83,6 +84,9 @@ update message model =
         DecrementViewScale ->
             { model | viewScale = lowerScale model.viewScale } ! []
 
+        MakeAIMove ->
+            randomAIMove model ! [ Ports.sound "clack" ]
+
         --TODO animate something or remove this!
         Animate _ ->
             model ! []
@@ -105,7 +109,7 @@ update message model =
                 model
 
 
-getNewPieces : Model -> Int -> ( Int, Int ) -> Pieces
+getNewPieces : Model -> Int -> SpaceIndex -> Pieces
 getNewPieces model pieceID spaceID =
     case
         ( Dict.get pieceID model.pieces
@@ -147,6 +151,45 @@ getNewPieces model pieceID spaceID =
 
         _ ->
             model.pieces
+
+
+randomAIMove : Model -> Model
+randomAIMove model =
+    let
+        moveList =
+            getPossibleMoveList model
+    in
+        case Deck.maybeFromDeck moveList model.seed of
+            Just ( ( pieceID, spaceID ), _, newSeed ) ->
+                { model
+                    | pieces = getNewPieces model pieceID spaceID
+                    , seed = newSeed
+                }
+
+            Nothing ->
+                model
+
+
+getPossibleMoveList : Model -> List ( Int, SpaceIndex )
+getPossibleMoveList model =
+    Pieces.getCPUMovablePieces model.pieces
+        `Extras.andThen` \x ->
+                            getUnoccupiedSpaceIndicies model
+                                `Extras.andThen` \y ->
+                                                    [ ( x, y ) ]
+
+
+getUnoccupiedSpaceIndicies : Model -> List SpaceIndex
+getUnoccupiedSpaceIndicies model =
+    let
+        piecePositions =
+            Dict.map (Extras.ignoreFirstArg .position) model.pieces
+                |> Dict.values
+    in
+        Spaces.getActualSpaces model.spaces
+            |> Dict.map (Extras.ignoreFirstArg .position)
+            |> Dict.filter (\index pos -> List.member pos piecePositions)
+            |> Dict.keys
 
 
 removePiecesinList : List Piece -> Pieces -> Pieces

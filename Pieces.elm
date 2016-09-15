@@ -2,6 +2,7 @@ module Pieces exposing (..)
 
 import Math.Vector2 exposing (Vec2)
 import Dict exposing (Dict)
+import Extras
 
 
 type alias Piece =
@@ -53,6 +54,43 @@ pieceTypePossibilities =
     controllablePossibilities ++ [ NoPiece ]
 
 
+getControllability : PieceType -> PieceControllability
+getControllability pieceType =
+    case pieceType of
+        Star controllability ->
+            controllability
+
+        WeirdThing controllability ->
+            controllability
+
+        Triangle controllability ->
+            controllability
+
+        Eye controllability ->
+            controllability
+
+        NoPiece ->
+            None
+
+
+isComputerControllable : Piece -> Bool
+isComputerControllable piece =
+    let
+        controllability =
+            getControllability piece.pieceType
+    in
+        controllability == Computer || controllability == Both
+
+
+isPlayerControllable : Piece -> Bool
+isPlayerControllable piece =
+    let
+        controllability =
+            getControllability piece.pieceType
+    in
+        controllability == Player || controllability == Both
+
+
 isActualPiece : Piece -> Bool
 isActualPiece piece =
     piece.pieceType /= NoPiece
@@ -74,6 +112,12 @@ getPiecesOnSpace pieces spacePosition =
     pieces
         |> Dict.values
         |> List.filter (.position >> (==) spacePosition)
+
+
+getCPUMovablePieces : Pieces -> List Int
+getCPUMovablePieces pieces =
+    Dict.filter (Extras.ignoreFirstArg isComputerControllable) pieces
+        |> Dict.keys
 
 
 movePieces sourcePos targetPos pieces =
