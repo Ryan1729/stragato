@@ -172,23 +172,28 @@ randomAIMove model =
 
 getPossibleMoveList : Model -> List ( Int, SpaceIndex )
 getPossibleMoveList model =
-    Pieces.getCPUMovablePieces model.pieces
-        `Extras.andThen` \x ->
-                            getUnoccupiedSpaceIndicies model
-                                `Extras.andThen` \y ->
-                                                    [ ( x, y ) ]
+    let
+        unoccupiedSpaceIndicies =
+            getUnoccupiedSpaceIndicies model
+    in
+        Pieces.getCPUMovablePieces model.pieces
+            `Extras.andThen` \x ->
+                                unoccupiedSpaceIndicies
+                                    `Extras.andThen` \y ->
+                                                        [ ( x, y ) ]
 
 
 getUnoccupiedSpaceIndicies : Model -> List SpaceIndex
 getUnoccupiedSpaceIndicies model =
     let
         piecePositions =
-            Dict.map (Extras.ignoreFirstArg .position) model.pieces
+            Dict.filter (Extras.ignoreFirstArg Pieces.isActualPiece) model.pieces
+                |> Dict.map (Extras.ignoreFirstArg .position)
                 |> Dict.values
     in
         Spaces.getActualSpaces model.spaces
             |> Dict.map (Extras.ignoreFirstArg .position)
-            |> Dict.filter (\index pos -> List.member pos piecePositions)
+            |> Dict.filter (\index pos -> not <| List.member pos piecePositions)
             |> Dict.keys
 
 
