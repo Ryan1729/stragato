@@ -1,7 +1,7 @@
 module Playfield exposing (..)
 
 import Model exposing (Model)
-import Svg exposing (Svg, svg, rect, polygon, circle, g, defs, Attribute)
+import Svg exposing (Svg, svg, rect, polygon, circle, g, Attribute)
 import Svg.Attributes exposing (..)
 import Svg.Events exposing (onClick, on)
 import Msg exposing (Msg(SelectPiece, ClearPieceSelection, Mdl))
@@ -10,6 +10,7 @@ import Points
 import Array
 import Spaces exposing (Spaces, Space, SpaceType(..), SpaceIndex)
 import Pieces exposing (Piece, PieceType(..), PieceControllability(..))
+import PiecesAndSpaces
 import Dict exposing (Dict)
 import String
 
@@ -33,38 +34,15 @@ getPieceSelectedInfo : Model -> SpaceIndex -> Maybe ( Int, Bool )
 getPieceSelectedInfo model spaceIndex =
     Maybe.map
         (\index ->
-            ( index, canPieceMoveToSpace model index spaceIndex )
+            ( index
+            , PiecesAndSpaces.canPieceMoveToSpace model.allowSelfMoves
+                model.pieces
+                model.spaces
+                index
+                spaceIndex
+            )
         )
         model.pieceSelected
-
-
-canPieceMoveToSpace : Model -> Int -> SpaceIndex -> Bool
-canPieceMoveToSpace model index spaceIndex =
-    let
-        maybePiece =
-            Dict.get index model.pieces
-    in
-        Maybe.map
-            (\piece ->
-                case piece.pieceType of
-                    Star _ ->
-                        isSpaceUnoccupied model spaceIndex
-
-                    _ ->
-                        Spaces.indexIsOfActualSpace model.spaces spaceIndex
-            )
-            maybePiece
-            |> Maybe.withDefault False
-
-
-isSpaceUnoccupied : Model -> SpaceIndex -> Bool
-isSpaceUnoccupied model spaceIndex =
-    Dict.get spaceIndex model.spaces
-        |> Maybe.map
-            (\space ->
-                List.length (Pieces.getPiecesOnSpace model.pieces space.position) <= 0
-            )
-        |> Maybe.withDefault False
 
 
 getSpaceView : Bool -> Maybe ( Int, Bool ) -> ( ( Int, Int ), Space ) -> Svg Msg
@@ -265,10 +243,6 @@ eyePieceSclera centerX xString centerY yString =
             , secondControlPointString
             , leftSideString
             ]
-
-
-defs =
-    []
 
 
 getFill control =

@@ -1,11 +1,11 @@
 module Extras exposing (..)
 
+import Dict exposing (Dict)
+
+
 {-| Remove the first occurrence of a value from a list.
+ from elm-community/list-extra
 -}
-
-{- from elm-community/list-extra -}
-
-
 remove : a -> List a -> List a
 remove x xs =
     case xs of
@@ -32,3 +32,17 @@ andThen =
 ignoreFirstArg : (a -> b) -> (c -> a -> b)
 ignoreFirstArg f =
     (\c a -> f a)
+
+
+
+--Also wrote myself, didn't search extensively for it
+
+
+filterOutListFromDict : List a -> Dict comparable a -> Dict comparable a
+filterOutListFromDict list dict =
+    Dict.filter
+        (\key value ->
+            List.member value list
+                |> not
+        )
+        dict

@@ -107,11 +107,22 @@ setPieceLocation pieceID position pieces =
         pieces
 
 
-getPiecesOnSpace : Pieces -> Vec2 -> List Piece
-getPiecesOnSpace pieces spacePosition =
+getPiecesAtPosition : Pieces -> Vec2 -> List Piece
+getPiecesAtPosition pieces position =
     pieces
         |> Dict.values
-        |> List.filter (.position >> (==) spacePosition)
+        |> List.filter (.position >> (==) position)
+
+
+noPiecesAtPosition : Pieces -> Vec2 -> Bool
+noPiecesAtPosition pieces position =
+    let
+        piecesOnSpace =
+            getPiecesAtPosition pieces position
+    in
+        piecesOnSpace
+            |> List.filter isActualPiece
+            |> (==) []
 
 
 getCPUMovablePieces : Pieces -> List Int
@@ -139,3 +150,8 @@ removePiecesAtPosition position pieces =
             piece.position /= position
         )
         pieces
+
+
+filterOutNonActualPieces : Pieces -> Pieces
+filterOutNonActualPieces pieces =
+    Dict.filter (Extras.ignoreFirstArg isActualPiece) pieces

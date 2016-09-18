@@ -10,6 +10,7 @@ import Extras
 import Material
 import Spaces exposing (Spaces, SpaceType(..), SpaceIndex)
 import Pieces exposing (Pieces, Piece, PieceType(..))
+import PiecesAndSpaces
 import Dict exposing (Dict)
 import Deck
 
@@ -112,48 +113,55 @@ update message model =
                 model
 
 
+
+--TODO make this return Cmd
+
+
 getNewPieces : Model -> Int -> SpaceIndex -> Pieces
 getNewPieces model pieceID spaceID =
+    if model.allowSelfMoves || PiecesAndSpaces.pieceIsNotAtSpace model.pieces model.spaces pieceID spaceID then
+        movePieceToSpace model.pieces model.spaces pieceID spaceID
+    else
+        model.pieces
+
+
+movePieceToSpace : Pieces -> Spaces -> Int -> SpaceIndex -> Pieces
+movePieceToSpace pieces spaces index spaceIndex =
     case
-        ( Dict.get pieceID model.pieces
-        , Spaces.getPosition spaceID model.spaces
+        ( Dict.get index pieces
+        , Spaces.getPosition spaceIndex spaces
         )
     of
         ( Just piece, Just spacePosition ) ->
             case
                 ( piece.pieceType
-                , Pieces.getPiecesOnSpace model.pieces spacePosition
+                , Pieces.getPiecesAtPosition pieces spacePosition
                 )
             of
                 {- They have a fight, Triangle wins. Triangle man! -}
                 ( Triangle _, piecesOnSpace ) ->
-                    model.pieces
-                        |> removePiecesinList piecesOnSpace
-                        |> Pieces.setPieceLocation pieceID spacePosition
+                    pieces
+                        |> Extras.filterOutListFromDict piecesOnSpace
+                        |> Pieces.setPieceLocation index spacePosition
 
                 ( WeirdThing _, piecesOnSpace ) ->
-                    model.pieces
-                        |> bumpPieces model.spaces piece.position spacePosition
-                        |> Pieces.setPieceLocation pieceID spacePosition
+                    pieces
+                        |> bumpPieces spaces piece.position spacePosition
+                        |> Pieces.setPieceLocation index spacePosition
 
                 ( Eye _, piecesOnSpace ) ->
-                    model.pieces
+                    pieces
                         |> Pieces.movePieces spacePosition piece.position
-                        |> Pieces.setPieceLocation pieceID spacePosition
+                        |> Pieces.setPieceLocation index spacePosition
 
                 _ ->
-                    if spaceIsEmpty model spacePosition then
-                        let
-                            newPieces =
-                                Pieces.setPieceLocation pieceID spacePosition model.pieces
-                        in
-                            Dict.filter (Extras.ignoreFirstArg Pieces.isActualPiece)
-                                newPieces
+                    if Pieces.noPiecesAtPosition pieces spacePosition then
+                        Pieces.setPieceLocation index spacePosition pieces
                     else
-                        model.pieces
+                        pieces
 
         _ ->
-            model.pieces
+            pieces
 
 
 randomAIMove : Model -> Model
@@ -177,7 +185,7 @@ getPossibleMoveList : Model -> List ( Int, SpaceIndex )
 getPossibleMoveList model =
     let
         unoccupiedSpaceIndicies =
-            getUnoccupiedSpaceIndicies model
+            PiecesAndSpaces.getUnoccupiedSpaceIndicies model.pieces model.spaces
 
         cpuMovablePieces =
             Pieces.getCPUMovablePieces model.pieces
@@ -190,55 +198,12 @@ getPossibleMoveList model =
                                                             [ ( x, y ) ]
     in
         if model.allowSelfMoves then
-            movesToUnoccupiedSpaces ++ getSelfMoves cpuMovablePieces model
+            movesToUnoccupiedSpaces
+                ++ PiecesAndSpaces.getSelfMoves cpuMovablePieces
+                    model.pieces
+                    model.spaces
         else
             movesToUnoccupiedSpaces
-
-
-getUnoccupiedSpaceIndicies : Model -> List SpaceIndex
-getUnoccupiedSpaceIndicies model =
-    let
-        piecePositions =
-            Dict.filter (Extras.ignoreFirstArg Pieces.isActualPiece) model.pieces
-                |> Dict.map (Extras.ignoreFirstArg .position)
-                |> Dict.values
-    in
-        Spaces.getActualSpaces model.spaces
-            |> Dict.map (Extras.ignoreFirstArg .position)
-            |> Dict.filter (\index pos -> not <| List.member pos piecePositions)
-            |> Dict.keys
-
-
-getSelfMoves : List Int -> Model -> List ( Int, SpaceIndex )
-getSelfMoves pieceList model =
-    List.filterMap
-        (\index ->
-            let
-                maybePiece =
-                    Dict.get index model.pieces
-
-                maybeSpaceIndex =
-                    Maybe.andThen maybePiece
-                        (\piece ->
-                            Spaces.getSpaceFromPosition model.spaces
-                                piece.position
-                        )
-            in
-                Maybe.map (\spaceIndex -> ( index, spaceIndex ))
-                    maybeSpaceIndex
-        )
-        pieceList
-
-
-removePiecesinList : List Piece -> Pieces -> Pieces
-removePiecesinList piecesToRemove pieces =
-    Dict.filter
-        (\index piece ->
-            piece
-                |> (flip List.member) piecesToRemove
-                |> not
-        )
-        pieces
 
 
 bumpPieces : Spaces -> Vec2 -> Vec2 -> Pieces -> Pieces
@@ -270,16 +235,6 @@ getTargetSpacePosition spaces piecePosition spacePosition =
 
 getTargetID ( bumpingX, bumpingY ) ( bumpedX, bumpedY ) =
     ( bumpedX + (bumpedX - bumpingX), bumpedY + (bumpedY - bumpingY) )
-
-
-spaceIsEmpty model spacePosition =
-    let
-        piecesOnSpace =
-            Pieces.getPiecesOnSpace model.pieces spacePosition
-    in
-        piecesOnSpace
-            |> List.filter (Pieces.isActualPiece)
-            |> (==) []
 
 
 higherScale : Float -> Float

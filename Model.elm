@@ -138,6 +138,7 @@ makePieces spaces deck seed =
             List.map2 Piece pieceTypes filteredPositions
                 |> List.indexedMap (,)
                 |> Dict.fromList
+                |> Pieces.filterOutNonActualPieces
     in
         ( pieces
         , newSeed
