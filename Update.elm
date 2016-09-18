@@ -113,13 +113,9 @@ update message model =
                 model
 
 
-
---TODO make this return Cmd
-
-
 getNewPieces : Model -> Int -> SpaceIndex -> Pieces
 getNewPieces model pieceID spaceID =
-    if model.allowSelfMoves || PiecesAndSpaces.pieceIsNotAtSpace model.pieces model.spaces pieceID spaceID then
+    if PiecesAndSpaces.canPieceMoveToSpace model.allowSelfMoves model.pieces model.spaces pieceID spaceID then
         movePieceToSpace model.pieces model.spaces pieceID spaceID
     else
         model.pieces
