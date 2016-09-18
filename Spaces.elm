@@ -49,6 +49,13 @@ getActualSpaces spaces =
     Dict.filter (Extras.ignoreFirstArg isActualSpace) spaces
 
 
+indexIsOfActualSpace : Spaces -> SpaceIndex -> Bool
+indexIsOfActualSpace spaces index =
+    getActualSpaces spaces
+        |> Dict.keys
+        |> List.member index
+
+
 positionIsOnActualSpace spaces targetSpacePosition =
     List.member targetSpacePosition <| getActualSpacePositions spaces
 

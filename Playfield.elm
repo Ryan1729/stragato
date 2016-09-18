@@ -8,7 +8,7 @@ import Msg exposing (Msg(SelectPiece, ClearPieceSelection, Mdl))
 import Math.Vector2 as V2 exposing (Vec2, vec2, getX, getY, add, scale)
 import Points
 import Array
-import Spaces exposing (Spaces, Space, SpaceType(..))
+import Spaces exposing (Spaces, Space, SpaceType(..), SpaceIndex)
 import Pieces exposing (Piece, PieceType(..), PieceControllability(..))
 import Dict exposing (Dict)
 import String
@@ -21,22 +21,74 @@ getPieces model =
 
 getSpaces model =
     Dict.toList model.spaces
-        |> List.map (getSpaceView model.showSpaceOutlines model.pieceSelected)
+        |> List.map
+            (\spacePair ->
+                getSpaceView model.showSpaceOutlines
+                    (getPieceSelectedInfo model (fst spacePair))
+                    spacePair
+            )
 
 
-getSpaceView : Bool -> Maybe Int -> ( ( Int, Int ), Space ) -> Svg Msg
-getSpaceView showOutlines pieceSelected ( index, currentSpace ) =
+getPieceSelectedInfo : Model -> SpaceIndex -> Maybe ( Int, Bool )
+getPieceSelectedInfo model spaceIndex =
+    Maybe.map
+        (\index ->
+            ( index, canPieceMoveToSpace model index spaceIndex )
+        )
+        model.pieceSelected
+
+
+canPieceMoveToSpace : Model -> Int -> SpaceIndex -> Bool
+canPieceMoveToSpace model index spaceIndex =
+    let
+        maybePiece =
+            Dict.get index model.pieces
+    in
+        Maybe.map
+            (\piece ->
+                case piece.pieceType of
+                    Star _ ->
+                        isSpaceUnoccupied model spaceIndex
+
+                    _ ->
+                        Spaces.indexIsOfActualSpace model.spaces spaceIndex
+            )
+            maybePiece
+            |> Maybe.withDefault False
+
+
+isSpaceUnoccupied : Model -> SpaceIndex -> Bool
+isSpaceUnoccupied model spaceIndex =
+    Dict.get spaceIndex model.spaces
+        |> Maybe.map
+            (\space ->
+                List.length (Pieces.getPiecesOnSpace model.pieces space.position) <= 0
+            )
+        |> Maybe.withDefault False
+
+
+getSpaceView : Bool -> Maybe ( Int, Bool ) -> ( ( Int, Int ), Space ) -> Svg Msg
+getSpaceView showOutlines pieceSelectedInfo ( index, currentSpace ) =
     let
         spaceType =
             currentSpace.spaceType
 
         extras =
-            case pieceSelected of
+            case pieceSelectedInfo of
                 Nothing ->
-                    []
+                    [ stroke "grey" ]
 
-                Just id ->
-                    [ onClick <| Msg.MovePiece id index, cursor "pointer" ]
+                Just ( id, canMoveHere ) ->
+                    let
+                        baseExtras =
+                            [ onClick <| Msg.MovePiece id index, cursor "pointer" ]
+                    in
+                        if canMoveHere then
+                            baseExtras
+                                ++ [ stroke "white" ]
+                        else
+                            baseExtras
+                                ++ [ stroke "grey" ]
 
         finalExtras =
             if spaceType == EmptySpace then
@@ -61,6 +113,7 @@ getPieceAttributes model currentID currentPiece =
         Just selectedID ->
             if selectedID == currentID then
                 [ onClick ClearPieceSelection
+                , stroke "white"
                 , fillOpacity "0.5"
                 ]
             else
@@ -70,13 +123,16 @@ getPieceAttributes model currentID currentPiece =
                             <| Msg.MovePiece selectedID
                                 spaceIndex
                         , cursor "pointer"
+                        , stroke "grey"
                         ]
 
                     Nothing ->
-                        [ cursor "not-allowed" ]
+                        [ cursor "not-allowed"
+                        , stroke "grey"
+                        ]
 
         Nothing ->
-            [ onClick <| SelectPiece currentID ]
+            [ onClick <| SelectPiece currentID, stroke "grey" ]
 
 
 noPiece =
@@ -123,8 +179,7 @@ piece extras center pieceType =
 
 
 basicPieceAttributes =
-    [ stroke "grey"
-    , strokeWidth "4"
+    [ strokeWidth "4"
     , cursor "move"
     ]
 
@@ -238,20 +293,14 @@ space showOutlines extras center spaceType =
             case spaceType of
                 Green ->
                     [ fill "lime"
-                    , stroke "grey"
-                    , strokeWidth "4"
                     ]
 
                 Red ->
                     [ fill "red"
-                    , stroke "grey"
-                    , strokeWidth "4"
                     ]
 
                 Yellow ->
                     [ fill "#FFDC00"
-                    , stroke "grey"
-                    , strokeWidth "4"
                     ]
 
                 EmptySpace ->
@@ -264,7 +313,6 @@ space showOutlines extras center spaceType =
 
         attributes =
             [ points <| Points.space center
-            , stroke "grey"
             , strokeWidth "4"
             ]
                 ++ appearance
