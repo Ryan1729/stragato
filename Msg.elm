@@ -27,5 +27,6 @@ type Msg
     | IncrementViewScale
     | DecrementViewScale
     | ToggleSpaceOutlines
+    | ToggleSelfMoves
     | Resize { width : Int, height : Int }
     | MakeAIMove

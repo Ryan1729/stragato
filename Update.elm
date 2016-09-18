@@ -78,6 +78,9 @@ update message model =
         ToggleSpaceOutlines ->
             { model | showSpaceOutlines = not model.showSpaceOutlines } ! []
 
+        ToggleSelfMoves ->
+            { model | allowSelfMoves = not model.allowSelfMoves } ! []
+
         IncrementViewScale ->
             { model | viewScale = higherScale model.viewScale } ! []
 
@@ -175,12 +178,21 @@ getPossibleMoveList model =
     let
         unoccupiedSpaceIndicies =
             getUnoccupiedSpaceIndicies model
+
+        cpuMovablePieces =
+            Pieces.getCPUMovablePieces model.pieces
+
+        movesToUnoccupiedSpaces =
+            cpuMovablePieces
+                `Extras.andThen` \x ->
+                                    unoccupiedSpaceIndicies
+                                        `Extras.andThen` \y ->
+                                                            [ ( x, y ) ]
     in
-        Pieces.getCPUMovablePieces model.pieces
-            `Extras.andThen` \x ->
-                                unoccupiedSpaceIndicies
-                                    `Extras.andThen` \y ->
-                                                        [ ( x, y ) ]
+        if model.allowSelfMoves then
+            movesToUnoccupiedSpaces ++ getSelfMoves cpuMovablePieces model
+        else
+            movesToUnoccupiedSpaces
 
 
 getUnoccupiedSpaceIndicies : Model -> List SpaceIndex
@@ -195,6 +207,27 @@ getUnoccupiedSpaceIndicies model =
             |> Dict.map (Extras.ignoreFirstArg .position)
             |> Dict.filter (\index pos -> not <| List.member pos piecePositions)
             |> Dict.keys
+
+
+getSelfMoves : List Int -> Model -> List ( Int, SpaceIndex )
+getSelfMoves pieceList model =
+    List.filterMap
+        (\index ->
+            let
+                maybePiece =
+                    Dict.get index model.pieces
+
+                maybeSpaceIndex =
+                    Maybe.andThen maybePiece
+                        (\piece ->
+                            Spaces.getSpaceFromPosition model.spaces
+                                piece.position
+                        )
+            in
+                Maybe.map (\spaceIndex -> ( index, spaceIndex ))
+                    maybeSpaceIndex
+        )
+        pieceList
 
 
 removePiecesinList : List Piece -> Pieces -> Pieces

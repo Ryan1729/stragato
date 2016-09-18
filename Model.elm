@@ -13,7 +13,8 @@ import Deck
 
 
 type alias Model =
-    { pieceSelected : Maybe Int
+    { allowSelfMoves : Bool
+    , pieceSelected : Maybe Int
     , pieces : Pieces
     , spaces : Spaces
     , gridWidth : Int
@@ -27,6 +28,25 @@ type alias Model =
     , viewScale : Float
     , windowSize : { width : Int, height : Int }
     , mdl : Material.Model
+    }
+
+
+defaultState =
+    { allowSelfMoves = False
+    , pieceSelected = Nothing
+    , pieces = defaultPieces
+    , spaces = defaultSpaces
+    , seed = (Random.initialSeed 42)
+    , gridWidth = defaultWidth
+    , gridHeight = defaultHeight
+    , spaceDeck = defaultSpaceDeck
+    , pieceDeck = defaultPieceDeck
+    , tabIndex = 0
+    , debug = True
+    , showSpaceOutlines = True
+    , viewScale = 1.0
+    , windowSize = { width = 600, height = 600 }
+    , mdl = Material.model
     }
 
 
@@ -66,24 +86,6 @@ defaultPieces : Pieces
 defaultPieces =
     makePieces defaultSpaces defaultPieceDeck (Random.initialSeed -421)
         |> fst
-
-
-defaultState =
-    { pieceSelected = Nothing
-    , pieces = defaultPieces
-    , spaces = defaultSpaces
-    , seed = (Random.initialSeed 42)
-    , gridWidth = defaultWidth
-    , gridHeight = defaultHeight
-    , spaceDeck = defaultSpaceDeck
-    , pieceDeck = defaultPieceDeck
-    , tabIndex = 0
-    , debug = True
-    , showSpaceOutlines = True
-    , viewScale = 1.0
-    , windowSize = { width = 600, height = 600 }
-    , mdl = Material.model
-    }
 
 
 makeSpaces : Int -> Int -> List SpaceType -> Seed -> ( Spaces, Seed )

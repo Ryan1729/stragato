@@ -82,6 +82,16 @@ editTab model =
                 ]
                 [ text "Show outlines of empty spaces" ]
             ]
+        , cell [ size All 4 ]
+            [ Toggles.switch Mdl
+                [ 9 ]
+                model.mdl
+                [ Toggles.onClick Msg.ToggleSelfMoves
+                , Toggles.ripple
+                , Toggles.value model.allowSelfMoves
+                ]
+                [ text "Allow \"moving\" to same space" ]
+            ]
         , cell [ offset All 1, size All 4 ]
             <| makeStepper [ 5 ]
                 model.mdl
