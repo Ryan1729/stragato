@@ -192,35 +192,35 @@ getPossibleMoveList model =
         cpuMovablePieces =
             Pieces.getCPUMovablePieces model.pieces
 
-        movesToUnoccupiedSpaces =
+        nonSelfMoves =
             cpuMovablePieces
                 `Extras.andThen` \x ->
-                                    let
-                                        availableIndicies =
-                                            case Dict.get x model.pieces of
-                                                Just piece ->
+                                    case Dict.get x model.pieces of
+                                        Just piece ->
+                                            let
+                                                availableIndicies =
                                                     case piece.pieceType of
                                                         Star _ ->
                                                             unoccupiedSpaceIndicies
 
                                                         _ ->
-                                                            Spaces.getNonMatchingSpaceIndicies model.spaces
+                                                            Spaces.getNonMatchingSpaceIndicies (Spaces.getActualSpaces model.spaces)
                                                                 piece.position
+                                            in
+                                                availableIndicies
+                                                    `Extras.andThen` \y ->
+                                                                        [ ( x, y ) ]
 
-                                                Nothing ->
-                                                    []
-                                    in
-                                        availableIndicies
-                                            `Extras.andThen` \y ->
-                                                                [ ( x, y ) ]
+                                        Nothing ->
+                                            []
     in
         if model.allowSelfMoves then
-            movesToUnoccupiedSpaces
+            nonSelfMoves
                 ++ PiecesAndSpaces.getSelfMoves cpuMovablePieces
                     model.pieces
                     model.spaces
         else
-            movesToUnoccupiedSpaces
+            nonSelfMoves
 
 
 bumpPieces : Spaces -> Vec2 -> Vec2 -> Pieces -> Pieces
