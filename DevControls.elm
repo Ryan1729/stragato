@@ -16,7 +16,7 @@ import Material.Toggles as Toggles
 import Material.Grid exposing (grid, cell, size, offset, Device(All, Tablet))
 import Math.Vector2 as V2 exposing (Vec2, vec2)
 import Svg exposing (Svg, svg)
-import Svg.Attributes exposing (height, width, viewBox)
+import Svg.Attributes exposing (height, width, viewBox, stroke)
 import Playfield
 import Pieces
 import Spaces
@@ -121,7 +121,7 @@ editTab model =
                 Msg.SpaceDeckDecrement
                 Msg.SpaceDeckIncrement
                 (positionedSvgMakerToHtmlMaker
-                    <| Playfield.space model.showSpaceOutlines []
+                    <| Playfield.space model.showSpaceOutlines [ stroke "grey" ]
                 )
             ]
         , cell [ size All 6 ]
@@ -131,7 +131,7 @@ editTab model =
                 model.pieceDeck
                 Msg.PieceDeckDecrement
                 Msg.PieceDeckIncrement
-                (positionedSvgMakerToHtmlMaker <| Playfield.piece [])
+                (positionedSvgMakerToHtmlMaker <| Playfield.piece [ stroke "grey" ])
             ]
         ]
 
