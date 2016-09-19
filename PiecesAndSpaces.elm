@@ -26,6 +26,12 @@ getSelfMoves pieceList pieces spaces =
         pieceList
 
 
+getNonSelfSpaceIdicies : Pieces -> Spaces -> Int -> List SpaceIndex
+getNonSelfSpaceIdicies pieces spaces index =
+    Dict.keys spaces
+        |> List.filter (pieceIsNotAtSpace pieces spaces index)
+
+
 isSpaceUnoccupied : Pieces -> Spaces -> SpaceIndex -> Bool
 isSpaceUnoccupied pieces spaces spaceIndex =
     spaces

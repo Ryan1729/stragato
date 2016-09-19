@@ -85,3 +85,14 @@ getSpaceFromPosition spaces targetPosition =
                     Nothing
             )
         |> List.head
+
+
+getNonMatchingSpaceIndicies : Spaces -> Vec2 -> List SpaceIndex
+getNonMatchingSpaceIndicies spaces position =
+    case getSpaceFromPosition spaces position of
+        Nothing ->
+            Dict.keys spaces
+
+        Just spaceIndex ->
+            Dict.keys spaces
+                |> List.filter ((/=) spaceIndex)

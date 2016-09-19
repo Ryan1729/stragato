@@ -195,9 +195,24 @@ getPossibleMoveList model =
         movesToUnoccupiedSpaces =
             cpuMovablePieces
                 `Extras.andThen` \x ->
-                                    unoccupiedSpaceIndicies
-                                        `Extras.andThen` \y ->
-                                                            [ ( x, y ) ]
+                                    let
+                                        availableIndicies =
+                                            case Dict.get x model.pieces of
+                                                Just piece ->
+                                                    case piece.pieceType of
+                                                        Star _ ->
+                                                            unoccupiedSpaceIndicies
+
+                                                        _ ->
+                                                            Spaces.getNonMatchingSpaceIndicies model.spaces
+                                                                piece.position
+
+                                                Nothing ->
+                                                    []
+                                    in
+                                        availableIndicies
+                                            `Extras.andThen` \y ->
+                                                                [ ( x, y ) ]
     in
         if model.allowSelfMoves then
             movesToUnoccupiedSpaces
