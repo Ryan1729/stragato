@@ -15528,6 +15528,21 @@ var _user$project$Spaces$getSpaceFromPosition = F2(
 				},
 				_elm_lang$core$Dict$toList(spaces)));
 	});
+var _user$project$Spaces$getNonMatchingSpaceIndicies = F2(
+	function (spaces, position) {
+		var _p2 = A2(_user$project$Spaces$getSpaceFromPosition, spaces, position);
+		if (_p2.ctor === 'Nothing') {
+			return _elm_lang$core$Dict$keys(spaces);
+		} else {
+			return A2(
+				_elm_lang$core$List$filter,
+				F2(
+					function (x, y) {
+						return !_elm_lang$core$Native_Utils.eq(x, y);
+					})(_p2._0),
+				_elm_lang$core$Dict$keys(spaces));
+		}
+	});
 var _user$project$Spaces$getSpaceType = F2(
 	function (id, spaces) {
 		return A2(
@@ -15982,6 +15997,13 @@ var _user$project$PiecesAndSpaces$canPieceMoveToSpace = F5(
 			return false;
 		}
 	});
+var _user$project$PiecesAndSpaces$getNonSelfSpaceIdicies = F3(
+	function (pieces, spaces, index) {
+		return A2(
+			_elm_lang$core$List$filter,
+			A3(_user$project$PiecesAndSpaces$pieceIsNotAtSpace, pieces, spaces, index),
+			_elm_lang$core$Dict$keys(spaces));
+	});
 var _user$project$PiecesAndSpaces$getSelfMoves = F3(
 	function (pieceList, pieces, spaces) {
 		return A2(
@@ -16198,7 +16220,7 @@ var _user$project$Playfield$basicPieceAttributes = _elm_lang$core$Native_List.fr
 		_elm_lang$svg$Svg_Attributes$strokeWidth('4'),
 		_elm_lang$svg$Svg_Attributes$cursor('move')
 	]);
-var _user$project$Playfield$noPiece = A2(
+var _user$project$Playfield$nullSVG = A2(
 	_elm_lang$svg$Svg$polygon,
 	_elm_lang$core$Native_List.fromArray(
 		[]),
@@ -16255,7 +16277,7 @@ var _user$project$Playfield$piece = F3(
 						otherAttributes),
 					center);
 			default:
-				return _user$project$Playfield$noPiece;
+				return _user$project$Playfield$nullSVG;
 		}
 	});
 var _user$project$Playfield$getPieceAttributes = F3(
@@ -16306,13 +16328,34 @@ var _user$project$Playfield$getPieceView = F3(
 		var selectedAttributes = A3(_user$project$Playfield$getPieceAttributes, model, currentID, currentPiece);
 		return A3(_user$project$Playfield$piece, selectedAttributes, currentPiece.position, currentPiece.pieceType);
 	});
-var _user$project$Playfield$getSpaceView = F3(
+var _user$project$Playfield$getSpaceHighlightView = F3(
 	function (showOutlines, pieceSelectedInfo, _p6) {
 		var _p7 = _p6;
 		var _p9 = _p7._1;
+		var _p8 = pieceSelectedInfo;
+		if (_p8.ctor === 'Nothing') {
+			return _user$project$Playfield$nullSVG;
+		} else {
+			return _p8._0 ? A4(
+				_user$project$Playfield$space,
+				showOutlines,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$svg$Svg_Attributes$pointerEvents('none'),
+						_elm_lang$svg$Svg_Attributes$stroke('white'),
+						_elm_lang$svg$Svg_Attributes$strokeWidth('4')
+					]),
+				_p9.position,
+				_p9.spaceType) : _user$project$Playfield$nullSVG;
+		}
+	});
+var _user$project$Playfield$getSpaceView = F3(
+	function (showOutlines, pieceSelectedInfo, _p10) {
+		var _p11 = _p10;
+		var _p13 = _p11._1;
 		var extras = function () {
-			var _p8 = pieceSelectedInfo;
-			if (_p8.ctor === 'Nothing') {
+			var _p12 = pieceSelectedInfo;
+			if (_p12.ctor === 'Nothing') {
 				return _elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$svg$Svg_Attributes$stroke('grey')
@@ -16321,16 +16364,10 @@ var _user$project$Playfield$getSpaceView = F3(
 				var baseExtras = _elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$svg$Svg_Events$onClick(
-						A2(_user$project$Msg$MovePiece, _p8._0._0, _p7._0)),
+						A2(_user$project$Msg$MovePiece, _p12._0._0, _p11._0)),
 						_elm_lang$svg$Svg_Attributes$cursor('pointer')
 					]);
-				return _p8._0._1 ? A2(
-					_elm_lang$core$Basics_ops['++'],
-					baseExtras,
-					_elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$svg$Svg_Attributes$stroke('white')
-						])) : A2(
+				return _p12._0._1 ? baseExtras : A2(
 					_elm_lang$core$Basics_ops['++'],
 					baseExtras,
 					_elm_lang$core$Native_List.fromArray(
@@ -16339,7 +16376,7 @@ var _user$project$Playfield$getSpaceView = F3(
 						]));
 			}
 		}();
-		var spaceType = _p9.spaceType;
+		var spaceType = _p13.spaceType;
 		var finalExtras = _elm_lang$core$Native_Utils.eq(spaceType, _user$project$Spaces$EmptySpace) ? A2(
 			_elm_lang$core$Basics_ops['++'],
 			extras,
@@ -16347,7 +16384,7 @@ var _user$project$Playfield$getSpaceView = F3(
 				[
 					_elm_lang$svg$Svg_Attributes$pointerEvents('none')
 				])) : extras;
-		return A4(_user$project$Playfield$space, showOutlines, finalExtras, _p9.position, spaceType);
+		return A4(_user$project$Playfield$space, showOutlines, finalExtras, _p13.position, spaceType);
 	});
 var _user$project$Playfield$getPieceSelectedInfo = F2(
 	function (model, spaceIndex) {
@@ -16363,7 +16400,21 @@ var _user$project$Playfield$getPieceSelectedInfo = F2(
 			model.pieceSelected);
 	});
 var _user$project$Playfield$getSpaces = function (model) {
-	return A2(
+	var spaceHighlights = A2(
+		_elm_lang$core$List$map,
+		function (spacePair) {
+			var maybePieceSelectedInfo = A2(
+				_user$project$Playfield$getPieceSelectedInfo,
+				model,
+				_elm_lang$core$Basics$fst(spacePair));
+			return A3(
+				_user$project$Playfield$getSpaceHighlightView,
+				model.showSpaceOutlines,
+				A2(_elm_lang$core$Maybe$map, _elm_lang$core$Basics$snd, maybePieceSelectedInfo),
+				spacePair);
+		},
+		_elm_lang$core$Dict$toList(model.spaces));
+	var baseSpaces = A2(
 		_elm_lang$core$List$map,
 		function (spacePair) {
 			return A3(
@@ -16376,6 +16427,7 @@ var _user$project$Playfield$getSpaces = function (model) {
 				spacePair);
 		},
 		_elm_lang$core$Dict$toList(model.spaces));
+	return A2(_elm_lang$core$Basics_ops['++'], baseSpaces, spaceHighlights);
 };
 var _user$project$Playfield$getPieces = function (model) {
 	return _elm_lang$core$Dict$values(
@@ -17018,70 +17070,88 @@ var _user$project$Update$bumpPieces = F4(
 var _user$project$Update$getPossibleMoveList = function (model) {
 	var cpuMovablePieces = _user$project$Pieces$getCPUMovablePieces(model.pieces);
 	var unoccupiedSpaceIndicies = A2(_user$project$PiecesAndSpaces$getUnoccupiedSpaceIndicies, model.pieces, model.spaces);
-	var movesToUnoccupiedSpaces = A2(
+	var nonSelfMoves = A2(
 		_user$project$Extras$andThen,
 		cpuMovablePieces,
 		function (x) {
-			return A2(
-				_user$project$Extras$andThen,
-				unoccupiedSpaceIndicies,
-				function (y) {
-					return _elm_lang$core$Native_List.fromArray(
-						[
-							{ctor: '_Tuple2', _0: x, _1: y}
-						]);
-				});
+			var _p8 = A2(_elm_lang$core$Dict$get, x, model.pieces);
+			if (_p8.ctor === 'Just') {
+				var _p10 = _p8._0;
+				var availableIndicies = function () {
+					var _p9 = _p10.pieceType;
+					if (_p9.ctor === 'Star') {
+						return unoccupiedSpaceIndicies;
+					} else {
+						return A2(
+							_user$project$Spaces$getNonMatchingSpaceIndicies,
+							_user$project$Spaces$getActualSpaces(model.spaces),
+							_p10.position);
+					}
+				}();
+				return A2(
+					_user$project$Extras$andThen,
+					availableIndicies,
+					function (y) {
+						return _elm_lang$core$Native_List.fromArray(
+							[
+								{ctor: '_Tuple2', _0: x, _1: y}
+							]);
+					});
+			} else {
+				return _elm_lang$core$Native_List.fromArray(
+					[]);
+			}
 		});
 	return model.allowSelfMoves ? A2(
 		_elm_lang$core$Basics_ops['++'],
-		movesToUnoccupiedSpaces,
-		A3(_user$project$PiecesAndSpaces$getSelfMoves, cpuMovablePieces, model.pieces, model.spaces)) : movesToUnoccupiedSpaces;
+		nonSelfMoves,
+		A3(_user$project$PiecesAndSpaces$getSelfMoves, cpuMovablePieces, model.pieces, model.spaces)) : nonSelfMoves;
 };
 var _user$project$Update$movePieceToSpace = F4(
 	function (pieces, spaces, index, spaceIndex) {
-		var _p8 = {
+		var _p11 = {
 			ctor: '_Tuple2',
 			_0: A2(_elm_lang$core$Dict$get, index, pieces),
 			_1: A2(_user$project$Spaces$getPosition, spaceIndex, spaces)
 		};
-		if (((_p8.ctor === '_Tuple2') && (_p8._0.ctor === 'Just')) && (_p8._1.ctor === 'Just')) {
-			var _p11 = _p8._1._0;
-			var _p10 = _p8._0._0;
-			var _p9 = {
+		if (((_p11.ctor === '_Tuple2') && (_p11._0.ctor === 'Just')) && (_p11._1.ctor === 'Just')) {
+			var _p14 = _p11._1._0;
+			var _p13 = _p11._0._0;
+			var _p12 = {
 				ctor: '_Tuple2',
-				_0: _p10.pieceType,
-				_1: A2(_user$project$Pieces$getPiecesAtPosition, pieces, _p11)
+				_0: _p13.pieceType,
+				_1: A2(_user$project$Pieces$getPiecesAtPosition, pieces, _p14)
 			};
-			_v4_3:
+			_v6_3:
 			do {
-				if (_p9.ctor === '_Tuple2') {
-					switch (_p9._0.ctor) {
+				if (_p12.ctor === '_Tuple2') {
+					switch (_p12._0.ctor) {
 						case 'Triangle':
 							return A3(
 								_user$project$Pieces$setPieceLocation,
 								index,
-								_p11,
-								A2(_user$project$Extras$filterOutListFromDict, _p9._1, pieces));
+								_p14,
+								A2(_user$project$Extras$filterOutListFromDict, _p12._1, pieces));
 						case 'WeirdThing':
 							return A3(
 								_user$project$Pieces$setPieceLocation,
 								index,
-								_p11,
-								A4(_user$project$Update$bumpPieces, spaces, _p10.position, _p11, pieces));
+								_p14,
+								A4(_user$project$Update$bumpPieces, spaces, _p13.position, _p14, pieces));
 						case 'Eye':
 							return A3(
 								_user$project$Pieces$setPieceLocation,
 								index,
-								_p11,
-								A3(_user$project$Pieces$movePieces, _p11, _p10.position, pieces));
+								_p14,
+								A3(_user$project$Pieces$movePieces, _p14, _p13.position, pieces));
 						default:
-							break _v4_3;
+							break _v6_3;
 					}
 				} else {
-					break _v4_3;
+					break _v6_3;
 				}
 			} while(false);
-			return A2(_user$project$Pieces$noPiecesAtPosition, pieces, _p11) ? A3(_user$project$Pieces$setPieceLocation, index, _p11, pieces) : pieces;
+			return A2(_user$project$Pieces$noPiecesAtPosition, pieces, _p14) ? A3(_user$project$Pieces$setPieceLocation, index, _p14, pieces) : pieces;
 		} else {
 			return pieces;
 		}
@@ -17092,13 +17162,13 @@ var _user$project$Update$getNewPieces = F3(
 	});
 var _user$project$Update$randomAIMove = function (model) {
 	var moveList = _user$project$Update$getPossibleMoveList(model);
-	var _p12 = A2(_user$project$Deck$maybeFromDeck, moveList, model.seed);
-	if (_p12.ctor === 'Just') {
+	var _p15 = A2(_user$project$Deck$maybeFromDeck, moveList, model.seed);
+	if (_p15.ctor === 'Just') {
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{
-				pieces: A3(_user$project$Update$getNewPieces, model, _p12._0._0._0, _p12._0._0._1),
-				seed: _p12._0._2
+				pieces: A3(_user$project$Update$getNewPieces, model, _p15._0._0._0, _p15._0._0._1),
+				seed: _p15._0._2
 			});
 	} else {
 		return model;
@@ -17106,8 +17176,8 @@ var _user$project$Update$randomAIMove = function (model) {
 };
 var _user$project$Update$update = F2(
 	function (message, model) {
-		var _p13 = message;
-		switch (_p13.ctor) {
+		var _p16 = message;
+		switch (_p16.ctor) {
 			case 'HitTable':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
@@ -17124,7 +17194,7 @@ var _user$project$Update$update = F2(
 					_elm_lang$core$Native_Utils.update(
 						model,
 						{
-							pieceSelected: _elm_lang$core$Maybe$Just(_p13._0)
+							pieceSelected: _elm_lang$core$Maybe$Just(_p16._0)
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -17143,19 +17213,19 @@ var _user$project$Update$update = F2(
 						model,
 						{
 							pieceSelected: _elm_lang$core$Maybe$Nothing,
-							pieces: A3(_user$project$Update$getNewPieces, model, _p13._0, _p13._1)
+							pieces: A3(_user$project$Update$getNewPieces, model, _p16._0, _p16._1)
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[
 							_user$project$Ports$sound('clack')
 						]));
 			case 'GenerateBoard':
-				var _p14 = A4(_user$project$Model$makeSpaces, model.gridWidth, model.gridHeight, model.spaceDeck, model.seed);
-				var spaces = _p14._0;
-				var postSpacesSeed = _p14._1;
-				var _p15 = A3(_user$project$Model$makePieces, spaces, model.pieceDeck, postSpacesSeed);
-				var pieces = _p15._0;
-				var newSeed = _p15._1;
+				var _p17 = A4(_user$project$Model$makeSpaces, model.gridWidth, model.gridHeight, model.spaceDeck, model.seed);
+				var spaces = _p17._0;
+				var postSpacesSeed = _p17._1;
+				var _p18 = A3(_user$project$Model$makePieces, spaces, model.pieceDeck, postSpacesSeed);
+				var pieces = _p18._0;
+				var newSeed = _p18._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -17168,7 +17238,7 @@ var _user$project$Update$update = F2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						model,
-						{tabIndex: _p13._0}),
+						{tabIndex: _p16._0}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
 			case 'SpaceDeckIncrement':
@@ -17177,7 +17247,7 @@ var _user$project$Update$update = F2(
 					_elm_lang$core$Native_Utils.update(
 						model,
 						{
-							spaceDeck: A2(_elm_lang$core$List_ops['::'], _p13._0, model.spaceDeck)
+							spaceDeck: A2(_elm_lang$core$List_ops['::'], _p16._0, model.spaceDeck)
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -17187,7 +17257,7 @@ var _user$project$Update$update = F2(
 					_elm_lang$core$Native_Utils.update(
 						model,
 						{
-							spaceDeck: A2(_user$project$Extras$remove, _p13._0, model.spaceDeck)
+							spaceDeck: A2(_user$project$Extras$remove, _p16._0, model.spaceDeck)
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -17197,7 +17267,7 @@ var _user$project$Update$update = F2(
 					_elm_lang$core$Native_Utils.update(
 						model,
 						{
-							pieceDeck: A2(_elm_lang$core$List_ops['::'], _p13._0, model.pieceDeck)
+							pieceDeck: A2(_elm_lang$core$List_ops['::'], _p16._0, model.pieceDeck)
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -17207,7 +17277,7 @@ var _user$project$Update$update = F2(
 					_elm_lang$core$Native_Utils.update(
 						model,
 						{
-							pieceDeck: A2(_user$project$Extras$remove, _p13._0, model.pieceDeck)
+							pieceDeck: A2(_user$project$Extras$remove, _p16._0, model.pieceDeck)
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -17306,7 +17376,7 @@ var _user$project$Update$update = F2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						model,
-						{windowSize: _p13._0}),
+						{windowSize: _p16._0}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
 			case 'GetSeed':
@@ -17319,12 +17389,12 @@ var _user$project$Update$update = F2(
 								A2(
 									_elm_lang$core$Debug$log,
 									'seed',
-									_elm_lang$core$Basics$round(_p13._0)))
+									_elm_lang$core$Basics$round(_p16._0)))
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
 			default:
-				return A2(_debois$elm_mdl$Material$update, _p13._0, model);
+				return A2(_debois$elm_mdl$Material$update, _p16._0, model);
 		}
 	});
 
