@@ -20,14 +20,32 @@ getPieces model =
         |> Dict.values
 
 
+getSpaces : Model -> List (Svg Msg)
 getSpaces model =
-    Dict.toList model.spaces
-        |> List.map
-            (\spacePair ->
-                getSpaceView model.showSpaceOutlines
-                    (getPieceSelectedInfo model (fst spacePair))
-                    spacePair
-            )
+    let
+        baseSpaces =
+            Dict.toList model.spaces
+                |> List.map
+                    (\spacePair ->
+                        getSpaceView model.showSpaceOutlines
+                            (getPieceSelectedInfo model (fst spacePair))
+                            spacePair
+                    )
+
+        spaceHighlights =
+            Dict.toList model.spaces
+                |> List.map
+                    (\spacePair ->
+                        let
+                            maybePieceSelectedInfo =
+                                getPieceSelectedInfo model (fst spacePair)
+                        in
+                            getSpaceHighlightView model.showSpaceOutlines
+                                (Maybe.map snd maybePieceSelectedInfo)
+                                spacePair
+                    )
+    in
+        baseSpaces ++ spaceHighlights
 
 
 getPieceSelectedInfo : Model -> SpaceIndex -> Maybe ( Int, Bool )
@@ -63,7 +81,6 @@ getSpaceView showOutlines pieceSelectedInfo ( index, currentSpace ) =
                     in
                         if canMoveHere then
                             baseExtras
-                                ++ [ stroke "white" ]
                         else
                             baseExtras
                                 ++ [ stroke "grey" ]
@@ -75,6 +92,22 @@ getSpaceView showOutlines pieceSelectedInfo ( index, currentSpace ) =
                 extras
     in
         space showOutlines finalExtras (currentSpace.position) spaceType
+
+
+getSpaceHighlightView : Bool -> Maybe (Bool) -> ( ( Int, Int ), Space ) -> Svg Msg
+getSpaceHighlightView showOutlines pieceSelectedInfo ( index, currentSpace ) =
+    case pieceSelectedInfo of
+        Nothing ->
+            nullSVG
+
+        Just canMoveHere ->
+            if canMoveHere then
+                space showOutlines
+                    [ pointerEvents "none", stroke "white", strokeWidth "4" ]
+                    (currentSpace.position)
+                    currentSpace.spaceType
+            else
+                nullSVG
 
 
 getPieceView : Model -> Int -> Piece -> Svg Msg
@@ -116,7 +149,7 @@ getPieceAttributes model currentID currentPiece =
                 [ cursor "not-allowed", stroke "grey" ]
 
 
-noPiece =
+nullSVG =
     polygon [] []
 
 
@@ -156,7 +189,7 @@ piece extras center pieceType =
                     center
 
             NoPiece ->
-                noPiece
+                nullSVG
 
 
 basicPieceAttributes =
