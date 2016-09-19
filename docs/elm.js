@@ -16762,7 +16762,9 @@ var _user$project$DevControls$editTab = function (model) {
 								_user$project$Playfield$space,
 								model.showSpaceOutlines,
 								_elm_lang$core$Native_List.fromArray(
-									[]))))
+									[
+										_elm_lang$svg$Svg_Attributes$stroke('grey')
+									]))))
 					])),
 				A2(
 				_debois$elm_mdl$Material_Grid$cell,
@@ -16784,7 +16786,9 @@ var _user$project$DevControls$editTab = function (model) {
 						_user$project$DevControls$positionedSvgMakerToHtmlMaker(
 							_user$project$Playfield$piece(
 								_elm_lang$core$Native_List.fromArray(
-									[]))))
+									[
+										_elm_lang$svg$Svg_Attributes$stroke('grey')
+									]))))
 					]))
 			]));
 };
