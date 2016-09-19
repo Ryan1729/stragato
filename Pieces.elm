@@ -131,6 +131,12 @@ getCPUMovablePieces pieces =
         |> Dict.keys
 
 
+getPlayerMovablePieces : Pieces -> List Int
+getPlayerMovablePieces pieces =
+    Dict.filter (Extras.ignoreFirstArg isPlayerControllable) pieces
+        |> Dict.keys
+
+
 movePieces sourcePos targetPos pieces =
     Dict.map
         (\index piece ->

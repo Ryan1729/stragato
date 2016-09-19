@@ -110,7 +110,10 @@ getPieceAttributes model currentID currentPiece =
                         ]
 
         Nothing ->
-            [ onClick <| SelectPiece currentID, stroke "grey" ]
+            if Pieces.isPlayerControllable currentPiece then
+                [ onClick <| SelectPiece currentID, stroke "grey" ]
+            else
+                [ cursor "not-allowed", stroke "grey" ]
 
 
 noPiece =

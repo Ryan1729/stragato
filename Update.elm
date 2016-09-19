@@ -115,7 +115,13 @@ update message model =
 
 getNewPieces : Model -> Int -> SpaceIndex -> Pieces
 getNewPieces model pieceID spaceID =
-    if PiecesAndSpaces.canPieceMoveToSpace model.allowSelfMoves model.pieces model.spaces pieceID spaceID then
+    if
+        PiecesAndSpaces.canPieceMoveToSpace model.allowSelfMoves
+            model.pieces
+            model.spaces
+            pieceID
+            spaceID
+    then
         movePieceToSpace model.pieces model.spaces pieceID spaceID
     else
         model.pieces
