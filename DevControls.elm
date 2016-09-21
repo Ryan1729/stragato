@@ -72,26 +72,21 @@ editTab model =
                 , text "Generate Board"
                 ]
             ]
-        , cell [ size All 4 ]
-            [ Toggles.switch Mdl
-                [ 8 ]
-                model.mdl
-                [ Toggles.onClick Msg.ToggleSpaceOutlines
-                , Toggles.ripple
-                , Toggles.value model.showSpaceOutlines
-                ]
-                [ text "Show outlines of empty spaces" ]
-            ]
-        , cell [ size All 4 ]
-            [ Toggles.switch Mdl
-                [ 9 ]
-                model.mdl
-                [ Toggles.onClick Msg.ToggleSelfMoves
-                , Toggles.ripple
-                , Toggles.value model.allowSelfMoves
-                ]
-                [ text "Allow \"moving\" to same space" ]
-            ]
+        , toggleSwitchCell [ 8 ]
+            model.mdl
+            Msg.ToggleSpaceOutlines
+            "Show outlines of empty spaces"
+            model.showSpaceOutlines
+        , toggleSwitchCell [ 9 ]
+            model.mdl
+            Msg.ToggleSelfMoves
+            "Allow \"moving\" to same space"
+            model.allowSelfMoves
+        , toggleSwitchCell [ 10 ]
+            model.mdl
+            Msg.ToggleAllowMovingAllPieces
+            "Allow moving all pieces"
+            model.allowMovingAllPieces
         , cell [ offset All 1, size All 4 ]
             <| makeStepper [ 5 ]
                 model.mdl
@@ -133,6 +128,20 @@ editTab model =
                 Msg.PieceDeckIncrement
                 (positionedSvgMakerToHtmlMaker <| Playfield.piece [ stroke "grey" ])
             ]
+        ]
+
+
+toggleSwitchCell : List Int -> Mdl -> Msg -> String -> Bool -> Material.Grid.Cell Msg
+toggleSwitchCell index mdl toggleMessage labelText bool =
+    cell [ size All 4 ]
+        [ Toggles.switch Mdl
+            index
+            mdl
+            [ Toggles.onClick toggleMessage
+            , Toggles.ripple
+            , Toggles.value bool
+            ]
+            [ text labelText ]
         ]
 
 

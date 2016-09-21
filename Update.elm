@@ -82,6 +82,9 @@ update message model =
         ToggleSelfMoves ->
             { model | allowSelfMoves = not model.allowSelfMoves } ! []
 
+        ToggleAllowMovingAllPieces ->
+            { model | allowMovingAllPieces = not model.allowMovingAllPieces } ! []
+
         IncrementViewScale ->
             { model | viewScale = higherScale model.viewScale } ! []
 

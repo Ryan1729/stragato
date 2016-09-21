@@ -25,6 +25,7 @@ type alias Model =
     , tabIndex : Int
     , debug : Bool
     , showSpaceOutlines : Bool
+    , allowMovingAllPieces : Bool
     , viewScale : Float
     , windowSize : { width : Int, height : Int }
     , mdl : Material.Model
@@ -44,6 +45,7 @@ defaultState =
     , tabIndex = 0
     , debug = True
     , showSpaceOutlines = True
+    , allowMovingAllPieces = False
     , viewScale = 1.0
     , windowSize = { width = 600, height = 600 }
     , mdl = Material.model

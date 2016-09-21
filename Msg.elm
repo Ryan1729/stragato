@@ -28,5 +28,6 @@ type Msg
     | DecrementViewScale
     | ToggleSpaceOutlines
     | ToggleSelfMoves
+    | ToggleAllowMovingAllPieces
     | Resize { width : Int, height : Int }
     | MakeAIMove
