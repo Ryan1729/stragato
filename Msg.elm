@@ -29,5 +29,6 @@ type Msg
     | ToggleSpaceOutlines
     | ToggleSelfMoves
     | ToggleAllowMovingAllPieces
+    | ToggleIgnoreGameResult
     | Resize { width : Int, height : Int }
     | MakeAIMove

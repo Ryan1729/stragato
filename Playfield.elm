@@ -143,10 +143,18 @@ getPieceAttributes model currentID currentPiece =
                         ]
 
         Nothing ->
-            if model.allowMovingAllPieces || Pieces.isPlayerControllable currentPiece then
+            if shouldAllowMoving model currentPiece then
                 [ onClick <| SelectPiece currentID, stroke "grey" ]
             else
                 [ cursor "not-allowed", stroke "grey" ]
+
+
+shouldAllowMoving : Model -> Piece -> Bool
+shouldAllowMoving model currentPiece =
+    Model.canMove model
+        && (model.allowMovingAllPieces
+                || Pieces.isPlayerControllable currentPiece
+           )
 
 
 nullSVG =

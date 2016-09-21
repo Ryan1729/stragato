@@ -52,7 +52,7 @@ make model =
                 editTab model
 
             _ ->
-                div [] [ text (toString model) ]
+                div [] [ text <| toString model.gameResult, Html.hr [] [], text (toString model) ]
         ]
     ]
 
@@ -87,6 +87,11 @@ editTab model =
             Msg.ToggleAllowMovingAllPieces
             "Allow moving all pieces"
             model.allowMovingAllPieces
+        , toggleSwitchCell [ 11 ]
+            model.mdl
+            Msg.ToggleIgnoreGameResult
+            "Allow moving pieces after end of game"
+            model.ignoreGameResult
         , cell [ offset All 1, size All 4 ]
             <| makeStepper [ 5 ]
                 model.mdl

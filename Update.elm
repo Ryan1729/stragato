@@ -28,11 +28,16 @@ update message model =
             { model | pieceSelected = Nothing } ! []
 
         MovePiece pieceID spaceID ->
-            { model
-                | pieceSelected = Nothing
-                , pieces = getNewPieces model pieceID spaceID
-            }
-                ! [ Ports.sound "clack" ]
+            let
+                newPieces =
+                    getNewPieces model pieceID spaceID
+            in
+                { model
+                    | pieceSelected = Nothing
+                    , pieces = newPieces
+                    , gameResult = getGameResult model.gameEndCons newPieces
+                }
+                    ! [ Ports.sound "clack" ]
 
         GenerateBoard ->
             let
@@ -47,7 +52,13 @@ update message model =
                         model.pieceDeck
                         postSpacesSeed
             in
-                { model | seed = newSeed, spaces = spaces, pieces = pieces } ! []
+                { model
+                    | seed = newSeed
+                    , spaces = spaces
+                    , pieces = pieces
+                    , gameResult = getGameResult model.gameEndCons pieces
+                }
+                    ! []
 
         SelectTab tabIndex ->
             { model | tabIndex = tabIndex } ! []
@@ -85,6 +96,9 @@ update message model =
         ToggleAllowMovingAllPieces ->
             { model | allowMovingAllPieces = not model.allowMovingAllPieces } ! []
 
+        ToggleIgnoreGameResult ->
+            { model | ignoreGameResult = not model.ignoreGameResult } ! []
+
         IncrementViewScale ->
             { model | viewScale = higherScale model.viewScale } ! []
 
@@ -92,7 +106,10 @@ update message model =
             { model | viewScale = lowerScale model.viewScale } ! []
 
         MakeAIMove ->
-            randomAIMove model ! [ Ports.sound "clack" ]
+            if Model.canMove model then
+                randomAIMove model ! [ Ports.sound "clack" ]
+            else
+                model ! []
 
         --TODO animate something or remove this!
         Animate _ ->
@@ -169,6 +186,17 @@ movePieceToSpace pieces spaces index spaceIndex =
             pieces
 
 
+getGameResult gameEndCons newPieces =
+    case gameEndCons of
+        _ ->
+            if Pieces.cpuControlledCount newPieces <= 0 then
+                Model.Win
+            else if Pieces.playerControlledCount newPieces <= 0 then
+                Model.Loss
+            else
+                Model.TBD
+
+
 randomAIMove : Model -> Model
 randomAIMove model =
     let
@@ -177,10 +205,15 @@ randomAIMove model =
     in
         case Deck.maybeFromDeck moveList model.seed of
             Just ( ( pieceID, spaceID ), _, newSeed ) ->
-                { model
-                    | pieces = getNewPieces model pieceID spaceID
-                    , seed = newSeed
-                }
+                let
+                    pieces =
+                        getNewPieces model pieceID spaceID
+                in
+                    { model
+                        | pieces = pieces
+                        , seed = newSeed
+                        , gameResult = getGameResult model.gameEndCons pieces
+                    }
 
             Nothing ->
                 model

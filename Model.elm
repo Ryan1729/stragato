@@ -23,6 +23,9 @@ type alias Model =
     , pieceDeck : List PieceType
     , seed : Seed
     , tabIndex : Int
+    , gameResult : GameResult
+    , ignoreGameResult : Bool
+    , gameEndCons : GameEndCons
     , debug : Bool
     , showSpaceOutlines : Bool
     , allowMovingAllPieces : Bool
@@ -43,6 +46,9 @@ defaultState =
     , spaceDeck = defaultSpaceDeck
     , pieceDeck = defaultPieceDeck
     , tabIndex = 0
+    , gameResult = TBD
+    , ignoreGameResult = False
+    , gameEndCons = GameEndCons NoCPUPieces NoPlayerPieces
     , debug = True
     , showSpaceOutlines = True
     , allowMovingAllPieces = False
@@ -58,6 +64,29 @@ defaultWidth =
 
 defaultHeight =
     5
+
+
+
+--TODO: should draws be possible?
+
+
+type GameResult
+    = Win
+    | Loss
+    | TBD
+
+
+
+-- GameEndCons WinPredicate LossPredicate
+
+
+type GameEndCons
+    = GameEndCons GamePredicate GamePredicate
+
+
+type GamePredicate
+    = NoCPUPieces
+    | NoPlayerPieces
 
 
 defaultSpaceDeck =
@@ -145,3 +174,8 @@ makePieces spaces deck seed =
         ( pieces
         , newSeed
         )
+
+
+canMove : Model -> Bool
+canMove model =
+    model.ignoreGameResult || model.gameResult == TBD

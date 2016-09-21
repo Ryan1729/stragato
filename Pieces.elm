@@ -91,6 +91,29 @@ isPlayerControllable piece =
         controllability == Player || controllability == Both
 
 
+cpuControlledCount : Pieces -> Int
+cpuControlledCount =
+    countPiecesThatFufillPredicate isComputerControllable
+
+
+playerControlledCount : Pieces -> Int
+playerControlledCount =
+    countPiecesThatFufillPredicate isPlayerControllable
+
+
+countPiecesThatFufillPredicate : (Piece -> Bool) -> Pieces -> Int
+countPiecesThatFufillPredicate predicate pieces =
+    Dict.foldl
+        (\index value acc ->
+            if predicate value then
+                acc + 1
+            else
+                acc
+        )
+        0
+        pieces
+
+
 isActualPiece : Piece -> Bool
 isActualPiece piece =
     piece.pieceType /= NoPiece
