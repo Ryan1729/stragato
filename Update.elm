@@ -1,6 +1,6 @@
 module Update exposing (..)
 
-import Model exposing (Model)
+import Model exposing (Model, GamePredicate(..), GameEndCons(..), GameResult)
 import Msg exposing (Msg(..))
 import Ports
 import Mouse
@@ -186,15 +186,26 @@ movePieceToSpace pieces spaces index spaceIndex =
             pieces
 
 
-getGameResult gameEndCons newPieces =
+getGameResult : GameEndCons -> Pieces -> GameResult
+getGameResult gameEndCons pieces =
     case gameEndCons of
-        _ ->
-            if Pieces.cpuControlledCount newPieces <= 0 then
+        GameEndCons winCondition loseCondition ->
+            if checkPredicate winCondition pieces then
                 Model.Win
-            else if Pieces.playerControlledCount newPieces <= 0 then
+            else if checkPredicate loseCondition pieces then
                 Model.Loss
             else
                 Model.TBD
+
+
+checkPredicate : GamePredicate -> Pieces -> Bool
+checkPredicate predicate pieces =
+    case predicate of
+        NoCPUPieces ->
+            Pieces.cpuControlledCount pieces <= 0
+
+        NoPlayerPieces ->
+            Pieces.playerControlledCount pieces <= 0
 
 
 randomAIMove : Model -> Model
