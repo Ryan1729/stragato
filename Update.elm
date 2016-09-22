@@ -105,6 +105,18 @@ update message model =
         DecrementViewScale ->
             { model | viewScale = lowerScale model.viewScale } ! []
 
+        DecrementWinCon ->
+            { model | gameEndCons = Model.decrementWinCon model.gameEndCons } ! []
+
+        IncrementWinCon ->
+            { model | gameEndCons = Model.incrementWinCon model.gameEndCons } ! []
+
+        DecrementLossCon ->
+            { model | gameEndCons = Model.decrementLossCon model.gameEndCons } ! []
+
+        IncrementLossCon ->
+            { model | gameEndCons = Model.incrementLossCon model.gameEndCons } ! []
+
         MakeAIMove ->
             if Model.canMove model then
                 randomAIMove model ! [ Ports.sound "clack" ]

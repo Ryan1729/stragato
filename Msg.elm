@@ -30,5 +30,9 @@ type Msg
     | ToggleSelfMoves
     | ToggleAllowMovingAllPieces
     | ToggleIgnoreGameResult
+    | DecrementWinCon
+    | IncrementWinCon
+    | DecrementLossCon
+    | IncrementLossCon
     | Resize { width : Int, height : Int }
     | MakeAIMove

@@ -89,6 +89,26 @@ type GamePredicate
     | NoPlayerPieces
 
 
+decrementGamePredicate : GamePredicate -> GamePredicate
+decrementGamePredicate predicate =
+    case predicate of
+        NoPlayerPieces ->
+            NoCPUPieces
+
+        NoCPUPieces ->
+            NoPlayerPieces
+
+
+incrementGamePredicate : GamePredicate -> GamePredicate
+incrementGamePredicate predicate =
+    case predicate of
+        NoCPUPieces ->
+            NoPlayerPieces
+
+        NoPlayerPieces ->
+            NoCPUPieces
+
+
 defaultSpaceDeck =
     [ Green
     , Green
@@ -179,3 +199,45 @@ makePieces spaces deck seed =
 canMove : Model -> Bool
 canMove model =
     model.ignoreGameResult || model.gameResult == TBD
+
+
+getWinConString : Model -> String
+getWinConString model =
+    case model.gameEndCons of
+        GameEndCons winCon _ ->
+            toString winCon
+
+
+getLossConString : Model -> String
+getLossConString model =
+    case model.gameEndCons of
+        GameEndCons _ lossCon ->
+            toString lossCon
+
+
+decrementWinCon : GameEndCons -> GameEndCons
+decrementWinCon gameEndCons =
+    case gameEndCons of
+        GameEndCons winCon lossCon ->
+            GameEndCons (decrementGamePredicate winCon) lossCon
+
+
+incrementWinCon : GameEndCons -> GameEndCons
+incrementWinCon gameEndCons =
+    case gameEndCons of
+        GameEndCons winCon lossCon ->
+            GameEndCons (incrementGamePredicate winCon) lossCon
+
+
+decrementLossCon : GameEndCons -> GameEndCons
+decrementLossCon gameEndCons =
+    case gameEndCons of
+        GameEndCons winCon lossCon ->
+            GameEndCons winCon (decrementGamePredicate lossCon)
+
+
+incrementLossCon : GameEndCons -> GameEndCons
+incrementLossCon gameEndCons =
+    case gameEndCons of
+        GameEndCons winCon lossCon ->
+            GameEndCons winCon (incrementGamePredicate lossCon)

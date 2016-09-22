@@ -92,22 +92,37 @@ editTab model =
             Msg.ToggleIgnoreGameResult
             "Allow moving pieces after end of game"
             model.ignoreGameResult
-        , cell [ offset All 1, size All 4 ]
+        , cell [ size All 4 ] []
+        , cell [ size All 4 ]
+            <| makeStepper [ 12 ]
+                model.mdl
+                "win condition"
+                DecrementWinCon
+                IncrementWinCon
+                (Model.getWinConString model)
+        , cell [ size All 4 ]
+            <| makeStepper [ 13 ]
+                model.mdl
+                "loss condition"
+                DecrementLossCon
+                IncrementLossCon
+                (Model.getLossConString model)
+        , cell [ size All 4 ]
             <| makeStepper [ 5 ]
                 model.mdl
                 "gridWidth"
                 DecrementGridWidth
                 IncrementGridWidth
                 (toString model.gridWidth)
-        , cell [ offset All 1, size All 4 ]
+        , cell [ size All 4 ]
             <| makeStepper [ 6 ]
                 model.mdl
                 "gridHeight"
                 DecrementGridHeight
                 IncrementGridHeight
                 (toString model.gridHeight)
-        , cell [ offset All 1, size All 4 ]
-            <| makeStepper [ 9 ]
+        , cell [ size All 4 ]
+            <| makeStepper [ 7 ]
                 model.mdl
                 "scale"
                 DecrementViewScale
@@ -153,20 +168,22 @@ toggleSwitchCell index mdl toggleMessage labelText bool =
 makeStepper : List Int -> Mdl -> String -> Msg -> Msg -> String -> List (Html Msg)
 makeStepper index mdl label decrementMsg incrementMsg value =
     [ text label
-    , Button.render Msg.Mdl
-        (index ++ [ 0 ])
-        mdl
-        [ Button.onClick decrementMsg
-        ]
-        [ Icon.i "remove"
-        ]
-    , text value
-    , Button.render Msg.Mdl
-        (index ++ [ 1 ])
-        mdl
-        [ Button.onClick incrementMsg
-        ]
-        [ Icon.i "add"
+    , div [ style [ ( "border", "1px solid" ) ] ]
+        [ Button.render Msg.Mdl
+            (index ++ [ 0 ])
+            mdl
+            [ Button.onClick decrementMsg
+            ]
+            [ Icon.i "remove"
+            ]
+        , text value
+        , Button.render Msg.Mdl
+            (index ++ [ 1 ])
+            mdl
+            [ Button.onClick incrementMsg
+            ]
+            [ Icon.i "add"
+            ]
         ]
     ]
 
