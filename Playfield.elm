@@ -189,6 +189,13 @@ piece extras center pieceType =
                        ]
                     ++ otherAttributes
 
+            Petals control ->
+                polygonPiece
+                    <| [ fill (getFill control)
+                       , points (Points.petals center)
+                       ]
+                    ++ otherAttributes
+
             Eye control ->
                 eyePiece
                     (fill (getFill control)

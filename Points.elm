@@ -73,6 +73,22 @@ weirdThingPointsList =
         ]
 
 
+
+--I couldn't find a ready-made version of this!
+
+
+fmod : Float -> Float -> Float
+fmod value modulus =
+    value - ((toFloat <| truncate (value / modulus)) * modulus)
+
+
+petalsPointsList : List Vec2
+petalsPointsList =
+    [0..12]
+        |> List.map (\x -> fmod (x * 4 / 13) 1)
+        |> List.map fractionToPointOnCircle
+
+
 pointsListToPiecePointsList : List Vec2 -> List Vec2
 pointsListToPiecePointsList =
     List.map (V2.scale 40)
@@ -81,6 +97,11 @@ pointsListToPiecePointsList =
 weirdThingPiecePointsList : List Vec2
 weirdThingPiecePointsList =
     pointsListToPiecePointsList weirdThingPointsList
+
+
+petalsPiecePointsList : List Vec2
+petalsPiecePointsList =
+    pointsListToPiecePointsList petalsPointsList
 
 
 spaceScale =
@@ -168,3 +189,8 @@ weirdThing =
 triangle : Vec2 -> String
 triangle =
     pointsListToSVGString trianglePiecePointsList
+
+
+petals : Vec2 -> String
+petals =
+    pointsListToSVGString petalsPiecePointsList
