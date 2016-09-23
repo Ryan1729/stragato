@@ -213,11 +213,11 @@ getGameResult gameEndCons pieces =
 checkPredicate : GamePredicate -> Pieces -> Bool
 checkPredicate predicate pieces =
     case predicate of
-        NoCPUPieces ->
-            Pieces.cpuControlledCount pieces <= 0
+        NoPiecesControlledBy controllability ->
+            Pieces.controllabiltyCount controllability pieces <= 0
 
-        NoPlayerPieces ->
-            Pieces.playerControlledCount pieces <= 0
+        NoPiecesStrictlyControlledBy controllability ->
+            Pieces.strictControllabiltyCount controllability pieces <= 0
 
 
 randomAIMove : Model -> Model

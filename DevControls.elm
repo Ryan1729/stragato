@@ -92,7 +92,7 @@ editTab model =
             Msg.ToggleIgnoreGameResult
             "Allow moving pieces after end of game"
             model.ignoreGameResult
-        , cell [ size All 4 ] []
+          -- , cell [ size All 4 ] []
         , cell [ size All 4 ]
             <| makeStepper [ 12 ]
                 model.mdl

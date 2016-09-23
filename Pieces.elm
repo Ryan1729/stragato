@@ -73,6 +73,38 @@ getControllability pieceType =
             None
 
 
+controllabiltyCount : PieceControllability -> Pieces -> Int
+controllabiltyCount controlability =
+    case controlability of
+        Player ->
+            playerControlledCount
+
+        Computer ->
+            cpuControlledCount
+
+        Both ->
+            bothControlledCount
+
+        None ->
+            noneControlledCount
+
+
+strictControllabiltyCount : PieceControllability -> Pieces -> Int
+strictControllabiltyCount controlability =
+    case controlability of
+        Player ->
+            strictPlayerControlledCount
+
+        Computer ->
+            strictCpuControlledCount
+
+        Both ->
+            bothControlledCount
+
+        None ->
+            noneControlledCount
+
+
 isComputerControllable : Piece -> Bool
 isComputerControllable piece =
     let
@@ -91,6 +123,42 @@ isPlayerControllable piece =
         controllability == Player || controllability == Both
 
 
+isStrictlyComputerControllable : Piece -> Bool
+isStrictlyComputerControllable piece =
+    let
+        controllability =
+            getControllability piece.pieceType
+    in
+        controllability == Computer
+
+
+isStrictlyPlayerControllable : Piece -> Bool
+isStrictlyPlayerControllable piece =
+    let
+        controllability =
+            getControllability piece.pieceType
+    in
+        controllability == Player
+
+
+isBothControllable : Piece -> Bool
+isBothControllable piece =
+    let
+        controllability =
+            getControllability piece.pieceType
+    in
+        controllability == Both
+
+
+isNoneControllable : Piece -> Bool
+isNoneControllable piece =
+    let
+        controllability =
+            getControllability piece.pieceType
+    in
+        controllability == None
+
+
 cpuControlledCount : Pieces -> Int
 cpuControlledCount =
     countPiecesThatFufillPredicate isComputerControllable
@@ -99,6 +167,24 @@ cpuControlledCount =
 playerControlledCount : Pieces -> Int
 playerControlledCount =
     countPiecesThatFufillPredicate isPlayerControllable
+
+
+bothControlledCount : Pieces -> Int
+bothControlledCount =
+    countPiecesThatFufillPredicate isBothControllable
+
+
+noneControlledCount : Pieces -> Int
+noneControlledCount =
+    countPiecesThatFufillPredicate isNoneControllable
+
+
+strictCpuControlledCount =
+    countPiecesThatFufillPredicate isStrictlyComputerControllable
+
+
+strictPlayerControlledCount =
+    countPiecesThatFufillPredicate isStrictlyPlayerControllable
 
 
 countPiecesThatFufillPredicate : (Piece -> Bool) -> Pieces -> Int

@@ -48,7 +48,7 @@ defaultState =
     , tabIndex = 0
     , gameResult = TBD
     , ignoreGameResult = False
-    , gameEndCons = GameEndCons NoCPUPieces NoPlayerPieces
+    , gameEndCons = GameEndCons (NoPiecesControlledBy Computer) (NoPiecesControlledBy Player)
     , debug = True
     , showSpaceOutlines = True
     , allowMovingAllPieces = False
@@ -85,28 +85,38 @@ type GameEndCons
 
 
 type GamePredicate
-    = NoCPUPieces
-    | NoPlayerPieces
+    = NoPiecesControlledBy PieceControllability
+    | NoPiecesStrictlyControlledBy PieceControllability
+
+
+gamePredicatePossibilities =
+    [ NoPiecesControlledBy Player
+    , NoPiecesControlledBy Computer
+    , NoPiecesControlledBy Both
+    , NoPiecesControlledBy None
+    , NoPiecesStrictlyControlledBy Player
+    , NoPiecesStrictlyControlledBy Computer
+    , NoPiecesStrictlyControlledBy Both
+    , NoPiecesStrictlyControlledBy None
+    ]
 
 
 decrementGamePredicate : GamePredicate -> GamePredicate
 decrementGamePredicate predicate =
-    case predicate of
-        NoPlayerPieces ->
-            NoCPUPieces
-
-        NoCPUPieces ->
-            NoPlayerPieces
+    (Extras.indexOf gamePredicatePossibilities predicate
+        |> Maybe.map (\index -> (index - 1) % List.length gamePredicatePossibilities)
+    )
+        `Maybe.andThen` (\index -> List.head <| List.drop index gamePredicatePossibilities)
+        |> Maybe.withDefault predicate
 
 
 incrementGamePredicate : GamePredicate -> GamePredicate
 incrementGamePredicate predicate =
-    case predicate of
-        NoCPUPieces ->
-            NoPlayerPieces
-
-        NoPlayerPieces ->
-            NoCPUPieces
+    (Extras.indexOf gamePredicatePossibilities predicate
+        |> Maybe.map (\index -> (index + 1) % List.length gamePredicatePossibilities)
+    )
+        `Maybe.andThen` (\index -> List.head <| List.drop index gamePredicatePossibilities)
+        |> Maybe.withDefault predicate
 
 
 defaultSpaceDeck =
