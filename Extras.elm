@@ -69,3 +69,35 @@ indexOfhelper lst elem offset =
 indexOf : List a -> a -> Maybe Int
 indexOf lst element =
     indexOfhelper lst element 0
+
+
+
+--wrote myself based on min-free example in https://github.com/liuxinyu95/AlgoXY,
+-- I searched "elm binary search" but that gave me stuff about trees
+--(probably overkill for this project)
+
+
+getLowestAbsentInt : List Int -> Int
+getLowestAbsentInt list =
+    getLowestAbsentIntHelper list 0 (List.length list - 1)
+
+
+getLowestAbsentIntHelper : List Int -> Int -> Int -> Int
+getLowestAbsentIntHelper list lowerBound upperBound =
+    if list == [] then
+        lowerBound
+    else
+        let
+            paritionPoint : Int
+            paritionPoint =
+                toFloat (lowerBound + upperBound)
+                    / 2
+                    |> floor
+
+            ( lowerList, higherList ) =
+                List.partition ((>=) paritionPoint) list
+        in
+            if List.length lowerList == (paritionPoint - lowerBound + 1) then
+                getLowestAbsentIntHelper higherList (paritionPoint + 1) upperBound
+            else
+                getLowestAbsentIntHelper lowerList lowerBound paritionPoint

@@ -228,6 +228,15 @@ setPieceLocation pieceID position pieces =
         pieces
 
 
+addPiece : Piece -> Pieces -> Pieces
+addPiece piece pieces =
+    let
+        lowestFreeIndex =
+            Extras.getLowestAbsentInt <| Dict.keys pieces
+    in
+        Dict.insert lowestFreeIndex piece pieces
+
+
 getPiecesAtPosition : Pieces -> Vec2 -> List Piece
 getPiecesAtPosition pieces position =
     pieces

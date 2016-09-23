@@ -166,31 +166,39 @@ movePieceToSpace pieces spaces index spaceIndex =
         , Spaces.getPosition spaceIndex spaces
         )
     of
-        ( Just piece, Just spacePosition ) ->
+        ( Just piece, Just targetSpacePosition ) ->
             case
                 ( piece.pieceType
-                , Pieces.getPiecesAtPosition pieces spacePosition
+                , Pieces.getPiecesAtPosition pieces targetSpacePosition
                 )
             of
                 {- They have a fight, Triangle wins. Triangle man! -}
                 ( Triangle _, piecesOnSpace ) ->
                     pieces
                         |> Extras.filterOutListFromDict piecesOnSpace
-                        |> Pieces.setPieceLocation index spacePosition
+                        |> Pieces.setPieceLocation index targetSpacePosition
 
                 ( WeirdThing _, piecesOnSpace ) ->
                     pieces
-                        |> bumpPieces spaces piece.position spacePosition
-                        |> Pieces.setPieceLocation index spacePosition
+                        |> bumpPieces spaces piece.position targetSpacePosition
+                        |> Pieces.setPieceLocation index targetSpacePosition
 
                 ( Eye _, piecesOnSpace ) ->
                     pieces
-                        |> Pieces.movePieces spacePosition piece.position
-                        |> Pieces.setPieceLocation index spacePosition
+                        |> Pieces.movePieces targetSpacePosition piece.position
+                        |> Pieces.setPieceLocation index targetSpacePosition
+
+                ( Petals control, piecesOnSpace ) ->
+                    if Pieces.noPiecesAtPosition pieces targetSpacePosition then
+                        pieces
+                            |> Pieces.setPieceLocation index targetSpacePosition
+                            |> Pieces.addPiece (Piece (Petals control) piece.position)
+                    else
+                        pieces
 
                 _ ->
-                    if Pieces.noPiecesAtPosition pieces spacePosition then
-                        Pieces.setPieceLocation index spacePosition pieces
+                    if Pieces.noPiecesAtPosition pieces targetSpacePosition then
+                        Pieces.setPieceLocation index targetSpacePosition pieces
                     else
                         pieces
 
