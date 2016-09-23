@@ -196,6 +196,20 @@ piece extras center pieceType =
                        ]
                     ++ otherAttributes
 
+            TwistedPlus control ->
+                polygonPiece
+                    <| [ fill (getFill control)
+                       , points (Points.twistedPlus center)
+                       ]
+                    ++ otherAttributes
+
+            Fangs control ->
+                polygonPiece
+                    <| [ fill (getFill control)
+                       , points (Points.fangs center)
+                       ]
+                    ++ otherAttributes
+
             Eye control ->
                 eyePiece
                     (fill (getFill control)

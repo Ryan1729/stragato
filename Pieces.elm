@@ -36,6 +36,8 @@ type PieceType
     | Triangle PieceControllability
     | Eye PieceControllability
     | Petals PieceControllability
+    | TwistedPlus PieceControllability
+    | Fangs PieceControllability
     | NoPiece
 
 
@@ -48,7 +50,7 @@ controllablePossibilities =
                 )
                 pieceControllabilityPossibilities
         )
-        [ Star, WeirdThing, Triangle, Eye, Petals ]
+        [ Star, WeirdThing, Triangle, Eye, Petals, TwistedPlus, Fangs ]
 
 
 pieceTypePossibilities =
@@ -71,6 +73,12 @@ getControllability pieceType =
             controllability
 
         Petals controllability ->
+            controllability
+
+        TwistedPlus controllability ->
+            controllability
+
+        Fangs controllability ->
             controllability
 
         NoPiece ->

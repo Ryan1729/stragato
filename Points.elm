@@ -89,19 +89,42 @@ petalsPointsList =
         |> List.map fractionToPointOnCircle
 
 
+twistedPlusPointsList : List Vec2
+twistedPlusPointsList =
+    List.map fractionToPointOnCircle
+        [ 1 / 24
+        , 17 / 24
+        , 19 / 24
+        , 19 / 24
+        , 11 / 24
+        , 13 / 24
+        , 5 / 24
+        , 7 / 24
+        , 23 / 24
+        ]
+
+
+fangsPointsList : List Vec2
+fangsPointsList =
+    List.map fractionToPointOnCircle
+        [ 3 / 24
+        , 1 / 24
+        , 23 / 24
+        , 21 / 24
+        , 5 / 24
+        , 7 / 24
+        , 15 / 24
+        , 13 / 24
+        , 11 / 24
+        , 9 / 24
+        , 17 / 24
+        , 19 / 24
+        ]
+
+
 pointsListToPiecePointsList : List Vec2 -> List Vec2
 pointsListToPiecePointsList =
     List.map (V2.scale 40)
-
-
-weirdThingPiecePointsList : List Vec2
-weirdThingPiecePointsList =
-    pointsListToPiecePointsList weirdThingPointsList
-
-
-petalsPiecePointsList : List Vec2
-petalsPiecePointsList =
-    pointsListToPiecePointsList petalsPointsList
 
 
 spaceScale =
@@ -142,16 +165,6 @@ trianglePointsList =
         ]
 
 
-starPiecePointsList : List Vec2
-starPiecePointsList =
-    pointsListToPiecePointsList starPointsList
-
-
-trianglePiecePointsList : List Vec2
-trianglePiecePointsList =
-    pointsListToPiecePointsList trianglePointsList
-
-
 v2ToSVGString : Vec2 -> String
 v2ToSVGString vector =
     let
@@ -164,33 +177,48 @@ v2ToSVGString vector =
         x ++ "," ++ y
 
 
-pointsListToSVGString : List Vec2 -> Vec2 -> String
-pointsListToSVGString pointsList center =
+piecePointsListToSVGString : List Vec2 -> Vec2 -> String
+piecePointsListToSVGString pointsList center =
     pointsList
         |> List.map (add center >> v2ToSVGString)
         |> String.join " "
 
 
+pointsListToSVGString : List Vec2 -> Vec2 -> String
+pointsListToSVGString =
+    pointsListToPiecePointsList >> piecePointsListToSVGString
+
+
 space : Vec2 -> String
 space =
-    pointsListToSVGString spacePointsList
+    piecePointsListToSVGString spacePointsList
 
 
 star : Vec2 -> String
 star =
-    pointsListToSVGString starPiecePointsList
+    pointsListToSVGString starPointsList
 
 
 weirdThing : Vec2 -> String
 weirdThing =
-    pointsListToSVGString weirdThingPiecePointsList
+    pointsListToSVGString weirdThingPointsList
 
 
 triangle : Vec2 -> String
 triangle =
-    pointsListToSVGString trianglePiecePointsList
+    pointsListToSVGString trianglePointsList
 
 
 petals : Vec2 -> String
 petals =
-    pointsListToSVGString petalsPiecePointsList
+    pointsListToSVGString petalsPointsList
+
+
+twistedPlus : Vec2 -> String
+twistedPlus =
+    pointsListToSVGString twistedPlusPointsList
+
+
+fangs : Vec2 -> String
+fangs =
+    pointsListToSVGString fangsPointsList
