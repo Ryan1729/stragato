@@ -48,7 +48,7 @@ defaultState =
     , tabIndex = 0
     , gameResult = TBD
     , ignoreGameResult = False
-    , gameEndCons = GameEndCons (NoPiecesControlledBy Computer) (NoPiecesControlledBy Player)
+    , gameEndCons = GameEndCons (NoPiecesOfGivenTypeCanMove (Star Both)) (NoPiecesControlledBy Player)
     , debug = True
     , showSpaceOutlines = True
     , allowMovingAllPieces = False
@@ -87,6 +87,7 @@ type GameEndCons
 type GamePredicate
     = NoPiecesControlledBy PieceControllability
     | NoPiecesStrictlyControlledBy PieceControllability
+    | NoPiecesOfGivenTypeCanMove PieceType
 
 
 gamePredicatePossibilities =
@@ -99,6 +100,7 @@ gamePredicatePossibilities =
     , NoPiecesStrictlyControlledBy Both
     , NoPiecesStrictlyControlledBy None
     ]
+        ++ List.map NoPiecesOfGivenTypeCanMove Pieces.actualPieceTypePossibilities
 
 
 decrementGamePredicate : GamePredicate -> GamePredicate

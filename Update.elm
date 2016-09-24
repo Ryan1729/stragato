@@ -1,4 +1,4 @@
-module Update exposing (..)
+module Update exposing (update)
 
 import Model exposing (Model, GamePredicate(..), GameEndCons(..), GameResult)
 import Msg exposing (Msg(..))
@@ -35,7 +35,7 @@ update message model =
                 { model
                     | pieceSelected = Nothing
                     , pieces = newPieces
-                    , gameResult = getGameResult model.gameEndCons newPieces
+                    , gameResult = getGameResult model newPieces
                 }
                     ! [ Ports.sound "clack" ]
 
@@ -56,7 +56,7 @@ update message model =
                     | seed = newSeed
                     , spaces = spaces
                     , pieces = pieces
-                    , gameResult = getGameResult model.gameEndCons pieces
+                    , gameResult = getGameResult model pieces
                 }
                     ! []
 
@@ -206,26 +206,60 @@ movePieceToSpace pieces spaces index spaceIndex =
             pieces
 
 
-getGameResult : GameEndCons -> Pieces -> GameResult
-getGameResult gameEndCons pieces =
-    case gameEndCons of
+getGameResult : Model -> Pieces -> GameResult
+getGameResult model pieces =
+    case model.gameEndCons of
         GameEndCons winCondition loseCondition ->
-            if checkPredicate winCondition pieces then
+            if checkPredicate model winCondition pieces then
                 Model.Win
-            else if checkPredicate loseCondition pieces then
+            else if checkPredicate model loseCondition pieces then
                 Model.Loss
             else
                 Model.TBD
 
 
-checkPredicate : GamePredicate -> Pieces -> Bool
-checkPredicate predicate pieces =
+checkPredicate : Model -> GamePredicate -> Pieces -> Bool
+checkPredicate model predicate pieces =
     case predicate of
         NoPiecesControlledBy controllability ->
             Pieces.controllabiltyCount controllability pieces <= 0
 
         NoPiecesStrictlyControlledBy controllability ->
             Pieces.strictControllabiltyCount controllability pieces <= 0
+
+        NoPiecesOfGivenTypeCanMove piecetype ->
+            let
+                matchingPieceIndicies =
+                    Dict.toList pieces
+                        |> List.filterMap
+                            (\( index, piece ) ->
+                                if piece.pieceType == piecetype then
+                                    Just index
+                                else
+                                    Nothing
+                            )
+
+                indexPairs =
+                    List.concatMap
+                        (\spaceIndex ->
+                            List.map
+                                (\pieceIndex ->
+                                    ( pieceIndex, spaceIndex )
+                                )
+                                matchingPieceIndicies
+                        )
+                        <| Dict.keys model.spaces
+            in
+                not
+                    <| List.any
+                        (\( index, spaceIndex ) ->
+                            PiecesAndSpaces.canPieceMoveToSpace model.allowSelfMoves
+                                pieces
+                                model.spaces
+                                index
+                                spaceIndex
+                        )
+                        indexPairs
 
 
 randomAIMove : Model -> Model
@@ -243,7 +277,7 @@ randomAIMove model =
                     { model
                         | pieces = pieces
                         , seed = newSeed
-                        , gameResult = getGameResult model.gameEndCons pieces
+                        , gameResult = getGameResult model pieces
                     }
 
             Nothing ->

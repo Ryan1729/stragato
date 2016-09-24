@@ -41,7 +41,7 @@ type PieceType
     | NoPiece
 
 
-controllablePossibilities =
+actualPieceTypePossibilities =
     List.concatMap
         (\f ->
             List.concatMap
@@ -54,7 +54,7 @@ controllablePossibilities =
 
 
 pieceTypePossibilities =
-    controllablePossibilities ++ [ NoPiece ]
+    actualPieceTypePossibilities ++ [ NoPiece ]
 
 
 getControllability : PieceType -> PieceControllability

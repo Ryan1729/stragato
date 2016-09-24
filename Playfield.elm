@@ -143,14 +143,14 @@ getPieceAttributes model currentID currentPiece =
                         ]
 
         Nothing ->
-            if shouldAllowMoving model currentPiece then
+            if shouldAllowSelecting model currentPiece then
                 [ onClick <| SelectPiece currentID, stroke "grey" ]
             else
                 [ cursor "not-allowed", stroke "grey" ]
 
 
-shouldAllowMoving : Model -> Piece -> Bool
-shouldAllowMoving model currentPiece =
+shouldAllowSelecting : Model -> Piece -> Bool
+shouldAllowSelecting model currentPiece =
     Model.canMove model
         && (model.allowMovingAllPieces
                 || Pieces.isPlayerControllable currentPiece
