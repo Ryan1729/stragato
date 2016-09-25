@@ -6,11 +6,9 @@ import Svg exposing (Svg, svg, rect, polygon, Attribute)
 import Svg.Attributes exposing (..)
 import Svg.Events exposing (onClick, on)
 import Msg exposing (Msg(HitTable, MakeAIMove))
-import Mouse
-import Json.Decode
 import DevControls
 import Playfield
-import Model exposing (Model)
+import Model exposing (Model, GameResult(..))
 import Points
 
 
@@ -48,6 +46,10 @@ px thing =
     (toString thing) ++ "px"
 
 
+fontHeightFraction =
+    0.05
+
+
 view : Model -> Html Msg
 view model =
     let
@@ -59,6 +61,17 @@ view model =
 
         viewHeight =
             playfieldHeight * model.viewScale
+
+        gameResultText =
+            case model.gameResult of
+                TBD ->
+                    []
+
+                Win ->
+                    [ makeBottomCenterText viewWidth viewHeight "You Win" ]
+
+                Loss ->
+                    [ makeBottomCenterText viewWidth viewHeight "You Lost" ]
 
         playfield =
             [ svg
@@ -73,6 +86,7 @@ view model =
                 <| background
                 ++ Playfield.getSpaces model
                 ++ Playfield.getPieces model
+                ++ gameResultText
             , Html.button
                 [ onClick MakeAIMove
                 , HA.style
@@ -97,3 +111,21 @@ view model =
         (div []
             elements
         )
+
+
+makeBottomCenterText : Float -> Float -> String -> Svg Msg
+makeBottomCenterText viewWidth viewHeight string =
+    let
+        fontHeightString =
+            viewHeight
+                * fontHeightFraction
+                |> truncate
+                |> toString
+    in
+        Svg.text'
+            [ x <| toString (viewWidth / 2)
+            , y <| toString (viewHeight * (1 - fontHeightFraction))
+            , fontSize fontHeightString
+            , textAnchor "middle"
+            ]
+            [ Svg.text string ]
