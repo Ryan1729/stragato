@@ -50,7 +50,7 @@ actualPieceTypePossibilities =
                 )
                 pieceControllabilityPossibilities
         )
-        [ Star, WeirdThing, Triangle, Eye, Petals, TwistedPlus, Fangs ]
+        [ Star, WeirdThing, Triangle, Eye, Petals, Fangs, TwistedPlus ]
 
 
 pieceTypePossibilities =

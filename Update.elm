@@ -13,6 +13,7 @@ import Pieces exposing (Pieces, Piece, PieceType(..))
 import PiecesAndSpaces
 import Dict exposing (Dict)
 import Deck
+import Movement
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -30,7 +31,7 @@ update message model =
         MovePiece pieceID spaceID ->
             let
                 newPieces =
-                    getNewPieces model pieceID spaceID
+                    Movement.getNewPieces model pieceID spaceID
             in
                 { model
                     | pieceSelected = Nothing
@@ -145,65 +146,26 @@ update message model =
                 model
 
 
-getNewPieces : Model -> Int -> SpaceIndex -> Pieces
-getNewPieces model pieceID spaceID =
-    if
-        PiecesAndSpaces.canPieceMoveToSpace model.allowSelfMoves
-            model.pieces
-            model.spaces
-            pieceID
-            spaceID
-    then
-        movePieceToSpace model.pieces model.spaces pieceID spaceID
-    else
-        model.pieces
+randomAIMove : Model -> Model
+randomAIMove model =
+    let
+        moveList =
+            Movement.getPossibleMoveList model
+    in
+        case Deck.maybeFromDeck moveList model.seed of
+            Just ( ( pieceID, spaceID ), _, newSeed ) ->
+                let
+                    pieces =
+                        Movement.getNewPieces model pieceID spaceID
+                in
+                    { model
+                        | pieces = pieces
+                        , seed = newSeed
+                        , gameResult = getGameResult model pieces
+                    }
 
-
-movePieceToSpace : Pieces -> Spaces -> Int -> SpaceIndex -> Pieces
-movePieceToSpace pieces spaces index spaceIndex =
-    case
-        ( Dict.get index pieces
-        , Spaces.getPosition spaceIndex spaces
-        )
-    of
-        ( Just piece, Just targetSpacePosition ) ->
-            case
-                ( piece.pieceType
-                , Pieces.getPiecesAtPosition pieces targetSpacePosition
-                )
-            of
-                {- They have a fight, Triangle wins. Triangle man! -}
-                ( Triangle _, piecesOnSpace ) ->
-                    pieces
-                        |> Extras.filterOutListFromDict piecesOnSpace
-                        |> Pieces.setPieceLocation index targetSpacePosition
-
-                ( WeirdThing _, piecesOnSpace ) ->
-                    pieces
-                        |> bumpPieces spaces piece.position targetSpacePosition
-                        |> Pieces.setPieceLocation index targetSpacePosition
-
-                ( Eye _, piecesOnSpace ) ->
-                    pieces
-                        |> Pieces.movePieces targetSpacePosition piece.position
-                        |> Pieces.setPieceLocation index targetSpacePosition
-
-                ( Petals control, piecesOnSpace ) ->
-                    if Pieces.noPiecesAtPosition pieces targetSpacePosition then
-                        pieces
-                            |> Pieces.setPieceLocation index targetSpacePosition
-                            |> Pieces.addPiece (Piece (Petals control) piece.position)
-                    else
-                        pieces
-
-                _ ->
-                    if Pieces.noPiecesAtPosition pieces targetSpacePosition then
-                        Pieces.setPieceLocation index targetSpacePosition pieces
-                    else
-                        pieces
-
-        _ ->
-            pieces
+            Nothing ->
+                model
 
 
 getGameResult : Model -> Pieces -> GameResult
@@ -260,99 +222,6 @@ checkPredicate model predicate pieces =
                                 spaceIndex
                         )
                         indexPairs
-
-
-randomAIMove : Model -> Model
-randomAIMove model =
-    let
-        moveList =
-            getPossibleMoveList model
-    in
-        case Deck.maybeFromDeck moveList model.seed of
-            Just ( ( pieceID, spaceID ), _, newSeed ) ->
-                let
-                    pieces =
-                        getNewPieces model pieceID spaceID
-                in
-                    { model
-                        | pieces = pieces
-                        , seed = newSeed
-                        , gameResult = getGameResult model pieces
-                    }
-
-            Nothing ->
-                model
-
-
-getPossibleMoveList : Model -> List ( Int, SpaceIndex )
-getPossibleMoveList model =
-    let
-        unoccupiedSpaceIndicies =
-            PiecesAndSpaces.getUnoccupiedSpaceIndicies model.pieces model.spaces
-
-        cpuMovablePieces =
-            Pieces.getCPUMovablePieces model.pieces
-
-        nonSelfMoves =
-            cpuMovablePieces
-                `Extras.andThen` \x ->
-                                    case Dict.get x model.pieces of
-                                        Just piece ->
-                                            let
-                                                availableIndicies =
-                                                    case piece.pieceType of
-                                                        Star _ ->
-                                                            unoccupiedSpaceIndicies
-
-                                                        _ ->
-                                                            Spaces.getNonMatchingSpaceIndicies (Spaces.getActualSpaces model.spaces)
-                                                                piece.position
-                                            in
-                                                availableIndicies
-                                                    `Extras.andThen` \y ->
-                                                                        [ ( x, y ) ]
-
-                                        Nothing ->
-                                            []
-    in
-        if model.allowSelfMoves then
-            nonSelfMoves
-                ++ PiecesAndSpaces.getSelfMoves cpuMovablePieces
-                    model.pieces
-                    model.spaces
-        else
-            nonSelfMoves
-
-
-bumpPieces : Spaces -> Vec2 -> Vec2 -> Pieces -> Pieces
-bumpPieces spaces piecePosition spacePosition pieces =
-    case getTargetSpacePosition spaces piecePosition spacePosition of
-        Just targetSpacePosition ->
-            if Spaces.positionIsOnActualSpace spaces targetSpacePosition then
-                Pieces.movePieces spacePosition targetSpacePosition pieces
-            else
-                Pieces.removePiecesAtPosition spacePosition pieces
-
-        Nothing ->
-            Pieces.removePiecesAtPosition spacePosition pieces
-
-
-getTargetSpacePosition : Spaces -> Vec2 -> Vec2 -> Maybe Vec2
-getTargetSpacePosition spaces piecePosition spacePosition =
-    let
-        maybeBumpingSpaceID =
-            Spaces.getSpaceFromPosition spaces piecePosition
-
-        maybeBumpedSpaceID =
-            Spaces.getSpaceFromPosition spaces spacePosition
-    in
-        Maybe.map2 getTargetID maybeBumpingSpaceID maybeBumpedSpaceID
-            `Maybe.andThen` (\targetID -> Dict.get targetID spaces)
-            |> Maybe.map .position
-
-
-getTargetID ( bumpingX, bumpingY ) ( bumpedX, bumpedY ) =
-    ( bumpedX + (bumpedX - bumpingX), bumpedY + (bumpedY - bumpingY) )
 
 
 higherScale : Float -> Float
