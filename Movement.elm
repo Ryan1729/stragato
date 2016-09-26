@@ -1,7 +1,7 @@
 module Movement exposing (..)
 
 import Spaces exposing (Spaces, SpaceType(..), SpaceIndex)
-import Pieces exposing (Pieces, Piece, PieceType(..))
+import Pieces exposing (Pieces, Piece, PieceType(..), MoveType(..))
 import PiecesAndSpaces
 import Model exposing (Model)
 import Extras
@@ -13,7 +13,7 @@ import Math.Vector2 as V2 exposing (Vec2, vec2)
 getNewPieces : Model -> Int -> SpaceIndex -> Pieces
 getNewPieces model pieceID spaceID =
     if
-        PiecesAndSpaces.canPieceMoveToSpace model.allowSelfMoves
+        canPieceMoveToSpace model.allowSelfMoves
             model.pieces
             model.spaces
             pieceID
@@ -62,7 +62,7 @@ movePieceToSpace pieces spaces index spaceIndex =
                     if Pieces.noPiecesAtPosition pieces targetSpacePosition then
                         pieces
                             |> Pieces.setPieceLocation index targetSpacePosition
-                            |> Pieces.addPiece (Piece (Petals control) piece.position)
+                            |> Pieces.addPiece (Piece (Petals control) piece.position Unoccupied)
                     else
                         pieces
 
@@ -114,6 +114,32 @@ getPossibleMoveList model =
                     model.spaces
         else
             nonSelfMoves
+
+
+canPieceMoveToSpace : Bool -> Pieces -> Spaces -> Int -> SpaceIndex -> Bool
+canPieceMoveToSpace allowSelfMoves pieces spaces index spaceIndex =
+    if allowSelfMoves || PiecesAndSpaces.pieceIsNotAtSpace pieces spaces index spaceIndex then
+        let
+            maybePiece =
+                Dict.get index pieces
+        in
+            Maybe.map
+                (\piece ->
+                    case piece.moveType of
+                        Occupied ->
+                            PiecesAndSpaces.isSpaceUnoccupied pieces spaces spaceIndex
+                                |> not
+
+                        Unoccupied ->
+                            PiecesAndSpaces.isSpaceUnoccupied pieces spaces spaceIndex
+
+                        AnySpace ->
+                            Spaces.indexIsOfActualSpace spaces spaceIndex
+                )
+                maybePiece
+                |> Maybe.withDefault False
+    else
+        False
 
 
 bumpPiecesNTimes : Int -> Spaces -> Vec2 -> Vec2 -> Pieces -> Pieces

@@ -59,29 +59,3 @@ pieceIsNotAtSpace pieces spaces index spaceIndex =
 
         _ ->
             True
-
-
-canPieceMoveToSpace : Bool -> Pieces -> Spaces -> Int -> SpaceIndex -> Bool
-canPieceMoveToSpace allowSelfMoves pieces spaces index spaceIndex =
-    if allowSelfMoves || pieceIsNotAtSpace pieces spaces index spaceIndex then
-        let
-            maybePiece =
-                Dict.get index pieces
-        in
-            Maybe.map
-                (\piece ->
-                    case piece.pieceType of
-                        --TODO read movability instead of special casing
-                        Star _ ->
-                            isSpaceUnoccupied pieces spaces spaceIndex
-
-                        Fangs _ ->
-                            isSpaceUnoccupied pieces spaces spaceIndex
-
-                        _ ->
-                            Spaces.indexIsOfActualSpace spaces spaceIndex
-                )
-                maybePiece
-                |> Maybe.withDefault False
-    else
-        False

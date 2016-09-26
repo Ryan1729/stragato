@@ -9,10 +9,11 @@ import Math.Vector2 as V2 exposing (Vec2, vec2, getX, getY, add, scale)
 import Points
 import Array
 import Spaces exposing (Spaces, Space, SpaceType(..), SpaceIndex)
-import Pieces exposing (Piece, PieceType(..), PieceControllability(..))
+import Pieces exposing (Piece, PieceType(..), PieceControllability(..), MoveType(..))
 import PiecesAndSpaces
 import Dict exposing (Dict)
 import String
+import Movement
 
 
 getPieces model =
@@ -53,7 +54,7 @@ getPieceSelectedInfo model spaceIndex =
     Maybe.map
         (\index ->
             ( index
-            , PiecesAndSpaces.canPieceMoveToSpace model.allowSelfMoves
+            , Movement.canPieceMoveToSpace model.allowSelfMoves
                 model.pieces
                 model.spaces
                 index

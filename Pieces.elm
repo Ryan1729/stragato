@@ -8,11 +8,25 @@ import Extras
 type alias Piece =
     { pieceType : PieceType
     , position : Vec2
+    , moveType : MoveType
     }
 
 
 type alias Pieces =
     Dict Int Piece
+
+
+type MoveType
+    = Occupied
+    | Unoccupied
+    | AnySpace
+
+
+moveTypePossibilities =
+    [ Occupied
+    , Unoccupied
+    , AnySpace
+    ]
 
 
 type PieceControllability

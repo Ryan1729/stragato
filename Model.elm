@@ -8,7 +8,7 @@ import Points
 import Extras
 import Dict exposing (Dict)
 import Spaces exposing (Spaces, Space, SpaceType(..))
-import Pieces exposing (Pieces, Piece, PieceType(..), PieceControllability(..))
+import Pieces exposing (Pieces, Piece, PieceType(..), PieceControllability(..), MoveType(..))
 import Deck
 
 
@@ -21,6 +21,7 @@ type alias Model =
     , gridHeight : Int
     , spaceDeck : List SpaceType
     , pieceDeck : List PieceType
+    , moveTypeDeck : List MoveType
     , seed : Seed
     , tabIndex : Int
     , gameResult : GameResult
@@ -44,7 +45,8 @@ defaultState =
     , gridWidth = defaultWidth
     , gridHeight = defaultHeight
     , spaceDeck = defaultSpaceDeck
-    , pieceDeck = defaultPieceDeck
+    , pieceDeck = defaultPieceTypeDeck
+    , moveTypeDeck = defaultMoveTypeDeck
     , tabIndex = 0
     , gameResult = TBD
     , ignoreGameResult = False
@@ -138,16 +140,20 @@ defaultSpaces =
             (Random.initialSeed -42)
 
 
-defaultPieceDeck =
+defaultPieceTypeDeck =
     Pieces.pieceTypePossibilities
         ++ [ NoPiece
              --  , NoPiece
            ]
 
 
+defaultMoveTypeDeck =
+    Pieces.moveTypePossibilities
+
+
 defaultPieces : Pieces
 defaultPieces =
-    makePieces defaultSpaces defaultPieceDeck (Random.initialSeed -421)
+    makePieces defaultSpaces defaultPieceTypeDeck defaultMoveTypeDeck (Random.initialSeed -421)
         |> fst
 
 
@@ -185,20 +191,29 @@ makeGridPoints width height =
             )
 
 
-makePieces : Spaces -> List PieceType -> Seed -> ( Pieces, Seed )
-makePieces spaces deck seed =
+makePieces : Spaces -> List PieceType -> List MoveType -> Seed -> ( Pieces, Seed )
+makePieces spaces pieceTypeDeck moveTypeDeck seed =
     let
         filteredPositions =
             Spaces.getActualSpacePositions spaces
 
-        ( pieceTypes, newSeed ) =
+        pieceAmount =
+            List.length filteredPositions
+
+        ( pieceTypes, postPieceTypesSeed ) =
             Deck.fillListFromDeck NoPiece
-                deck
-                (List.length filteredPositions)
+                pieceTypeDeck
+                pieceAmount
                 seed
 
+        ( moveTypes, newSeed ) =
+            Deck.fillListFromDeck AnySpace
+                moveTypeDeck
+                pieceAmount
+                postPieceTypesSeed
+
         pieces =
-            List.map2 Piece pieceTypes filteredPositions
+            List.map3 Piece pieceTypes filteredPositions moveTypes
                 |> List.indexedMap (,)
                 |> Dict.fromList
                 |> Pieces.filterOutNonActualPieces

@@ -51,6 +51,7 @@ update message model =
                 ( pieces, newSeed ) =
                     Model.makePieces spaces
                         model.pieceDeck
+                        model.moveTypeDeck
                         postSpacesSeed
             in
                 { model
@@ -215,7 +216,7 @@ checkPredicate model predicate pieces =
                 not
                     <| List.any
                         (\( index, spaceIndex ) ->
-                            PiecesAndSpaces.canPieceMoveToSpace model.allowSelfMoves
+                            Movement.canPieceMoveToSpace model.allowSelfMoves
                                 pieces
                                 model.spaces
                                 index
