@@ -16397,10 +16397,13 @@ var _user$project$PiecesAndSpaces$canPieceMoveToSpace = F5(
 					_elm_lang$core$Maybe$map,
 					function (piece) {
 						var _p1 = piece.pieceType;
-						if (_p1.ctor === 'Star') {
-							return A3(_user$project$PiecesAndSpaces$isSpaceUnoccupied, pieces, spaces, spaceIndex);
-						} else {
-							return A2(_user$project$Spaces$indexIsOfActualSpace, spaces, spaceIndex);
+						switch (_p1.ctor) {
+							case 'Star':
+								return A3(_user$project$PiecesAndSpaces$isSpaceUnoccupied, pieces, spaces, spaceIndex);
+							case 'Fangs':
+								return A3(_user$project$PiecesAndSpaces$isSpaceUnoccupied, pieces, spaces, spaceIndex);
+							default:
+								return A2(_user$project$Spaces$indexIsOfActualSpace, spaces, spaceIndex);
 						}
 					},
 					maybePiece));
