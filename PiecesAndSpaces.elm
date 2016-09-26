@@ -71,7 +71,11 @@ canPieceMoveToSpace allowSelfMoves pieces spaces index spaceIndex =
             Maybe.map
                 (\piece ->
                     case piece.pieceType of
+                        --TODO read movability instead of special casing
                         Star _ ->
+                            isSpaceUnoccupied pieces spaces spaceIndex
+
+                        Fangs _ ->
                             isSpaceUnoccupied pieces spaces spaceIndex
 
                         _ ->
