@@ -3,7 +3,7 @@ module Msg exposing (..)
 import Mouse
 import Material
 import Spaces exposing (SpaceType)
-import Pieces exposing (PieceType)
+import Pieces exposing (ProtoPiece)
 
 
 type Msg
@@ -18,8 +18,8 @@ type Msg
     | Mdl (Material.Msg Msg)
     | SpaceDeckIncrement SpaceType
     | SpaceDeckDecrement SpaceType
-    | PieceDeckIncrement PieceType
-    | PieceDeckDecrement PieceType
+    | PieceDeckIncrement ProtoPiece
+    | PieceDeckDecrement ProtoPiece
     | IncrementGridWidth
     | DecrementGridWidth
     | IncrementGridHeight

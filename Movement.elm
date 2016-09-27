@@ -1,7 +1,7 @@
 module Movement exposing (..)
 
 import Spaces exposing (Spaces, SpaceType(..), SpaceIndex)
-import Pieces exposing (Pieces, Piece, PieceType(..), MoveType(..))
+import Pieces exposing (Pieces, Piece, PieceType, Shape(..), MoveType(..))
 import PiecesAndSpaces
 import Model exposing (Model)
 import Extras
@@ -33,36 +33,37 @@ movePieceToSpace pieces spaces index spaceIndex =
     of
         ( Just piece, Just targetSpacePosition ) ->
             case
-                ( piece.pieceType
+                ( piece.pieceType.shape
+                , piece.pieceType.controller
                 , Pieces.getPiecesAtPosition pieces targetSpacePosition
                 )
             of
                 {- They have a fight, Triangle wins. Triangle man! -}
-                ( Triangle _, piecesOnSpace ) ->
+                ( Triangle, _, piecesOnSpace ) ->
                     pieces
                         |> Extras.filterOutListFromDict piecesOnSpace
                         |> Pieces.setPieceLocation index targetSpacePosition
 
-                ( WeirdThing _, piecesOnSpace ) ->
+                ( WeirdThing, _, piecesOnSpace ) ->
                     pieces
                         |> bumpPiecesOnce spaces piece.position targetSpacePosition
                         |> Pieces.setPieceLocation index targetSpacePosition
 
-                ( TwistedPlus _, piecesOnSpace ) ->
+                ( TwistedPlus, _, piecesOnSpace ) ->
                     pieces
                         |> bumpPiecesNTimes 2 spaces piece.position targetSpacePosition
                         |> Pieces.setPieceLocation index targetSpacePosition
 
-                ( Eye _, piecesOnSpace ) ->
+                ( Eye, _, piecesOnSpace ) ->
                     pieces
                         |> Pieces.movePieces targetSpacePosition piece.position
                         |> Pieces.setPieceLocation index targetSpacePosition
 
-                ( Petals control, piecesOnSpace ) ->
+                ( Petals, control, piecesOnSpace ) ->
                     if Pieces.noPiecesAtPosition pieces targetSpacePosition then
                         pieces
                             |> Pieces.setPieceLocation index targetSpacePosition
-                            |> Pieces.addPiece (Piece (Petals control) piece.position Unoccupied)
+                            |> Pieces.addPiece (Piece (PieceType Pieces.Petals control Unoccupied) piece.position)
                     else
                         pieces
 
@@ -79,9 +80,14 @@ movePieceToSpace pieces spaces index spaceIndex =
 getPossibleMoveList : Model -> List ( Int, SpaceIndex )
 getPossibleMoveList model =
     let
+        --TODO partition instead of iterating twice
         unoccupiedSpaceIndicies =
             PiecesAndSpaces.getUnoccupiedSpaceIndicies model.pieces model.spaces
 
+        occupiedSpaceIndicies =
+            PiecesAndSpaces.getOccupiedSpaceIndicies model.pieces model.spaces
+
+        --End TODO
         cpuMovablePieces =
             Pieces.getCPUMovablePieces model.pieces
 
@@ -92,11 +98,14 @@ getPossibleMoveList model =
                                         Just piece ->
                                             let
                                                 availableIndicies =
-                                                    case piece.pieceType of
-                                                        Star _ ->
+                                                    case piece.pieceType.moveType of
+                                                        Occupied ->
+                                                            occupiedSpaceIndicies
+
+                                                        Unoccupied ->
                                                             unoccupiedSpaceIndicies
 
-                                                        _ ->
+                                                        AnySpace ->
                                                             Spaces.getNonMatchingSpaceIndicies (Spaces.getActualSpaces model.spaces)
                                                                 piece.position
                                             in
@@ -125,7 +134,7 @@ canPieceMoveToSpace allowSelfMoves pieces spaces index spaceIndex =
         in
             Maybe.map
                 (\piece ->
-                    case piece.moveType of
+                    case piece.pieceType.moveType of
                         Occupied ->
                             PiecesAndSpaces.isSpaceUnoccupied pieces spaces spaceIndex
                                 |> not

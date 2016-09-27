@@ -8,7 +8,6 @@ import Extras
 type alias Piece =
     { pieceType : PieceType
     , position : Vec2
-    , moveType : MoveType
     }
 
 
@@ -29,7 +28,7 @@ moveTypePossibilities =
     ]
 
 
-type PieceControllability
+type Controller
     = Player
     | Computer
     | Both
@@ -44,62 +43,50 @@ pieceControllabilityPossibilities =
     ]
 
 
-type PieceType
-    = Star PieceControllability
-    | WeirdThing PieceControllability
-    | Triangle PieceControllability
-    | Eye PieceControllability
-    | Petals PieceControllability
-    | TwistedPlus PieceControllability
-    | Fangs PieceControllability
+type Shape
+    = Star
+    | WeirdThing
+    | Triangle
+    | Eye
+    | Petals
+    | TwistedPlus
+    | Fangs
+
+
+shapePossibilities =
+    [ Star, WeirdThing, Triangle, Eye, Petals, Fangs, TwistedPlus ]
+
+
+type ProtoPiece
+    = ActualPiece PieceType
     | NoPiece
+
+
+type alias PieceType =
+    { shape : Shape
+    , controller : Controller
+    , moveType : MoveType
+    }
 
 
 actualPieceTypePossibilities =
     List.concatMap
-        (\f ->
+        (\shape ->
             List.concatMap
-                (\x ->
-                    [ f x ]
+                (\controller ->
+                    List.map (PieceType shape controller)
+                        moveTypePossibilities
                 )
                 pieceControllabilityPossibilities
         )
-        [ Star, WeirdThing, Triangle, Eye, Petals, Fangs, TwistedPlus ]
+        shapePossibilities
 
 
-pieceTypePossibilities =
-    actualPieceTypePossibilities ++ [ NoPiece ]
+protoPiecePossibilities =
+    List.map ActualPiece actualPieceTypePossibilities ++ [ NoPiece ]
 
 
-getControllability : PieceType -> PieceControllability
-getControllability pieceType =
-    case pieceType of
-        Star controllability ->
-            controllability
-
-        WeirdThing controllability ->
-            controllability
-
-        Triangle controllability ->
-            controllability
-
-        Eye controllability ->
-            controllability
-
-        Petals controllability ->
-            controllability
-
-        TwistedPlus controllability ->
-            controllability
-
-        Fangs controllability ->
-            controllability
-
-        NoPiece ->
-            None
-
-
-controllabiltyCount : PieceControllability -> Pieces -> Int
+controllabiltyCount : Controller -> Pieces -> Int
 controllabiltyCount controlability =
     case controlability of
         Player ->
@@ -115,7 +102,7 @@ controllabiltyCount controlability =
             noneControlledCount
 
 
-strictControllabiltyCount : PieceControllability -> Pieces -> Int
+strictControllabiltyCount : Controller -> Pieces -> Int
 strictControllabiltyCount controlability =
     case controlability of
         Player ->
@@ -135,7 +122,7 @@ isComputerControllable : Piece -> Bool
 isComputerControllable piece =
     let
         controllability =
-            getControllability piece.pieceType
+            piece.pieceType.controller
     in
         controllability == Computer || controllability == Both
 
@@ -144,7 +131,7 @@ isPlayerControllable : Piece -> Bool
 isPlayerControllable piece =
     let
         controllability =
-            getControllability piece.pieceType
+            piece.pieceType.controller
     in
         controllability == Player || controllability == Both
 
@@ -153,7 +140,7 @@ isStrictlyComputerControllable : Piece -> Bool
 isStrictlyComputerControllable piece =
     let
         controllability =
-            getControllability piece.pieceType
+            piece.pieceType.controller
     in
         controllability == Computer
 
@@ -162,7 +149,7 @@ isStrictlyPlayerControllable : Piece -> Bool
 isStrictlyPlayerControllable piece =
     let
         controllability =
-            getControllability piece.pieceType
+            piece.pieceType.controller
     in
         controllability == Player
 
@@ -171,7 +158,7 @@ isBothControllable : Piece -> Bool
 isBothControllable piece =
     let
         controllability =
-            getControllability piece.pieceType
+            piece.pieceType.controller
     in
         controllability == Both
 
@@ -180,7 +167,7 @@ isNoneControllable : Piece -> Bool
 isNoneControllable piece =
     let
         controllability =
-            getControllability piece.pieceType
+            piece.pieceType.controller
     in
         controllability == None
 
@@ -226,11 +213,6 @@ countPiecesThatFufillPredicate predicate pieces =
         pieces
 
 
-isActualPiece : Piece -> Bool
-isActualPiece piece =
-    piece.pieceType /= NoPiece
-
-
 setPieceLocation : Int -> Vec2 -> Pieces -> Pieces
 setPieceLocation pieceID position pieces =
     Dict.update pieceID
@@ -264,9 +246,7 @@ noPiecesAtPosition pieces position =
         piecesOnSpace =
             getPiecesAtPosition pieces position
     in
-        piecesOnSpace
-            |> List.filter isActualPiece
-            |> (==) []
+        piecesOnSpace == []
 
 
 getCPUMovablePieces : Pieces -> List Int
@@ -300,8 +280,3 @@ removePiecesAtPosition position pieces =
             piece.position /= position
         )
         pieces
-
-
-filterOutNonActualPieces : Pieces -> Pieces
-filterOutNonActualPieces pieces =
-    Dict.filter (Extras.ignoreFirstArg isActualPiece) pieces

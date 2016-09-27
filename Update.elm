@@ -9,7 +9,7 @@ import Random
 import Extras
 import Material
 import Spaces exposing (Spaces, SpaceType(..), SpaceIndex)
-import Pieces exposing (Pieces, Piece, PieceType(..))
+import Pieces exposing (Pieces, Piece, PieceType)
 import PiecesAndSpaces
 import Dict exposing (Dict)
 import Deck

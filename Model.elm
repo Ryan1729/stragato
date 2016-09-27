@@ -8,7 +8,7 @@ import Points
 import Extras
 import Dict exposing (Dict)
 import Spaces exposing (Spaces, Space, SpaceType(..))
-import Pieces exposing (Pieces, Piece, PieceType(..), PieceControllability(..), MoveType(..))
+import Pieces exposing (Pieces, Piece, PieceType, Controller(..), MoveType(..), ProtoPiece(..))
 import Deck
 
 
@@ -20,7 +20,7 @@ type alias Model =
     , gridWidth : Int
     , gridHeight : Int
     , spaceDeck : List SpaceType
-    , pieceDeck : List PieceType
+    , pieceDeck : List ProtoPiece
     , moveTypeDeck : List MoveType
     , seed : Seed
     , tabIndex : Int
@@ -50,7 +50,15 @@ defaultState =
     , tabIndex = 0
     , gameResult = TBD
     , ignoreGameResult = False
-    , gameEndCons = GameEndCons (NoPiecesOfGivenTypeCanMove (Star Both)) (NoPiecesControlledBy Player)
+    , gameEndCons =
+        GameEndCons
+            (NoPiecesOfGivenTypeCanMove
+                (PieceType Pieces.Star
+                    Pieces.Both
+                    Pieces.Unoccupied
+                )
+            )
+            (NoPiecesControlledBy Player)
     , debug = True
     , showSpaceOutlines = True
     , allowMovingAllPieces = False
@@ -87,8 +95,8 @@ type GameEndCons
 
 
 type GamePredicate
-    = NoPiecesControlledBy PieceControllability
-    | NoPiecesStrictlyControlledBy PieceControllability
+    = NoPiecesControlledBy Controller
+    | NoPiecesStrictlyControlledBy Controller
     | NoPiecesOfGivenTypeCanMove PieceType
 
 
@@ -141,7 +149,7 @@ defaultSpaces =
 
 
 defaultPieceTypeDeck =
-    Pieces.pieceTypePossibilities
+    Pieces.protoPiecePossibilities
         ++ [ NoPiece
              --  , NoPiece
            ]
@@ -191,8 +199,8 @@ makeGridPoints width height =
             )
 
 
-makePieces : Spaces -> List PieceType -> List MoveType -> Seed -> ( Pieces, Seed )
-makePieces spaces pieceTypeDeck moveTypeDeck seed =
+makePieces : Spaces -> List ProtoPiece -> List MoveType -> Seed -> ( Pieces, Seed )
+makePieces spaces protoPieceDeck moveTypeDeck seed =
     let
         filteredPositions =
             Spaces.getActualSpacePositions spaces
@@ -202,7 +210,7 @@ makePieces spaces pieceTypeDeck moveTypeDeck seed =
 
         ( pieceTypes, postPieceTypesSeed ) =
             Deck.fillListFromDeck NoPiece
-                pieceTypeDeck
+                protoPieceDeck
                 pieceAmount
                 seed
 
@@ -213,14 +221,25 @@ makePieces spaces pieceTypeDeck moveTypeDeck seed =
                 postPieceTypesSeed
 
         pieces =
-            List.map3 Piece pieceTypes filteredPositions moveTypes
+            List.map2 attemptPiece pieceTypes filteredPositions
+                |> List.filterMap identity
                 |> List.indexedMap (,)
                 |> Dict.fromList
-                |> Pieces.filterOutNonActualPieces
     in
         ( pieces
         , newSeed
         )
+
+
+attemptPiece : ProtoPiece -> Vec2 -> Maybe Piece
+attemptPiece protoPiece position =
+    case protoPiece of
+        ActualPiece pieceType ->
+            Piece pieceType position
+                |> Just
+
+        NoPiece ->
+            Nothing
 
 
 canMove : Model -> Bool

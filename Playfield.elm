@@ -9,7 +9,7 @@ import Math.Vector2 as V2 exposing (Vec2, vec2, getX, getY, add, scale)
 import Points
 import Array
 import Spaces exposing (Spaces, Space, SpaceType(..), SpaceIndex)
-import Pieces exposing (Piece, PieceType(..), PieceControllability(..), MoveType(..))
+import Pieces exposing (Piece, PieceType, Controller(..), MoveType(..), Shape(..))
 import PiecesAndSpaces
 import Dict exposing (Dict)
 import String
@@ -111,13 +111,17 @@ getSpaceHighlightView showOutlines pieceSelectedInfo ( index, currentSpace ) =
                 nullSVG
 
 
+nullSVG =
+    polygon [] []
+
+
 getPieceView : Model -> Int -> Piece -> Svg Msg
 getPieceView model currentID currentPiece =
     let
         selectedAttributes =
             getPieceAttributes model currentID currentPiece
     in
-        piece selectedAttributes currentPiece.position currentPiece.pieceType
+        piece selectedAttributes currentPiece.position currentPiece
 
 
 getPieceAttributes model currentID currentPiece =
@@ -158,68 +162,68 @@ shouldAllowSelecting model currentPiece =
            )
 
 
-nullSVG =
-    polygon [] []
-
-
-piece : List (Attribute Msg) -> Vec2 -> PieceType -> Svg Msg
-piece extras center pieceType =
+piece : List (Attribute Msg) -> Vec2 -> Piece -> Svg Msg
+piece extras center piece =
     let
         otherAttributes =
             basicPieceAttributes ++ extras
     in
-        case pieceType of
-            Star control ->
+        --TODO get record pattern matching working/report bug
+        case ( piece.pieceType.shape, piece.pieceType.controller, piece.pieceType.moveType ) of
+            ( Star, control, moveType ) ->
                 polygonPiece
                     <| [ fill (getFill control)
                        , points (Points.star center)
+                       , transform (getTransform moveType)
                        ]
                     ++ otherAttributes
 
-            WeirdThing control ->
+            ( WeirdThing, control, moveType ) ->
                 polygonPiece
                     <| [ fill (getFill control)
                        , points (Points.weirdThing center)
+                       , transform (getTransform moveType)
                        ]
                     ++ otherAttributes
 
-            Triangle control ->
+            ( Triangle, control, moveType ) ->
                 polygonPiece
                     <| [ fill (getFill control)
                        , points (Points.triangle center)
+                       , transform (getTransform moveType)
                        ]
                     ++ otherAttributes
 
-            Petals control ->
+            ( Petals, control, moveType ) ->
                 polygonPiece
                     <| [ fill (getFill control)
                        , points (Points.petals center)
+                       , transform (getTransform moveType)
                        ]
                     ++ otherAttributes
 
-            TwistedPlus control ->
+            ( TwistedPlus, control, moveType ) ->
                 polygonPiece
                     <| [ fill (getFill control)
                        , points (Points.twistedPlus center)
+                       , transform (getTransform moveType)
                        ]
                     ++ otherAttributes
 
-            Fangs control ->
+            ( Fangs, control, moveType ) ->
                 polygonPiece
                     <| [ fill (getFill control)
                        , points (Points.fangs center)
+                       , transform (getTransform moveType)
                        ]
                     ++ otherAttributes
 
-            Eye control ->
+            ( Eye, control, moveType ) ->
                 eyePiece
                     (fill (getFill control)
                         :: otherAttributes
                     )
                     center
-
-            NoPiece ->
-                nullSVG
 
 
 basicPieceAttributes =
@@ -324,6 +328,18 @@ getFill control =
 
         None ->
             "#0a0"
+
+
+getTransform moveType =
+    case moveType of
+        Occupied ->
+            "skewX(45)"
+
+        Unoccupied ->
+            "skewY(45)"
+
+        AnySpace ->
+            ""
 
 
 space : Bool -> List (Attribute Msg) -> Vec2 -> SpaceType -> Svg Msg

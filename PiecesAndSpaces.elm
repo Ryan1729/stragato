@@ -1,7 +1,7 @@
 module PiecesAndSpaces exposing (..)
 
 import Spaces exposing (Spaces, SpaceType(..), SpaceIndex)
-import Pieces exposing (Pieces, Piece, PieceType(..))
+import Pieces exposing (Pieces, Piece, PieceType)
 import Dict exposing (Dict)
 
 
@@ -49,6 +49,13 @@ getUnoccupiedSpaceIndicies pieces spaces =
     Spaces.getActualSpaces spaces
         |> Dict.keys
         |> List.filter (isSpaceUnoccupied pieces spaces)
+
+
+getOccupiedSpaceIndicies : Pieces -> Spaces -> List SpaceIndex
+getOccupiedSpaceIndicies pieces spaces =
+    Spaces.getActualSpaces spaces
+        |> Dict.keys
+        |> List.filter (not << isSpaceUnoccupied pieces spaces)
 
 
 pieceIsNotAtSpace : Pieces -> Spaces -> Int -> SpaceIndex -> Bool
