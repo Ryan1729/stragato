@@ -19,7 +19,7 @@ import Math.Vector2 as V2 exposing (Vec2, vec2)
 import Svg exposing (Svg, svg)
 import Svg.Attributes exposing (height, width, viewBox, stroke)
 import Playfield
-import Pieces
+import Pieces exposing (Piece, PieceType, ProtoPiece(..), Controller(..), MoveType(..), Shape(..))
 import Spaces
 
 
@@ -149,14 +149,24 @@ editTab model =
             , cell [ size All 6 ]
                 [ deckControl [ 3 ]
                     model.mdl
-                    Pieces.pieceTypePossibilities
+                    Pieces.protoPiecePossibilities
                     model.pieceDeck
                     Msg.PieceDeckDecrement
                     Msg.PieceDeckIncrement
-                    (positionedSvgMakerToHtmlMaker <| Playfield.piece [ stroke "grey" ])
+                    (positionedSvgMakerToHtmlMaker <| protoPieceToSVG)
                 ]
             ]
         ]
+
+
+protoPieceToSVG : Vec2 -> ProtoPiece -> Svg Msg
+protoPieceToSVG center protoPiece =
+    case protoPiece of
+        ActualPiece pieceType ->
+            Playfield.piece [ stroke "grey" ] center pieceType
+
+        NoPiece ->
+            Playfield.nullSVG
 
 
 toggleSwitchCell : List Int -> Mdl -> Msg -> String -> Bool -> Material.Grid.Cell Msg

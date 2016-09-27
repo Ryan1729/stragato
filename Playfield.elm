@@ -121,7 +121,7 @@ getPieceView model currentID currentPiece =
         selectedAttributes =
             getPieceAttributes model currentID currentPiece
     in
-        piece selectedAttributes currentPiece.position currentPiece
+        piece selectedAttributes currentPiece.position currentPiece.pieceType
 
 
 getPieceAttributes model currentID currentPiece =
@@ -162,14 +162,14 @@ shouldAllowSelecting model currentPiece =
            )
 
 
-piece : List (Attribute Msg) -> Vec2 -> Piece -> Svg Msg
-piece extras center piece =
+piece : List (Attribute Msg) -> Vec2 -> PieceType -> Svg Msg
+piece extras center pieceType =
     let
         otherAttributes =
             basicPieceAttributes ++ extras
     in
         --TODO get record pattern matching working/report bug
-        case ( piece.pieceType.shape, piece.pieceType.controller, piece.pieceType.moveType ) of
+        case ( pieceType.shape, pieceType.controller, pieceType.moveType ) of
             ( Star, control, moveType ) ->
                 polygonPiece
                     <| [ fill (getFill control)
@@ -333,10 +333,10 @@ getFill control =
 getTransform moveType =
     case moveType of
         Occupied ->
-            "skewX(45)"
+            "scale(1.1 1)"
 
         Unoccupied ->
-            "skewY(45)"
+            "scale(1 0.9)"
 
         AnySpace ->
             ""

@@ -32,6 +32,22 @@ getNonSelfSpaceIdicies pieces spaces index =
         |> List.filter (pieceIsNotAtSpace pieces spaces index)
 
 
+
+{--isSpaceOccupied and isSpaceUnoccupied are both necessary because of the default case-}
+
+
+isSpaceOccupied : Pieces -> Spaces -> SpaceIndex -> Bool
+isSpaceOccupied pieces spaces spaceIndex =
+    spaces
+        |> Spaces.getActualSpaces
+        |> Dict.get spaceIndex
+        |> Maybe.map
+            (\space ->
+                not <| Pieces.noPiecesAtPosition pieces space.position
+            )
+        |> Maybe.withDefault False
+
+
 isSpaceUnoccupied : Pieces -> Spaces -> SpaceIndex -> Bool
 isSpaceUnoccupied pieces spaces spaceIndex =
     spaces
@@ -44,18 +60,16 @@ isSpaceUnoccupied pieces spaces spaceIndex =
         |> Maybe.withDefault False
 
 
-getUnoccupiedSpaceIndicies : Pieces -> Spaces -> List SpaceIndex
-getUnoccupiedSpaceIndicies pieces spaces =
-    Spaces.getActualSpaces spaces
-        |> Dict.keys
-        |> List.filter (isSpaceUnoccupied pieces spaces)
-
-
-getOccupiedSpaceIndicies : Pieces -> Spaces -> List SpaceIndex
-getOccupiedSpaceIndicies pieces spaces =
-    Spaces.getActualSpaces spaces
-        |> Dict.keys
-        |> List.filter (not << isSpaceUnoccupied pieces spaces)
+getSpaceIndiciesParitionedByOccupation : Pieces -> Spaces -> ( List SpaceIndex, List SpaceIndex )
+getSpaceIndiciesParitionedByOccupation pieces spaces =
+    let
+        actualSpaces =
+            Spaces.getActualSpaces spaces
+    in
+        actualSpaces
+            |> Dict.keys
+            |> List.partition (isSpaceUnoccupied pieces actualSpaces)
+            |> Debug.log "parts"
 
 
 pieceIsNotAtSpace : Pieces -> Spaces -> Int -> SpaceIndex -> Bool

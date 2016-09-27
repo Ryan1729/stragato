@@ -80,14 +80,9 @@ movePieceToSpace pieces spaces index spaceIndex =
 getPossibleMoveList : Model -> List ( Int, SpaceIndex )
 getPossibleMoveList model =
     let
-        --TODO partition instead of iterating twice
-        unoccupiedSpaceIndicies =
-            PiecesAndSpaces.getUnoccupiedSpaceIndicies model.pieces model.spaces
+        ( unoccupiedSpaceIndicies, occupiedSpaceIndicies ) =
+            PiecesAndSpaces.getSpaceIndiciesParitionedByOccupation model.pieces model.spaces
 
-        occupiedSpaceIndicies =
-            PiecesAndSpaces.getOccupiedSpaceIndicies model.pieces model.spaces
-
-        --End TODO
         cpuMovablePieces =
             Pieces.getCPUMovablePieces model.pieces
 
@@ -136,8 +131,7 @@ canPieceMoveToSpace allowSelfMoves pieces spaces index spaceIndex =
                 (\piece ->
                     case piece.pieceType.moveType of
                         Occupied ->
-                            PiecesAndSpaces.isSpaceUnoccupied pieces spaces spaceIndex
-                                |> not
+                            PiecesAndSpaces.isSpaceOccupied pieces spaces spaceIndex
 
                         Unoccupied ->
                             PiecesAndSpaces.isSpaceUnoccupied pieces spaces spaceIndex
