@@ -80,44 +80,30 @@ movePieceToSpace pieces spaces index spaceIndex =
 getPossibleMoveList : Model -> List ( Int, SpaceIndex )
 getPossibleMoveList model =
     let
-        ( unoccupiedSpaceIndicies, occupiedSpaceIndicies ) =
-            PiecesAndSpaces.getSpaceIndiciesParitionedByOccupation model.pieces model.spaces
-
         cpuMovablePieces =
             Pieces.getCPUMovablePieces model.pieces
 
-        nonSelfMoves =
+        actualSpaceIndicies =
+            model.spaces
+                |> Spaces.getActualSpaces
+                |> Dict.keys
+
+        allConcievableMoves =
             cpuMovablePieces
                 `Extras.andThen` \x ->
-                                    case Dict.get x model.pieces of
-                                        Just piece ->
-                                            let
-                                                availableIndicies =
-                                                    case piece.pieceType.moveType of
-                                                        Occupied ->
-                                                            occupiedSpaceIndicies
-
-                                                        Unoccupied ->
-                                                            unoccupiedSpaceIndicies
-
-                                                        AnySpace ->
-                                                            Spaces.getNonMatchingSpaceIndicies (Spaces.getActualSpaces model.spaces)
-                                                                piece.position
-                                            in
-                                                availableIndicies
-                                                    `Extras.andThen` \y ->
-                                                                        [ ( x, y ) ]
-
-                                        Nothing ->
-                                            []
+                                    actualSpaceIndicies
+                                        `Extras.andThen` \y ->
+                                                            [ ( x, y ) ]
     in
-        if model.allowSelfMoves then
-            nonSelfMoves
-                ++ PiecesAndSpaces.getSelfMoves cpuMovablePieces
+        List.filter
+            (\( index, spaceIndex ) ->
+                canPieceMoveToSpace model.allowSelfMoves
                     model.pieces
                     model.spaces
-        else
-            nonSelfMoves
+                    index
+                    spaceIndex
+            )
+            allConcievableMoves
 
 
 canPieceMoveToSpace : Bool -> Pieces -> Spaces -> Int -> SpaceIndex -> Bool
