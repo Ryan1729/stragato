@@ -14,6 +14,7 @@ import PiecesAndSpaces
 import Dict exposing (Dict)
 import String
 import Movement
+import PieceAppearances exposing (PieceAppearances)
 
 
 getPieces model =
@@ -121,7 +122,7 @@ getPieceView model currentID currentPiece =
         selectedAttributes =
             getPieceAttributes model currentID currentPiece
     in
-        piece selectedAttributes currentPiece.position currentPiece.pieceType
+        piece model.pieceAppearances selectedAttributes currentPiece.position currentPiece.pieceType
 
 
 getPieceAttributes model currentID currentPiece =
@@ -162,65 +163,65 @@ shouldAllowSelecting model currentPiece =
            )
 
 
-piece : List (Attribute Msg) -> Vec2 -> PieceType -> Svg Msg
-piece extras center pieceType =
+piece : PieceAppearances -> List (Attribute Msg) -> Vec2 -> PieceType -> Svg Msg
+piece pieceAppearances extras center pieceType =
     let
         otherAttributes =
             basicPieceAttributes ++ extras
     in
         --TODO get record pattern matching working/report bug
-        case ( pieceType.shape, pieceType.controller, pieceType.moveType ) of
-            ( Star, control, moveType ) ->
+        case ( PieceAppearances.get pieceType pieceAppearances, pieceType.moveType ) of
+            ( ( Star, fillString ), moveType ) ->
                 polygonPiece
-                    <| [ fill (getFill control)
+                    <| [ fill fillString
                        , points (Points.star center)
                        , transform (getTransform moveType)
                        ]
                     ++ otherAttributes
 
-            ( WeirdThing, control, moveType ) ->
+            ( ( WeirdThing, fillString ), moveType ) ->
                 polygonPiece
-                    <| [ fill (getFill control)
+                    <| [ fill fillString
                        , points (Points.weirdThing center)
                        , transform (getTransform moveType)
                        ]
                     ++ otherAttributes
 
-            ( Triangle, control, moveType ) ->
+            ( ( Triangle, fillString ), moveType ) ->
                 polygonPiece
-                    <| [ fill (getFill control)
+                    <| [ fill fillString
                        , points (Points.triangle center)
                        , transform (getTransform moveType)
                        ]
                     ++ otherAttributes
 
-            ( Petals, control, moveType ) ->
+            ( ( Petals, fillString ), moveType ) ->
                 polygonPiece
-                    <| [ fill (getFill control)
+                    <| [ fill fillString
                        , points (Points.petals center)
                        , transform (getTransform moveType)
                        ]
                     ++ otherAttributes
 
-            ( TwistedPlus, control, moveType ) ->
+            ( ( TwistedPlus, fillString ), moveType ) ->
                 polygonPiece
-                    <| [ fill (getFill control)
+                    <| [ fill fillString
                        , points (Points.twistedPlus center)
                        , transform (getTransform moveType)
                        ]
                     ++ otherAttributes
 
-            ( Fangs, control, moveType ) ->
+            ( ( Fangs, fillString ), moveType ) ->
                 polygonPiece
-                    <| [ fill (getFill control)
+                    <| [ fill fillString
                        , points (Points.fangs center)
                        , transform (getTransform moveType)
                        ]
                     ++ otherAttributes
 
-            ( Eye, control, moveType ) ->
+            ( ( Eye, fillString ), moveType ) ->
                 eyePiece
-                    (fill (getFill control)
+                    (fill fillString
                         :: otherAttributes
                     )
                     center
@@ -313,21 +314,6 @@ eyePieceSclera centerX xString centerY yString =
             , secondControlPointString
             , leftSideString
             ]
-
-
-getFill control =
-    case control of
-        Player ->
-            "#fa0"
-
-        Computer ->
-            "#0af"
-
-        Both ->
-            "#faf"
-
-        None ->
-            "#0a0"
 
 
 getTransform moveType =

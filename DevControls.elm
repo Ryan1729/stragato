@@ -21,6 +21,7 @@ import Svg.Attributes exposing (height, width, viewBox, stroke)
 import Playfield
 import Pieces exposing (Piece, PieceType, ProtoPiece(..), Controller(..), MoveType(..), Shape(..))
 import Spaces
+import PieceAppearances exposing (PieceAppearances)
 
 
 type alias Mdl =
@@ -153,17 +154,17 @@ editTab model =
                     model.pieceDeck
                     Msg.PieceDeckDecrement
                     Msg.PieceDeckIncrement
-                    (positionedSvgMakerToHtmlMaker <| protoPieceToSVG)
+                    (positionedSvgMakerToHtmlMaker <| protoPieceToSVG model.pieceAppearances)
                 ]
             ]
         ]
 
 
-protoPieceToSVG : Vec2 -> ProtoPiece -> Svg Msg
-protoPieceToSVG center protoPiece =
+protoPieceToSVG : PieceAppearances -> Vec2 -> ProtoPiece -> Svg Msg
+protoPieceToSVG pieceAppearances center protoPiece =
     case protoPiece of
         ActualPiece pieceType ->
-            Playfield.piece [ stroke "grey" ] center pieceType
+            Playfield.piece pieceAppearances [ stroke "grey" ] center pieceType
 
         NoPiece ->
             Playfield.nullSVG

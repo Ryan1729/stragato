@@ -72,6 +72,16 @@ indexOf lst element =
 
 
 
+-- A lot of the time this default is fine
+
+
+indexOfDefault : List a -> a -> Int
+indexOfDefault lst element =
+    indexOfhelper lst element 0
+        |> Maybe.withDefault -1
+
+
+
 --wrote myself based on min-free example in https://github.com/liuxinyu95/AlgoXY,
 -- I searched "elm binary search" but that gave me stuff about trees
 --(probably overkill for this project)

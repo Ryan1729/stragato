@@ -1,13 +1,15 @@
 module Movement exposing (..)
 
 import Spaces exposing (Spaces, SpaceType(..), SpaceIndex)
-import Pieces exposing (Pieces, Piece, PieceType, Shape(..), MoveType(..))
+import Pieces exposing (Pieces, Piece, PieceType, Shape(..), MoveType(..), MoveEffect(..))
 import PiecesAndSpaces
 import Model exposing (Model)
 import Extras
 import Dict
 import Deck
 import Math.Vector2 as V2 exposing (Vec2, vec2)
+import PieceAppearances exposing (PieceAppearances)
+import PosInt
 
 
 getNewPieces : Model -> Int -> SpaceIndex -> Pieces
@@ -19,55 +21,51 @@ getNewPieces model pieceID spaceID =
             pieceID
             spaceID
     then
-        movePieceToSpace model.pieces model.spaces pieceID spaceID
+        movePieceToSpace model.pieceAppearances model.pieces model.spaces pieceID spaceID
     else
         model.pieces
 
 
-movePieceToSpace : Pieces -> Spaces -> Int -> SpaceIndex -> Pieces
-movePieceToSpace pieces spaces index spaceIndex =
+movePieceToSpace : PieceAppearances -> Pieces -> Spaces -> Int -> SpaceIndex -> Pieces
+movePieceToSpace pieceAppearances pieces spaces index spaceIndex =
     case
         ( Dict.get index pieces
         , Spaces.getPosition spaceIndex spaces
         )
     of
         ( Just piece, Just targetSpacePosition ) ->
-            case
-                ( piece.pieceType.shape
-                , piece.pieceType.controller
-                , Pieces.getPiecesAtPosition pieces targetSpacePosition
-                )
-            of
-                {- They have a fight, Triangle wins. Triangle man! -}
-                ( Triangle, _, piecesOnSpace ) ->
+            case piece.pieceType.moveEffect of
+                Capture ->
                     pieces
-                        |> Extras.filterOutListFromDict piecesOnSpace
+                        |> Extras.filterOutListFromDict (Pieces.getPiecesAtPosition pieces targetSpacePosition)
                         |> Pieces.setPieceLocation index targetSpacePosition
 
-                ( WeirdThing, _, piecesOnSpace ) ->
-                    pieces
-                        |> bumpPiecesOnce spaces piece.position targetSpacePosition
-                        |> Pieces.setPieceLocation index targetSpacePosition
+                Bump posInt ->
+                    case PosInt.toInt posInt of
+                        1 ->
+                            pieces
+                                |> bumpPiecesOnce spaces piece.position targetSpacePosition
+                                |> Pieces.setPieceLocation index targetSpacePosition
 
-                ( TwistedPlus, _, piecesOnSpace ) ->
-                    pieces
-                        |> bumpPiecesNTimes 2 spaces piece.position targetSpacePosition
-                        |> Pieces.setPieceLocation index targetSpacePosition
+                        n ->
+                            pieces
+                                |> bumpPiecesNTimes n spaces piece.position targetSpacePosition
+                                |> Pieces.setPieceLocation index targetSpacePosition
 
-                ( Eye, _, piecesOnSpace ) ->
+                Swap ->
                     pieces
                         |> Pieces.movePieces targetSpacePosition piece.position
                         |> Pieces.setPieceLocation index targetSpacePosition
 
-                ( Petals, control, piecesOnSpace ) ->
+                Copy ->
                     if Pieces.noPiecesAtPosition pieces targetSpacePosition then
                         pieces
                             |> Pieces.setPieceLocation index targetSpacePosition
-                            |> Pieces.addPiece (Piece (PieceType Pieces.Petals control Unoccupied) piece.position)
+                            |> Pieces.addPiece piece
                     else
                         pieces
 
-                _ ->
+                NoEffect ->
                     if Pieces.noPiecesAtPosition pieces targetSpacePosition then
                         Pieces.setPieceLocation index targetSpacePosition pieces
                     else

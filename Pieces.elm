@@ -3,6 +3,7 @@ module Pieces exposing (..)
 import Math.Vector2 exposing (Vec2)
 import Dict exposing (Dict)
 import Extras
+import PosInt exposing (PosInt)
 
 
 type alias Piece =
@@ -35,7 +36,7 @@ type Controller
     | None
 
 
-pieceControllabilityPossibilities =
+controllerPossibilities =
     [ Player
     , Computer
     , Both
@@ -57,13 +58,38 @@ shapePossibilities =
     [ Star, WeirdThing, Triangle, Eye, Petals, Fangs, TwistedPlus ]
 
 
+type MoveEffect
+    = Capture
+    | Bump PosInt
+    | Swap
+    | Copy
+    | NoEffect
+
+
+
+{- this does not include every possibility for Bump -}
+
+
+someMoveEffectPossibilities =
+    [ Capture
+    , Bump (PosInt.fromInt 1)
+    , Bump (PosInt.fromInt 2)
+      --64 bumps ought to be enough for anybody!
+      --(more can easily be added later, it's fine)
+    , Bump (PosInt.fromInt 64)
+    , Swap
+    , Copy
+    , NoEffect
+    ]
+
+
 type ProtoPiece
     = ActualPiece PieceType
     | NoPiece
 
 
 type alias PieceType =
-    { shape : Shape
+    { moveEffect : MoveEffect
     , controller : Controller
     , moveType : MoveType
     }
@@ -71,15 +97,15 @@ type alias PieceType =
 
 actualPieceTypePossibilities =
     List.concatMap
-        (\shape ->
+        (\moveEffect ->
             List.concatMap
                 (\controller ->
-                    List.map (PieceType shape controller)
+                    List.map (PieceType moveEffect controller)
                         moveTypePossibilities
                 )
-                pieceControllabilityPossibilities
+                controllerPossibilities
         )
-        shapePossibilities
+        someMoveEffectPossibilities
 
 
 protoPiecePossibilities =

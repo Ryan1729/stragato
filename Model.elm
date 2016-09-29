@@ -10,6 +10,7 @@ import Dict exposing (Dict)
 import Spaces exposing (Spaces, Space, SpaceType(..))
 import Pieces exposing (Pieces, Piece, PieceType, Controller(..), MoveType(..), ProtoPiece(..))
 import Deck
+import PieceAppearances exposing (PieceAppearances, Appearance)
 
 
 type alias Model =
@@ -22,6 +23,7 @@ type alias Model =
     , spaceDeck : List SpaceType
     , pieceDeck : List ProtoPiece
     , moveTypeDeck : List MoveType
+    , pieceAppearances : PieceAppearances
     , seed : Seed
     , tabIndex : Int
     , gameResult : GameResult
@@ -41,19 +43,20 @@ defaultState =
     , pieceSelected = Nothing
     , pieces = defaultPieces
     , spaces = defaultSpaces
-    , seed = (Random.initialSeed 42)
     , gridWidth = defaultWidth
     , gridHeight = defaultHeight
     , spaceDeck = defaultSpaceDeck
     , pieceDeck = defaultPieceTypeDeck
     , moveTypeDeck = defaultMoveTypeDeck
+    , pieceAppearances = defaultpieceAppearances
+    , seed = (Random.initialSeed 42)
     , tabIndex = 0
     , gameResult = TBD
     , ignoreGameResult = False
     , gameEndCons =
         GameEndCons
             (NoPiecesOfGivenTypeCanMove
-                (PieceType Pieces.Star
+                (PieceType Pieces.NoEffect
                     Pieces.Both
                     Pieces.Unoccupied
                 )
@@ -163,6 +166,13 @@ defaultPieces : Pieces
 defaultPieces =
     makePieces defaultSpaces defaultPieceTypeDeck defaultMoveTypeDeck (Random.initialSeed -421)
         |> fst
+
+
+defaultpieceAppearances : PieceAppearances
+defaultpieceAppearances =
+    Pieces.actualPieceTypePossibilities
+        |> List.map PieceAppearances.pairWithAppearance
+        |> PieceAppearances.fromList
 
 
 makeSpaces : Int -> Int -> List SpaceType -> Seed -> ( Spaces, Seed )
