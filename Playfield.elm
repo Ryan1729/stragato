@@ -171,50 +171,10 @@ piece pieceAppearances extras center pieceType =
     in
         --TODO get record pattern matching working/report bug
         case ( PieceAppearances.get pieceType pieceAppearances, pieceType.moveType ) of
-            ( ( Star, fillString ), moveType ) ->
+            ( ( PointsList pointsList, fillString ), moveType ) ->
                 polygonPiece
                     <| [ fill fillString
-                       , points (Points.star center)
-                       , transform (getTransform moveType)
-                       ]
-                    ++ otherAttributes
-
-            ( ( WeirdThing, fillString ), moveType ) ->
-                polygonPiece
-                    <| [ fill fillString
-                       , points (Points.weirdThing center)
-                       , transform (getTransform moveType)
-                       ]
-                    ++ otherAttributes
-
-            ( ( Triangle, fillString ), moveType ) ->
-                polygonPiece
-                    <| [ fill fillString
-                       , points (Points.triangle center)
-                       , transform (getTransform moveType)
-                       ]
-                    ++ otherAttributes
-
-            ( ( Petals, fillString ), moveType ) ->
-                polygonPiece
-                    <| [ fill fillString
-                       , points (Points.petals center)
-                       , transform (getTransform moveType)
-                       ]
-                    ++ otherAttributes
-
-            ( ( TwistedPlus, fillString ), moveType ) ->
-                polygonPiece
-                    <| [ fill fillString
-                       , points (Points.twistedPlus center)
-                       , transform (getTransform moveType)
-                       ]
-                    ++ otherAttributes
-
-            ( ( Fangs, fillString ), moveType ) ->
-                polygonPiece
-                    <| [ fill fillString
-                       , points (Points.fangs center)
+                       , points (Points.piecePointsListToSVGString pointsList center)
                        , transform (getTransform moveType)
                        ]
                     ++ otherAttributes

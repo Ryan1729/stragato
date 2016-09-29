@@ -4,6 +4,7 @@ import Pieces exposing (Controller(..), MoveType, MoveEffect(..), Shape(..), Pie
 import GenericDict exposing (GenericDict)
 import Extras
 import PosInt
+import Points
 
 
 type alias Appearance =
@@ -19,7 +20,7 @@ get pieceType pieceAppearances =
     GenericDict.get pieceType pieceAppearances
         --TODO more obviously wrong default case?
         |>
-            Maybe.withDefault ( Star, "#f0f" )
+            Maybe.withDefault ( Eye, "#f0f" )
 
 
 comparer : PieceType -> PieceType -> Order
@@ -100,27 +101,33 @@ getShape : MoveEffect -> Shape
 getShape moveEffect =
     case moveEffect of
         Capture ->
-            Triangle
+            Points.pointsListToPiecePointsList Points.trianglePointsList
+                |> PointsList
 
         Bump posInt ->
             case PosInt.toInt posInt of
                 1 ->
-                    WeirdThing
+                    Points.pointsListToPiecePointsList Points.weirdThingPointsList
+                        |> PointsList
 
                 2 ->
-                    TwistedPlus
+                    Points.pointsListToPiecePointsList Points.twistedPlusPointsList
+                        |> PointsList
 
                 _ ->
-                    Fangs
+                    Points.pointsListToPiecePointsList Points.fangsPointsList
+                        |> PointsList
 
         Swap ->
             Eye
 
         Copy ->
-            Petals
+            Points.pointsListToPiecePointsList Points.petalsPointsList
+                |> PointsList
 
         NoEffect ->
-            Star
+            Points.pointsListToPiecePointsList Points.starPointsList
+                |> PointsList
 
 
 getFill : Controller -> String

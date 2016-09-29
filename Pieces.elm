@@ -45,17 +45,8 @@ controllerPossibilities =
 
 
 type Shape
-    = Star
-    | WeirdThing
-    | Triangle
+    = PointsList (List Vec2)
     | Eye
-    | Petals
-    | TwistedPlus
-    | Fangs
-
-
-shapePossibilities =
-    [ Star, WeirdThing, Triangle, Eye, Petals, Fangs, TwistedPlus ]
 
 
 type MoveEffect
