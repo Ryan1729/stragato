@@ -16,7 +16,7 @@ import Spaces
 import PieceAppearances exposing (PieceAppearances)
 import Extras
 import String
-import DevControlsHelpers
+import DevControlsCommon
 
 
 render model =
@@ -51,11 +51,11 @@ pieceAppearancesTable index mdl pieceAppearances =
                     (\( pieceType, ( shape, colourString ) ) ->
                         Table.tr []
                             [ Table.td []
-                                [ DevControlsHelpers.positionedSvgMakerToHtmlMaker (DevControlsHelpers.pieceTypeToSVG pieceAppearances)
+                                [ DevControlsCommon.positionedSvgMakerToHtmlMaker (DevControlsCommon.pieceTypeToSVG pieceAppearances)
                                     pieceType
                                 ]
                             , Table.td []
-                                <| displayPiecetype pieceType
+                                <| DevControlsCommon.displayPiecetype pieceType
                             , Table.td []
                                 <| (case shape of
                                         Eye ->
@@ -124,21 +124,3 @@ updatePoint msgMaker list index vector component inputString =
 
         Err _ ->
             msgMaker list
-
-
-roundOff : Float -> Float
-roundOff =
-    Extras.roundTo 2
-
-
-displayPiecetype : PieceType -> List (Html Msg)
-displayPiecetype pieceType =
-    [ pOf pieceType.moveEffect
-    , pOf pieceType.controller
-    , pOf pieceType.moveType
-    ]
-
-
-pOf : a -> Html Msg
-pOf thing =
-    Html.p [] [ toString thing |> text ]

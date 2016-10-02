@@ -20,7 +20,7 @@ import Pieces exposing (Piece, PieceType, ProtoPiece(..), Controller(..), MoveTy
 import Spaces
 import PieceAppearances exposing (PieceAppearances)
 import String
-import DevControlsHelpers
+import DevControlsCommon
 
 
 render : Model -> Html Msg
@@ -105,9 +105,11 @@ render model =
                     model.mdl
                     Spaces.spaceTypePossibilities
                     model.spaceDeck
+                    "space type"
+                    (always <| [ text "not implemented" ])
                     Msg.SpaceDeckDecrement
                     Msg.SpaceDeckIncrement
-                    (DevControlsHelpers.positionedSvgMakerToHtmlMaker
+                    (DevControlsCommon.positionedSvgMakerToHtmlMaker
                         <| Playfield.space model.showSpaceOutlines [ stroke "grey" ]
                     )
                 ]
@@ -116,9 +118,11 @@ render model =
                     model.mdl
                     Pieces.protoPiecePossibilities
                     model.pieceDeck
+                    "piece type"
+                    displayProtoPieceType
                     Msg.PieceDeckDecrement
                     Msg.PieceDeckIncrement
-                    (DevControlsHelpers.positionedSvgMakerToHtmlMaker
+                    (DevControlsCommon.positionedSvgMakerToHtmlMaker
                         <| protoPieceToSVG model.pieceAppearances
                     )
                 ]
@@ -126,11 +130,21 @@ render model =
         ]
 
 
+displayProtoPieceType : ProtoPiece -> List (Html Msg)
+displayProtoPieceType protoPiece =
+    case protoPiece of
+        ActualPiece pieceType ->
+            DevControlsCommon.displayPiecetype pieceType
+
+        NoPiece ->
+            [ text "No piece" ]
+
+
 protoPieceToSVG : PieceAppearances -> Vec2 -> ProtoPiece -> Svg Msg
 protoPieceToSVG pieceAppearances center protoPiece =
     case protoPiece of
         ActualPiece pieceType ->
-            DevControlsHelpers.pieceTypeToSVG pieceAppearances center pieceType
+            DevControlsCommon.pieceTypeToSVG pieceAppearances center pieceType
 
         NoPiece ->
             Playfield.nullSVG
@@ -188,16 +202,19 @@ deckControl :
     -> Material.Model
     -> List a
     -> List a
+    -> String
+    -> (a -> List (Html Msg))
     -> (a -> Msg)
     -> (a -> Msg)
     -> (a -> Html Msg)
     -> Html Msg
-deckControl index mdl possibilities currentDeck addMessage removeMessage elementView =
+deckControl index mdl possibilities currentDeck typeHeading typeDisplay addMessage removeMessage elementView =
     Table.table [ css "background-color" "#DDDDDD" ]
         [ Table.thead []
             [ Table.tr []
                 [ Table.th [{- Table.onClick Reorder -}]
                     [ text "Deck Element" ]
+                , Table.th [] [ text typeHeading ]
                 , Table.th [] [ text "remove" ]
                 , Table.th [ Table.numeric ] [ text "Quantity" ]
                 , Table.th [] [ text "add" ]
@@ -211,6 +228,8 @@ deckControl index mdl possibilities currentDeck addMessage removeMessage element
                             [ Table.td []
                                 [ elementView item
                                 ]
+                            , Table.td []
+                                <| typeDisplay item
                             , Table.td []
                                 [ Button.render Msg.Mdl
                                     (index ++ [ 0 ])

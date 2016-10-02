@@ -1,6 +1,6 @@
-module DevControlsHelpers exposing (..)
+module DevControlsCommon exposing (..)
 
-import Html exposing (Html)
+import Html exposing (Html, text)
 import Msg exposing (Msg)
 import Material.Grid exposing (grid, cell, size, offset, Device(All, Tablet))
 import Math.Vector2 as V2 exposing (Vec2, vec2)
@@ -20,3 +20,16 @@ positionedSvgMakerToHtmlMaker svgMaker identifier =
 pieceTypeToSVG : PieceAppearances -> Vec2 -> PieceType -> Svg Msg
 pieceTypeToSVG pieceAppearances center pieceType =
     Playfield.piece pieceAppearances [ stroke "grey" ] center pieceType
+
+
+displayPiecetype : PieceType -> List (Html Msg)
+displayPiecetype pieceType =
+    [ pOf pieceType.moveEffect
+    , pOf pieceType.controller
+    , pOf pieceType.moveType
+    ]
+
+
+pOf : a -> Html Msg
+pOf thing =
+    Html.p [] [ toString thing |> text ]
