@@ -92,6 +92,10 @@ fromList =
     GenericDict.fromList comparer
 
 
+toList =
+    GenericDict.toList
+
+
 pairWithAppearance : PieceType -> ( PieceType, Appearance )
 pairWithAppearance ({ moveEffect, controller, moveType } as pieceType) =
     ( pieceType, ( getShape moveEffect, getFill controller ) )

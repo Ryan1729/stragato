@@ -22,6 +22,8 @@ import Playfield
 import Pieces exposing (Piece, PieceType, ProtoPiece(..), Controller(..), MoveType(..), Shape(..))
 import Spaces
 import PieceAppearances exposing (PieceAppearances)
+import Extras
+import String
 
 
 type alias Mdl =
@@ -75,6 +77,9 @@ editTab model =
                     , text "Generate Board"
                     ]
                 ]
+            ]
+        , grid []
+            [ cell [ size All 6 ] [ pieceAppearancesTable [ 14 ] model.mdl model.pieceAppearances ]
             ]
         , grid []
             [ toggleSwitchCell [ 8 ]
@@ -164,10 +169,15 @@ protoPieceToSVG : PieceAppearances -> Vec2 -> ProtoPiece -> Svg Msg
 protoPieceToSVG pieceAppearances center protoPiece =
     case protoPiece of
         ActualPiece pieceType ->
-            Playfield.piece pieceAppearances [ stroke "grey" ] center pieceType
+            pieceTypeToSVG pieceAppearances center pieceType
 
         NoPiece ->
             Playfield.nullSVG
+
+
+pieceTypeToSVG : PieceAppearances -> Vec2 -> PieceType -> Svg Msg
+pieceTypeToSVG pieceAppearances center pieceType =
+    Playfield.piece pieceAppearances [ stroke "grey" ] center pieceType
 
 
 toggleSwitchCell : List Int -> Mdl -> Msg -> String -> Bool -> Material.Grid.Cell Msg
@@ -278,6 +288,89 @@ deckControl index mdl possibilities currentDeck addMessage removeMessage element
                     )
             )
         ]
+
+
+pieceAppearancesTable :
+    List Int
+    -> Mdl
+    -> PieceAppearances
+    -> Html Msg
+pieceAppearancesTable index mdl pieceAppearances =
+    Table.table [ css "background-color" "#DDDDDD" ]
+        [ Table.thead []
+            [ Table.tr []
+                [ Table.th [] [ text "preview" ]
+                , Table.th [] [ text "piece type" ]
+                , Table.th [] [ text "points" ]
+                , Table.th [] [ text "colour" ]
+                ]
+            ]
+        , Table.tbody []
+            (pieceAppearances
+                |> PieceAppearances.toList
+                |> List.map
+                    (\( pieceType, ( shape, colourString ) ) ->
+                        Table.tr []
+                            [ Table.td []
+                                [ positionedSvgMakerToHtmlMaker (pieceTypeToSVG pieceAppearances)
+                                    pieceType
+                                ]
+                            , Table.td []
+                                <| displayPiecetype pieceType
+                            , Table.td []
+                                <| (case shape of
+                                        Eye ->
+                                            [ text "hardcoded" ]
+
+                                        PointsList list ->
+                                            displayPointsList list
+                                   )
+                            , Table.td []
+                                [ text colourString
+                                ]
+                            ]
+                    )
+            )
+        ]
+
+
+displayPointsList : List Vec2 -> List (Html Msg)
+displayPointsList list =
+    List.map displayPoint list
+
+
+roundOff : Float -> Float
+roundOff =
+    Extras.roundTo 2
+
+
+displayPoint : Vec2 -> Html Msg
+displayPoint vector =
+    Html.p []
+        [ [ vector
+                |> V2.getX
+                |> roundOff
+          , vector
+                |> V2.getY
+                |> roundOff
+          ]
+            |> List.map toString
+            |> String.join ", "
+            |> text
+        ]
+
+
+displayPiecetype : PieceType -> List (Html Msg)
+displayPiecetype pieceType =
+    [ pOf pieceType.moveEffect
+    , pOf pieceType.controller
+    , pOf pieceType.moveType
+    ]
+
+
+pOf : a -> Html Msg
+pOf thing =
+    Html.p [] [ toString thing |> text ]
 
 
 amountOfItemInDeck : a -> List a -> Int

@@ -111,3 +111,23 @@ getLowestAbsentIntHelper list lowerBound upperBound =
                 getLowestAbsentIntHelper higherList (paritionPoint + 1) upperBound
             else
                 getLowestAbsentIntHelper lowerList lowerBound paritionPoint
+
+
+
+-- from https://github.com/krisajenkins/elm-exts
+
+
+{-| Round a `Float` to a given number of decimal places.
+-}
+roundTo : Int -> Float -> Float
+roundTo places value =
+    let
+        factor =
+            10 ^ places
+    in
+        (value
+            * factor
+            |> round
+            |> toFloat
+        )
+            / factor
