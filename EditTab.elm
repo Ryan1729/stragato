@@ -2,6 +2,7 @@ module EditTab exposing (..)
 
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (style)
+import Html.Events exposing (onInput)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Material
@@ -204,20 +205,18 @@ deckControl :
     -> List a
     -> String
     -> (a -> List (Html Msg))
-    -> (a -> Msg)
-    -> (a -> Msg)
+    -> (a -> Int -> Msg)
+    -> (a -> Int -> Msg)
     -> (a -> Html Msg)
     -> Html Msg
-deckControl index mdl possibilities currentDeck typeHeading typeDisplay addMessage removeMessage elementView =
+deckControl index mdl possibilities currentDeck typeHeading typeDisplay removeMessage addMessage elementView =
     Table.table [ css "background-color" "#DDDDDD" ]
         [ Table.thead []
             [ Table.tr []
                 [ Table.th [{- Table.onClick Reorder -}]
                     [ text "Deck Element" ]
                 , Table.th [] [ text typeHeading ]
-                , Table.th [] [ text "remove" ]
                 , Table.th [ Table.numeric ] [ text "Quantity" ]
-                , Table.th [] [ text "add" ]
                 ]
             ]
         , Table.tbody []
@@ -231,27 +230,30 @@ deckControl index mdl possibilities currentDeck typeHeading typeDisplay addMessa
                             , Table.td []
                                 <| typeDisplay item
                             , Table.td []
-                                [ Button.render Msg.Mdl
-                                    (index ++ [ 0 ])
-                                    mdl
-                                    [ Button.onClick <| addMessage item
-                                    ]
-                                    [ Icon.i "remove"
-                                    ]
-                                ]
-                            , Table.td []
-                                [ text
-                                    <| toString
-                                    <| amountOfItemInDeck item currentDeck
-                                ]
-                            , Table.td []
-                                [ Button.render Msg.Mdl
-                                    (index ++ [ 1 ])
-                                    mdl
-                                    [ Button.onClick <| removeMessage item
-                                    ]
-                                    [ Icon.i "add"
-                                    ]
+                                [ let
+                                    currentAmount =
+                                        amountOfItemInDeck item currentDeck
+                                  in
+                                    Html.input
+                                        [ Html.Attributes.type' "number"
+                                        , Html.Attributes.min "0"
+                                        , Html.Attributes.step "any"
+                                        , String.toInt
+                                            >> Result.withDefault currentAmount
+                                            >> Debug.log ""
+                                            >> (\newAmount ->
+                                                    if newAmount > currentAmount then
+                                                        addMessage item <| Debug.log "diff add" (newAmount - currentAmount)
+                                                    else if newAmount < currentAmount then
+                                                        removeMessage item <| Debug.log "diff remove" (currentAmount - newAmount)
+                                                    else
+                                                        NoOp
+                                               )
+                                            |> onInput
+                                        , currentAmount |> toString |> Html.Attributes.value
+                                        , style [ ( "width", "4rem" ) ]
+                                        ]
+                                        []
                                 ]
                             ]
                     )

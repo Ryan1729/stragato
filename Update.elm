@@ -66,17 +66,17 @@ update message model =
         SelectTab tabIndex ->
             { model | tabIndex = tabIndex } ! []
 
-        SpaceDeckIncrement item ->
-            { model | spaceDeck = item :: model.spaceDeck } ! []
+        SpaceDeckIncrement item amount ->
+            { model | spaceDeck = List.repeat amount item ++ model.spaceDeck } ! []
 
-        SpaceDeckDecrement item ->
-            { model | spaceDeck = Extras.remove item model.spaceDeck } ! []
+        SpaceDeckDecrement item amount ->
+            { model | spaceDeck = List.foldl (Extras.ignoreFirstArg <| Extras.remove item) model.spaceDeck [1..amount] } ! []
 
-        PieceDeckIncrement item ->
-            { model | pieceDeck = item :: model.pieceDeck } ! []
+        PieceDeckIncrement item amount ->
+            { model | pieceDeck = List.repeat amount item ++ model.pieceDeck } ! []
 
-        PieceDeckDecrement item ->
-            { model | pieceDeck = Extras.remove item model.pieceDeck } ! []
+        PieceDeckDecrement item amount ->
+            { model | pieceDeck = List.foldl (Extras.ignoreFirstArg <| Extras.remove item) model.pieceDeck [1..amount] } ! []
 
         IncrementGridWidth ->
             { model | gridWidth = model.gridWidth + 1 } ! []
@@ -150,6 +150,9 @@ update message model =
                         <| round time
             }
                 ! []
+
+        NoOp ->
+            model ! [ Ports.sound "tableHit" ]
 
         -- When the `Mdl` messages come through, update appropriately.
         Mdl msg' ->

@@ -19,10 +19,10 @@ type Msg
     | MakeAIMove
     | SelectTab Int
     | Mdl (Material.Msg Msg)
-    | SpaceDeckIncrement SpaceType
-    | SpaceDeckDecrement SpaceType
-    | PieceDeckIncrement ProtoPiece
-    | PieceDeckDecrement ProtoPiece
+    | SpaceDeckIncrement SpaceType Int
+    | SpaceDeckDecrement SpaceType Int
+    | PieceDeckIncrement ProtoPiece Int
+    | PieceDeckDecrement ProtoPiece Int
     | IncrementGridWidth
     | DecrementGridWidth
     | IncrementGridHeight
@@ -38,3 +38,4 @@ type Msg
     | DecrementLossCon
     | IncrementLossCon
     | EditPoints PieceType (List Vec2)
+    | NoOp
