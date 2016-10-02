@@ -1,5 +1,6 @@
 module PieceAppearances exposing (..)
 
+import Math.Vector2 exposing (Vec2)
 import Pieces exposing (Controller(..), MoveType, MoveEffect(..), Shape(..), PieceType)
 import GenericDict exposing (GenericDict)
 import Extras
@@ -94,6 +95,33 @@ fromList =
 
 toList =
     GenericDict.toList
+
+
+update :
+    PieceType
+    -> (Maybe Appearance -> Maybe Appearance)
+    -> PieceAppearances
+    -> PieceAppearances
+update =
+    GenericDict.update
+
+
+updatePoints :
+    PieceType
+    -> List Vec2
+    -> PieceAppearances
+    -> PieceAppearances
+updatePoints pieceType list pieceAppearances =
+    update pieceType
+        (\maybeOldApppearance ->
+            case maybeOldApppearance of
+                Just ( _, colour ) ->
+                    Just ( PointsList list, colour )
+
+                Nothing ->
+                    Just ( PointsList list, getFill pieceType.controller )
+        )
+        pieceAppearances
 
 
 pairWithAppearance : PieceType -> ( PieceType, Appearance )

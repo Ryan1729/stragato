@@ -3,7 +3,8 @@ module Msg exposing (..)
 import Mouse
 import Material
 import Spaces exposing (SpaceType)
-import Pieces exposing (ProtoPiece)
+import Pieces exposing (ProtoPiece, PieceType)
+import Math.Vector2 exposing (Vec2)
 
 
 type Msg
@@ -14,6 +15,8 @@ type Msg
     | MovePiece Int ( Int, Int )
     | GetSeed Float
     | GenerateBoard
+    | Resize { width : Int, height : Int }
+    | MakeAIMove
     | SelectTab Int
     | Mdl (Material.Msg Msg)
     | SpaceDeckIncrement SpaceType
@@ -34,5 +37,4 @@ type Msg
     | IncrementWinCon
     | DecrementLossCon
     | IncrementLossCon
-    | Resize { width : Int, height : Int }
-    | MakeAIMove
+    | EditPoints PieceType (List Vec2)

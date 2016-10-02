@@ -11,6 +11,7 @@ import Material
 import Spaces exposing (Spaces, SpaceType(..), SpaceIndex)
 import Pieces exposing (Pieces, Piece, PieceType)
 import PiecesAndSpaces
+import PieceAppearances
 import Dict exposing (Dict)
 import Deck
 import Movement
@@ -118,6 +119,15 @@ update message model =
 
         IncrementLossCon ->
             { model | gameEndCons = Model.incrementLossCon model.gameEndCons } ! []
+
+        EditPoints pieceType newPoints ->
+            { model
+                | pieceAppearances =
+                    PieceAppearances.updatePoints pieceType
+                        newPoints
+                        model.pieceAppearances
+            }
+                ! []
 
         MakeAIMove ->
             if Model.canMove model then

@@ -25,6 +25,33 @@ andThen =
 
 
 
+{- modified from the  version
+   instead of returning a maybe,
+    it returns the input list
+-}
+
+
+setAt : Int -> a -> List a -> List a
+setAt index value l =
+    if index < 0 then
+        l
+    else
+        let
+            head =
+                List.take index l
+
+            tail =
+                List.drop index l |> List.tail
+        in
+            case tail of
+                Nothing ->
+                    l
+
+                Just t ->
+                    value :: t |> List.append head
+
+
+
 --wrote myself since apparently a function that does the argument ignoring like
 --this, isn't on package.elm-lang.org
 
