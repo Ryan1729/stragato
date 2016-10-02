@@ -106,7 +106,7 @@ render model =
                     Spaces.spaceTypePossibilities
                     model.spaceDeck
                     "space type"
-                    (always <| [ text "not implemented" ])
+                    DevControlsCommon.displaySpaceType
                     Msg.SpaceDeckDecrement
                     Msg.SpaceDeckIncrement
                     (DevControlsCommon.positionedSvgMakerToHtmlMaker

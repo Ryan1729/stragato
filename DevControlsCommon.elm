@@ -9,6 +9,7 @@ import Svg.Attributes exposing (height, width, viewBox, stroke)
 import Playfield
 import Pieces exposing (Piece, PieceType, ProtoPiece(..), Controller(..), MoveType(..), Shape(..))
 import PieceAppearances exposing (PieceAppearances)
+import Spaces exposing (SpaceType)
 
 
 positionedSvgMakerToHtmlMaker : (Vec2 -> a -> Svg Msg) -> a -> Html Msg
@@ -27,6 +28,12 @@ displayPiecetype pieceType =
     [ pOf pieceType.moveEffect
     , pOf pieceType.controller
     , pOf pieceType.moveType
+    ]
+
+
+displaySpaceType : SpaceType -> List (Html Msg)
+displaySpaceType spaceType =
+    [ pOf spaceType
     ]
 
 
