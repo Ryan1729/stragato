@@ -122,9 +122,13 @@ fangsPointsList =
         ]
 
 
+pieceScaleFactor =
+    40
+
+
 pointsListToPiecePointsList : List Vec2 -> List Vec2
 pointsListToPiecePointsList =
-    List.map (V2.scale 40)
+    List.map (V2.scale pieceScaleFactor)
 
 
 spaceScale =

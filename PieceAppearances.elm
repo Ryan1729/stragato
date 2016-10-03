@@ -1,7 +1,7 @@
 module PieceAppearances exposing (..)
 
 import Math.Vector2 exposing (Vec2)
-import Pieces exposing (Controller(..), MoveType, MoveEffect(..), Shape(..), PieceType)
+import Pieces exposing (Controller(..), MoveType(..), MoveEffect(..), Shape(..), PieceType)
 import GenericDict exposing (GenericDict)
 import Extras
 import PosInt
@@ -9,7 +9,7 @@ import Points
 
 
 type alias Appearance =
-    ( Shape, String )
+    ( Shape, String, Icon )
 
 
 type alias PieceAppearances =
@@ -21,7 +21,7 @@ get pieceType pieceAppearances =
     GenericDict.get pieceType pieceAppearances
         --TODO more obviously wrong default case?
         |>
-            Maybe.withDefault ( Eye, "#f0f" )
+            Maybe.withDefault ( Eye, "#f0f", NoIcon )
 
 
 comparer : PieceType -> PieceType -> Order
@@ -115,18 +115,89 @@ updatePoints pieceType list pieceAppearances =
     update pieceType
         (\maybeOldApppearance ->
             case maybeOldApppearance of
-                Just ( _, colour ) ->
-                    Just ( PointsList list, colour )
+                Just ( _, colour, icon ) ->
+                    Just ( PointsList list, colour, icon )
 
                 Nothing ->
-                    Just ( PointsList list, getFill pieceType.controller )
+                    Just
+                        ( PointsList list
+                        , getFill pieceType.controller
+                        , getIcon pieceType.moveType
+                        )
+        )
+        pieceAppearances
+
+
+updateColour :
+    PieceType
+    -> String
+    -> PieceAppearances
+    -> PieceAppearances
+updateColour pieceType colour pieceAppearances =
+    update pieceType
+        (\maybeOldApppearance ->
+            case maybeOldApppearance of
+                Just ( points, _, icon ) ->
+                    Just ( points, colour, icon )
+
+                Nothing ->
+                    Just
+                        ( getShape pieceType.moveEffect
+                        , colour
+                        , getIcon pieceType.moveType
+                        )
+        )
+        pieceAppearances
+
+
+updateIcon :
+    PieceType
+    -> Icon
+    -> PieceAppearances
+    -> PieceAppearances
+updateIcon pieceType icon pieceAppearances =
+    update pieceType
+        (\maybeOldApppearance ->
+            case maybeOldApppearance of
+                Just ( points, colour, _ ) ->
+                    Just ( points, colour, icon )
+
+                Nothing ->
+                    Just
+                        ( getShape pieceType.moveEffect
+                        , getFill pieceType.controller
+                        , icon
+                        )
         )
         pieceAppearances
 
 
 pairWithAppearance : PieceType -> ( PieceType, Appearance )
 pairWithAppearance ({ moveEffect, controller, moveType } as pieceType) =
-    ( pieceType, ( getShape moveEffect, getFill controller ) )
+    ( pieceType, ( getShape moveEffect, getFill controller, getIcon moveType ) )
+
+
+type Icon
+    = EmptySpaceIcon
+    | ShapeSpaceIcon Shape
+    | ShapeIcon Shape
+    | NoIcon
+
+
+getIcon : MoveType -> Icon
+getIcon moveType =
+    case moveType of
+        AnySpace ->
+            NoIcon
+
+        Occupied ->
+            Points.trianglePointsList
+                |> Points.pointsListToPiecePointsList
+                |> PointsList
+                |> ShapeSpaceIcon
+
+        Unoccupied ->
+            EmptySpaceIcon
 
 
 getShape : MoveEffect -> Shape

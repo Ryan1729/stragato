@@ -14,7 +14,7 @@ import PiecesAndSpaces
 import Dict exposing (Dict)
 import String
 import Movement
-import PieceAppearances exposing (PieceAppearances)
+import PieceAppearances exposing (PieceAppearances, Icon(..))
 
 
 getPieces model =
@@ -171,20 +171,106 @@ piece pieceAppearances extras center pieceType =
     in
         --TODO get record pattern matching working/report bug
         case ( PieceAppearances.get pieceType pieceAppearances, pieceType.moveType ) of
-            ( ( PointsList pointsList, fillString ), moveType ) ->
-                polygonPiece
+            ( ( PointsList pointsList, fillString, icon ), moveType ) ->
+                (polygonPiece
                     <| [ fill fillString
                        , points (Points.piecePointsListToSVGString pointsList center)
-                       , transform (getTransform moveType)
                        ]
                     ++ otherAttributes
+                )
+                    |> addIcon icon center
 
-            ( ( Eye, fillString ), moveType ) ->
+            ( ( Eye, fillString, icon ), moveType ) ->
                 eyePiece
                     (fill fillString
                         :: otherAttributes
                     )
                     center
+                    |> addIcon icon center
+
+
+addIcon : Icon -> Vec2 -> Svg Msg -> Svg Msg
+addIcon icon center pieceView =
+    let
+        baseList =
+            case icon of
+                NoIcon ->
+                    []
+
+                EmptySpaceIcon ->
+                    [ emptySpaceIcon center ]
+
+                ShapeSpaceIcon shape ->
+                    [ makeShapeIcon center shape, emptySpaceIcon center ]
+
+                ShapeIcon shape ->
+                    [ makeShapeIcon center shape, emptySpaceIcon center ]
+    in
+        g []
+            <| pieceView
+            :: baseList
+
+
+iconOffset =
+    vec2 Points.pieceScaleFactor Points.pieceScaleFactor
+        |> V2.scale (0.6)
+
+
+iconScale =
+    0.25
+
+
+pieceScale =
+    iconScale * (Points.pieceScaleFactor / Points.spaceScale)
+
+
+scaledSpacePointsList =
+    List.map (V2.scale iconScale)
+        Points.spacePointsList
+
+
+emptySpaceIcon : Vec2 -> Svg Msg
+emptySpaceIcon center =
+    let
+        iconCenter =
+            V2.add iconOffset
+                center
+    in
+        polygon
+            [ iconCenter
+                |> Points.piecePointsListToSVGString scaledSpacePointsList
+                |> points
+            , strokeWidth "4"
+            , fillOpacity "0.0"
+            , stroke "black"
+            ]
+            []
+
+
+makeShapeIcon center shape =
+    let
+        iconCenter =
+            V2.add iconOffset center
+    in
+        case shape of
+            PointsList pointsList ->
+                polygonPiece
+                    [ points
+                        (Points.piecePointsListToSVGString (List.map (V2.scale pieceScale) pointsList)
+                            iconCenter
+                        )
+                    , strokeWidth "4"
+                    , fillOpacity "0.0"
+                    , stroke "black"
+                    ]
+
+            Eye ->
+                eyePieceSized (Points.circleRadius * pieceScale)
+                    [ strokeWidth "4"
+                    , fillOpacity "0.0"
+                    , stroke "black"
+                    ]
+                    iconCenter
 
 
 basicPieceAttributes =
@@ -200,6 +286,11 @@ polygonPiece finalAttributes =
 
 eyePiece : List (Attribute Msg) -> Vec2 -> Svg Msg
 eyePiece attributes center =
+    eyePieceSized Points.circleRadius attributes center
+
+
+eyePieceSized : Float -> List (Attribute Msg) -> Vec2 -> Svg Msg
+eyePieceSized radius attributes center =
     let
         centerX =
             getX center
@@ -231,7 +322,7 @@ eyePiece attributes center =
             , circle
                 ([ cx xString
                  , cy yString
-                 , r <| toString (Points.circleRadius / 2.25)
+                 , r <| toString (radius / 2.25)
                  ]
                     ++ attributes
                 )
@@ -239,7 +330,7 @@ eyePiece attributes center =
             , circle
                 ([ cx xString
                  , cy yString
-                 , r <| toString Points.circleRadius
+                 , r <| toString radius
                  , mask ("url(#" ++ idString ++ ")")
                  ]
                     ++ attributes
@@ -274,18 +365,6 @@ eyePieceSclera centerX xString centerY yString =
             , secondControlPointString
             , leftSideString
             ]
-
-
-getTransform moveType =
-    case moveType of
-        Occupied ->
-            "scale(1.1 1)"
-
-        Unoccupied ->
-            "scale(1 0.9)"
-
-        AnySpace ->
-            ""
 
 
 space : Bool -> List (Attribute Msg) -> Vec2 -> SpaceType -> Svg Msg

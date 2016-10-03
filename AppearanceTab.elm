@@ -17,6 +17,7 @@ import PieceAppearances exposing (PieceAppearances)
 import Extras
 import String
 import DevControlsCommon
+import Regex
 
 
 render model =
@@ -48,7 +49,8 @@ pieceAppearancesTable index mdl pieceAppearances =
             (pieceAppearances
                 |> PieceAppearances.toList
                 |> List.map
-                    (\( pieceType, ( shape, colourString ) ) ->
+                    (\( pieceType, ( shape, colourString, icon ) ) ->
+                        --TODO display icon controls
                         Table.tr []
                             [ Table.td []
                                 [ DevControlsCommon.positionedSvgMakerToHtmlMaker (DevControlsCommon.pieceTypeToSVG pieceAppearances)
@@ -65,7 +67,14 @@ pieceAppearancesTable index mdl pieceAppearances =
                                             editAblePointsList (EditPoints pieceType) list
                                    )
                             , Table.td []
-                                [ text colourString
+                                [ Html.input
+                                    [ cleanColourString
+                                        >> UpdateColour pieceType
+                                        |> onInput
+                                    , colourString |> Html.Attributes.value
+                                    , style [ ( "width", "6rem" ) ]
+                                    ]
+                                    []
                                 ]
                             ]
                     )
@@ -124,3 +133,8 @@ updatePoint msgMaker list index vector component inputString =
 
         Err _ ->
             msgMaker list
+
+
+cleanColourString : String -> String
+cleanColourString input =
+    Regex.replace Regex.All (Regex.regex "[^#0-9A-Za-z]") (always "") input

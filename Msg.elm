@@ -29,6 +29,7 @@ type Msg
     | DecrementGridHeight
     | IncrementViewScale
     | DecrementViewScale
+    | UpdateColour PieceType String
     | ToggleSpaceOutlines
     | ToggleSelfMoves
     | ToggleAllowMovingAllPieces

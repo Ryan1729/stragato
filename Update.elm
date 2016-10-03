@@ -90,6 +90,15 @@ update message model =
         DecrementGridHeight ->
             { model | gridHeight = max 0 (model.gridHeight - 1) } ! []
 
+        UpdateColour pieceType colourString ->
+            { model
+                | pieceAppearances =
+                    PieceAppearances.updateColour pieceType
+                        colourString
+                        model.pieceAppearances
+            }
+                ! []
+
         ToggleSpaceOutlines ->
             { model | showSpaceOutlines = not model.showSpaceOutlines } ! []
 
