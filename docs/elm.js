@@ -13392,192 +13392,140 @@ var _debois$elm_mdl$Material$Model = F8(
 		return {button: a, textfield: b, menu: c, snackbar: d, layout: e, toggles: f, tooltip: g, tabs: h};
 	});
 
-var _debois$elm_mdl$Material_Color$text = function (_p0) {
-	var _p1 = _p0;
-	return _debois$elm_mdl$Material_Options$cs(
-		A2(_elm_lang$core$Basics_ops['++'], 'mdl-color-text--', _p1._0));
-};
-var _debois$elm_mdl$Material_Color$background = function (_p2) {
-	var _p3 = _p2;
-	return _debois$elm_mdl$Material_Options$cs(
-		A2(_elm_lang$core$Basics_ops['++'], 'mdl-color--', _p3._0));
-};
-var _debois$elm_mdl$Material_Color$shadeName = function (shade) {
-	var _p4 = shade;
-	switch (_p4.ctor) {
-		case 'S50':
-			return '50';
-		case 'S100':
-			return '100';
-		case 'S200':
-			return '200';
-		case 'S300':
-			return '300';
-		case 'S400':
-			return '400';
-		case 'S500':
-			return '500';
-		case 'S600':
-			return '600';
-		case 'S700':
-			return '700';
-		case 'S800':
-			return '800';
-		case 'S900':
-			return '900';
-		case 'A100':
-			return 'A100';
-		case 'A200':
-			return 'A200';
-		case 'A400':
-			return 'A400';
-		default:
-			return 'A700';
+//import Maybe, Native.List //
+
+var _elm_lang$core$Native_Regex = function() {
+
+function escape(str)
+{
+	return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+}
+function caseInsensitive(re)
+{
+	return new RegExp(re.source, 'gi');
+}
+function regex(raw)
+{
+	return new RegExp(raw, 'g');
+}
+
+function contains(re, string)
+{
+	return string.match(re) !== null;
+}
+
+function find(n, re, str)
+{
+	n = n.ctor === 'All' ? Infinity : n._0;
+	var out = [];
+	var number = 0;
+	var string = str;
+	var lastIndex = re.lastIndex;
+	var prevLastIndex = -1;
+	var result;
+	while (number++ < n && (result = re.exec(string)))
+	{
+		if (prevLastIndex === re.lastIndex) break;
+		var i = result.length - 1;
+		var subs = new Array(i);
+		while (i > 0)
+		{
+			var submatch = result[i];
+			subs[--i] = submatch === undefined
+				? _elm_lang$core$Maybe$Nothing
+				: _elm_lang$core$Maybe$Just(submatch);
+		}
+		out.push({
+			match: result[0],
+			submatches: _elm_lang$core$Native_List.fromArray(subs),
+			index: result.index,
+			number: number
+		});
+		prevLastIndex = re.lastIndex;
 	}
-};
-var _debois$elm_mdl$Material_Color$hueName = function (color) {
-	var _p5 = color;
-	switch (_p5.ctor) {
-		case 'Indigo':
-			return 'indigo';
-		case 'Blue':
-			return 'blue';
-		case 'LightBlue':
-			return 'light-blue';
-		case 'Cyan':
-			return 'cyan';
-		case 'Teal':
-			return 'teal';
-		case 'Green':
-			return 'green';
-		case 'LightGreen':
-			return 'light-green';
-		case 'Lime':
-			return 'lime';
-		case 'Yellow':
-			return 'yellow';
-		case 'Amber':
-			return 'amber';
-		case 'Orange':
-			return 'orange';
-		case 'Brown':
-			return 'brown';
-		case 'BlueGrey':
-			return 'blue-grey';
-		case 'Grey':
-			return 'grey';
-		case 'DeepOrange':
-			return 'deep-orange';
-		case 'Red':
-			return 'red';
-		case 'Pink':
-			return 'pink';
-		case 'Purple':
-			return 'purple';
-		default:
-			return 'deep-purple';
+	re.lastIndex = lastIndex;
+	return _elm_lang$core$Native_List.fromArray(out);
+}
+
+function replace(n, re, replacer, string)
+{
+	n = n.ctor === 'All' ? Infinity : n._0;
+	var count = 0;
+	function jsReplacer(match)
+	{
+		if (count++ >= n)
+		{
+			return match;
+		}
+		var i = arguments.length - 3;
+		var submatches = new Array(i);
+		while (i > 0)
+		{
+			var submatch = arguments[i];
+			submatches[--i] = submatch === undefined
+				? _elm_lang$core$Maybe$Nothing
+				: _elm_lang$core$Maybe$Just(submatch);
+		}
+		return replacer({
+			match: match,
+			submatches: _elm_lang$core$Native_List.fromArray(submatches),
+			index: arguments[i - 1],
+			number: count
+		});
 	}
+	return string.replace(re, jsReplacer);
+}
+
+function split(n, re, str)
+{
+	n = n.ctor === 'All' ? Infinity : n._0;
+	if (n === Infinity)
+	{
+		return _elm_lang$core$Native_List.fromArray(str.split(re));
+	}
+	var string = str;
+	var result;
+	var out = [];
+	var start = re.lastIndex;
+	while (n--)
+	{
+		if (!(result = re.exec(string))) break;
+		out.push(string.slice(start, result.index));
+		start = re.lastIndex;
+	}
+	out.push(string.slice(start));
+	return _elm_lang$core$Native_List.fromArray(out);
+}
+
+return {
+	regex: regex,
+	caseInsensitive: caseInsensitive,
+	escape: escape,
+
+	contains: F2(contains),
+	find: F3(find),
+	replace: F4(replace),
+	split: F3(split)
 };
-var _debois$elm_mdl$Material_Color$scheme = F2(
-	function (primary, accent) {
-		var q = _elm_lang$core$String$map(
-			function (x) {
-				return _elm_lang$core$Native_Utils.eq(
-					x,
-					_elm_lang$core$Native_Utils.chr('-')) ? _elm_lang$core$Native_Utils.chr('_') : x;
-			});
-		var cssFile = function () {
-			var _p6 = accent;
-			switch (_p6.ctor) {
-				case 'Grey':
-					return '';
-				case 'Brown':
-					return '';
-				case 'BlueGrey':
-					return '';
-				default:
-					return A2(
-						_elm_lang$core$Basics_ops['++'],
-						'.',
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							q(
-								_debois$elm_mdl$Material_Color$hueName(primary)),
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								'-',
-								q(
-									_debois$elm_mdl$Material_Color$hueName(accent)))));
-			}
-		}();
-		return A2(
-			_elm_lang$core$Basics_ops['++'],
-			'material',
-			A2(_elm_lang$core$Basics_ops['++'], cssFile, '.min.css'));
+
+}();
+
+var _elm_lang$core$Regex$split = _elm_lang$core$Native_Regex.split;
+var _elm_lang$core$Regex$replace = _elm_lang$core$Native_Regex.replace;
+var _elm_lang$core$Regex$find = _elm_lang$core$Native_Regex.find;
+var _elm_lang$core$Regex$contains = _elm_lang$core$Native_Regex.contains;
+var _elm_lang$core$Regex$caseInsensitive = _elm_lang$core$Native_Regex.caseInsensitive;
+var _elm_lang$core$Regex$regex = _elm_lang$core$Native_Regex.regex;
+var _elm_lang$core$Regex$escape = _elm_lang$core$Native_Regex.escape;
+var _elm_lang$core$Regex$Match = F4(
+	function (a, b, c, d) {
+		return {match: a, submatches: b, index: c, number: d};
 	});
-var _debois$elm_mdl$Material_Color$DeepPurple = {ctor: 'DeepPurple'};
-var _debois$elm_mdl$Material_Color$Purple = {ctor: 'Purple'};
-var _debois$elm_mdl$Material_Color$Pink = {ctor: 'Pink'};
-var _debois$elm_mdl$Material_Color$Red = {ctor: 'Red'};
-var _debois$elm_mdl$Material_Color$DeepOrange = {ctor: 'DeepOrange'};
-var _debois$elm_mdl$Material_Color$Grey = {ctor: 'Grey'};
-var _debois$elm_mdl$Material_Color$BlueGrey = {ctor: 'BlueGrey'};
-var _debois$elm_mdl$Material_Color$Brown = {ctor: 'Brown'};
-var _debois$elm_mdl$Material_Color$Orange = {ctor: 'Orange'};
-var _debois$elm_mdl$Material_Color$Amber = {ctor: 'Amber'};
-var _debois$elm_mdl$Material_Color$Yellow = {ctor: 'Yellow'};
-var _debois$elm_mdl$Material_Color$Lime = {ctor: 'Lime'};
-var _debois$elm_mdl$Material_Color$LightGreen = {ctor: 'LightGreen'};
-var _debois$elm_mdl$Material_Color$Green = {ctor: 'Green'};
-var _debois$elm_mdl$Material_Color$Teal = {ctor: 'Teal'};
-var _debois$elm_mdl$Material_Color$Cyan = {ctor: 'Cyan'};
-var _debois$elm_mdl$Material_Color$LightBlue = {ctor: 'LightBlue'};
-var _debois$elm_mdl$Material_Color$Blue = {ctor: 'Blue'};
-var _debois$elm_mdl$Material_Color$Indigo = {ctor: 'Indigo'};
-var _debois$elm_mdl$Material_Color$hues = _elm_lang$core$Array$fromList(
-	_elm_lang$core$Native_List.fromArray(
-		[_debois$elm_mdl$Material_Color$Indigo, _debois$elm_mdl$Material_Color$Blue, _debois$elm_mdl$Material_Color$LightBlue, _debois$elm_mdl$Material_Color$Cyan, _debois$elm_mdl$Material_Color$Teal, _debois$elm_mdl$Material_Color$Green, _debois$elm_mdl$Material_Color$LightGreen, _debois$elm_mdl$Material_Color$Lime, _debois$elm_mdl$Material_Color$Yellow, _debois$elm_mdl$Material_Color$Amber, _debois$elm_mdl$Material_Color$Orange, _debois$elm_mdl$Material_Color$Brown, _debois$elm_mdl$Material_Color$BlueGrey, _debois$elm_mdl$Material_Color$Grey, _debois$elm_mdl$Material_Color$DeepOrange, _debois$elm_mdl$Material_Color$Red, _debois$elm_mdl$Material_Color$Pink, _debois$elm_mdl$Material_Color$Purple, _debois$elm_mdl$Material_Color$DeepPurple]));
-var _debois$elm_mdl$Material_Color$accentHues = _elm_lang$core$Array$fromList(
-	_elm_lang$core$Native_List.fromArray(
-		[_debois$elm_mdl$Material_Color$Indigo, _debois$elm_mdl$Material_Color$Blue, _debois$elm_mdl$Material_Color$LightBlue, _debois$elm_mdl$Material_Color$Cyan, _debois$elm_mdl$Material_Color$Teal, _debois$elm_mdl$Material_Color$Green, _debois$elm_mdl$Material_Color$LightGreen, _debois$elm_mdl$Material_Color$Lime, _debois$elm_mdl$Material_Color$Yellow, _debois$elm_mdl$Material_Color$Amber, _debois$elm_mdl$Material_Color$Orange, _debois$elm_mdl$Material_Color$DeepOrange, _debois$elm_mdl$Material_Color$Red, _debois$elm_mdl$Material_Color$Pink, _debois$elm_mdl$Material_Color$Purple, _debois$elm_mdl$Material_Color$DeepPurple]));
-var _debois$elm_mdl$Material_Color$A700 = {ctor: 'A700'};
-var _debois$elm_mdl$Material_Color$A400 = {ctor: 'A400'};
-var _debois$elm_mdl$Material_Color$A200 = {ctor: 'A200'};
-var _debois$elm_mdl$Material_Color$A100 = {ctor: 'A100'};
-var _debois$elm_mdl$Material_Color$S900 = {ctor: 'S900'};
-var _debois$elm_mdl$Material_Color$S800 = {ctor: 'S800'};
-var _debois$elm_mdl$Material_Color$S700 = {ctor: 'S700'};
-var _debois$elm_mdl$Material_Color$S600 = {ctor: 'S600'};
-var _debois$elm_mdl$Material_Color$S500 = {ctor: 'S500'};
-var _debois$elm_mdl$Material_Color$S400 = {ctor: 'S400'};
-var _debois$elm_mdl$Material_Color$S300 = {ctor: 'S300'};
-var _debois$elm_mdl$Material_Color$S200 = {ctor: 'S200'};
-var _debois$elm_mdl$Material_Color$S100 = {ctor: 'S100'};
-var _debois$elm_mdl$Material_Color$S50 = {ctor: 'S50'};
-var _debois$elm_mdl$Material_Color$shades = _elm_lang$core$Array$fromList(
-	_elm_lang$core$Native_List.fromArray(
-		[_debois$elm_mdl$Material_Color$S50, _debois$elm_mdl$Material_Color$S100, _debois$elm_mdl$Material_Color$S200, _debois$elm_mdl$Material_Color$S300, _debois$elm_mdl$Material_Color$S400, _debois$elm_mdl$Material_Color$S500, _debois$elm_mdl$Material_Color$S600, _debois$elm_mdl$Material_Color$S700, _debois$elm_mdl$Material_Color$S800, _debois$elm_mdl$Material_Color$S900, _debois$elm_mdl$Material_Color$A100, _debois$elm_mdl$Material_Color$A200, _debois$elm_mdl$Material_Color$A400, _debois$elm_mdl$Material_Color$A700]));
-var _debois$elm_mdl$Material_Color$C = function (a) {
-	return {ctor: 'C', _0: a};
+var _elm_lang$core$Regex$Regex = {ctor: 'Regex'};
+var _elm_lang$core$Regex$AtMost = function (a) {
+	return {ctor: 'AtMost', _0: a};
 };
-var _debois$elm_mdl$Material_Color$color = F2(
-	function (hue, shade) {
-		return _debois$elm_mdl$Material_Color$C(
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				_debois$elm_mdl$Material_Color$hueName(hue),
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					'-',
-					_debois$elm_mdl$Material_Color$shadeName(shade))));
-	});
-var _debois$elm_mdl$Material_Color$white = _debois$elm_mdl$Material_Color$C('white');
-var _debois$elm_mdl$Material_Color$black = _debois$elm_mdl$Material_Color$C('black');
-var _debois$elm_mdl$Material_Color$primary = _debois$elm_mdl$Material_Color$C('primary');
-var _debois$elm_mdl$Material_Color$primaryDark = _debois$elm_mdl$Material_Color$C('primary-dark');
-var _debois$elm_mdl$Material_Color$primaryContrast = _debois$elm_mdl$Material_Color$C('primary-contrast');
-var _debois$elm_mdl$Material_Color$accent = _debois$elm_mdl$Material_Color$C('accent');
-var _debois$elm_mdl$Material_Color$accentContrast = _debois$elm_mdl$Material_Color$C('accent-contrast');
+var _elm_lang$core$Regex$All = {ctor: 'All'};
 
 var _debois$elm_mdl$Material_Grid$clip = F3(
 	function (lower, upper, k) {
@@ -13828,236 +13776,6 @@ var _debois$elm_mdl$Material_List$ul = function (options) {
 			_debois$elm_mdl$Material_Options$cs('mdl-list'),
 			options));
 };
-
-var _debois$elm_mdl$Material_Scheme$scheme = F2(
-	function (primary, accent) {
-		return A2(
-			_elm_lang$core$String$join,
-			'\n',
-			A2(
-				_elm_lang$core$List$map,
-				function (url) {
-					return A2(
-						_elm_lang$core$Basics_ops['++'],
-						'@import url(',
-						A2(_elm_lang$core$Basics_ops['++'], url, ');'));
-				},
-				_elm_lang$core$Native_List.fromArray(
-					[
-						A2(
-						_elm_lang$core$Basics_ops['++'],
-						'https://code.getmdl.io/1.2.0/',
-						A2(_debois$elm_mdl$Material_Color$scheme, primary, accent)),
-						'https://fonts.googleapis.com/icon?family=Material+Icons',
-						'https://fonts.googleapis.com/css?family=Roboto:400,300,500|Roboto+Mono|Roboto+Condensed:400,700&subset=latin,latin-ext'
-					])));
-	});
-var _debois$elm_mdl$Material_Scheme$topWithScheme = F3(
-	function (primary, accent, content) {
-		return A2(
-			_elm_lang$html$Html$div,
-			_elm_lang$core$Native_List.fromArray(
-				[]),
-			_elm_lang$core$Native_List.fromArray(
-				[
-					A3(
-					_elm_lang$html$Html$node,
-					'style',
-					_elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$html$Html_Attributes$type$('text/css')
-						]),
-					_elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$html$Html$text(
-							A2(_debois$elm_mdl$Material_Scheme$scheme, primary, accent))
-						])),
-					content
-				]));
-	});
-var _debois$elm_mdl$Material_Scheme$top = function (content) {
-	return A3(_debois$elm_mdl$Material_Scheme$topWithScheme, _debois$elm_mdl$Material_Color$Grey, _debois$elm_mdl$Material_Color$Grey, content);
-};
-
-var _debois$elm_mdl$Material_Slider$floatVal = A2(
-	_elm_lang$core$Json_Decode$at,
-	_elm_lang$core$Native_List.fromArray(
-		['target', 'valueAsNumber']),
-	_elm_lang$core$Json_Decode$float);
-var _debois$elm_mdl$Material_Slider$onChange = function (l) {
-	return _debois$elm_mdl$Material_Options$set(
-		function (options) {
-			return _elm_lang$core$Native_Utils.update(
-				options,
-				{
-					listener: _elm_lang$core$Maybe$Just(l)
-				});
-		});
-};
-var _debois$elm_mdl$Material_Slider$disabled = _debois$elm_mdl$Material_Options$set(
-	function (options) {
-		return _elm_lang$core$Native_Utils.update(
-			options,
-			{disabled: true});
-	});
-var _debois$elm_mdl$Material_Slider$step = function (v) {
-	return _debois$elm_mdl$Material_Options$set(
-		function (options) {
-			return _elm_lang$core$Native_Utils.update(
-				options,
-				{step: v});
-		});
-};
-var _debois$elm_mdl$Material_Slider$max = function (v) {
-	return _debois$elm_mdl$Material_Options$set(
-		function (options) {
-			return _elm_lang$core$Native_Utils.update(
-				options,
-				{max: v});
-		});
-};
-var _debois$elm_mdl$Material_Slider$min = function (v) {
-	return _debois$elm_mdl$Material_Options$set(
-		function (options) {
-			return _elm_lang$core$Native_Utils.update(
-				options,
-				{min: v});
-		});
-};
-var _debois$elm_mdl$Material_Slider$value = function (v) {
-	return _debois$elm_mdl$Material_Options$set(
-		function (options) {
-			return _elm_lang$core$Native_Utils.update(
-				options,
-				{value: v});
-		});
-};
-var _debois$elm_mdl$Material_Slider$defaultConfig = {
-	value: 50,
-	min: 0,
-	max: 100,
-	step: 1,
-	listener: _elm_lang$core$Maybe$Nothing,
-	disabled: false,
-	inner: _elm_lang$core$Native_List.fromArray(
-		[])
-};
-var _debois$elm_mdl$Material_Slider$view = function (options) {
-	var summary = A2(_debois$elm_mdl$Material_Options$collect, _debois$elm_mdl$Material_Slider$defaultConfig, options);
-	var config = summary.config;
-	var fraction = (config.value - config.min) / (config.max - config.min);
-	var lower = A2(
-		_elm_lang$core$Basics_ops['++'],
-		_elm_lang$core$Basics$toString(fraction),
-		' 1 0%');
-	var upper = A2(
-		_elm_lang$core$Basics_ops['++'],
-		_elm_lang$core$Basics$toString(1 - fraction),
-		' 1 0%');
-	var background = A3(
-		_debois$elm_mdl$Material_Options$styled,
-		_elm_lang$html$Html$div,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_debois$elm_mdl$Material_Options$cs('mdl-slider__background-flex')
-			]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				A3(
-				_debois$elm_mdl$Material_Options$styled,
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_debois$elm_mdl$Material_Options$cs('mdl-slider__background-lower'),
-						A2(_debois$elm_mdl$Material_Options$css, 'flex', lower)
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[])),
-				A3(
-				_debois$elm_mdl$Material_Options$styled,
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_debois$elm_mdl$Material_Options$cs('mdl-slider__background-upper'),
-						A2(_debois$elm_mdl$Material_Options$css, 'flex', upper)
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[]))
-			]));
-	var listeners = A2(
-		_elm_lang$core$Maybe$withDefault,
-		_debois$elm_mdl$Material_Options$nop,
-		A2(
-			_elm_lang$core$Maybe$map,
-			function (f) {
-				return _debois$elm_mdl$Material_Options$many(
-					A2(
-						_elm_lang$core$List$map,
-						_debois$elm_mdl$Material_Options_Internal$attribute,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								A2(
-								_elm_lang$html$Html_Events$on,
-								'change',
-								A2(_elm_lang$core$Json_Decode$map, f, _debois$elm_mdl$Material_Slider$floatVal)),
-								A2(
-								_elm_lang$html$Html_Events$on,
-								'input',
-								A2(_elm_lang$core$Json_Decode$map, f, _debois$elm_mdl$Material_Slider$floatVal))
-							])));
-			},
-			config.listener));
-	return A5(
-		_debois$elm_mdl$Material_Options$apply,
-		summary,
-		_elm_lang$html$Html$div,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_debois$elm_mdl$Material_Options$cs('mdl-slider__container')
-			]),
-		_elm_lang$core$Native_List.fromArray(
-			[]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				A4(
-				_debois$elm_mdl$Material_Options$styled$,
-				_elm_lang$html$Html$input,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_debois$elm_mdl$Material_Options$cs('mdl-slider'),
-						_debois$elm_mdl$Material_Options$cs('mdl-js-slider'),
-						_debois$elm_mdl$Material_Options$cs('is-upgraded'),
-						A2(
-						_debois$elm_mdl$Material_Options$when,
-						_debois$elm_mdl$Material_Options$cs('is-lowest-value'),
-						_elm_lang$core$Native_Utils.eq(fraction, 0)),
-						listeners,
-						_debois$elm_mdl$Material_Options$disabled(config.disabled),
-						A2(_debois$elm_mdl$Material_Options$css, 'padding', '8px 0'),
-						_debois$elm_mdl$Material_Options$many(config.inner)
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$type$('range'),
-						_elm_lang$html$Html_Attributes$max(
-						_elm_lang$core$Basics$toString(config.max)),
-						_elm_lang$html$Html_Attributes$min(
-						_elm_lang$core$Basics$toString(config.min)),
-						_elm_lang$html$Html_Attributes$step(
-						_elm_lang$core$Basics$toString(config.step)),
-						_elm_lang$html$Html_Attributes$value(
-						_elm_lang$core$Basics$toString(config.value)),
-						_debois$elm_mdl$Material_Helpers$blurOn('mouseup')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[])),
-				background
-			]));
-};
-var _debois$elm_mdl$Material_Slider$Config = F7(
-	function (a, b, c, d, e, f, g) {
-		return {value: a, min: b, max: c, step: d, listener: e, disabled: f, inner: g};
-	});
 
 var _debois$elm_mdl$Material_Table$defaultCell = {numeric: false};
 var _debois$elm_mdl$Material_Table$td = F2(
@@ -15389,82 +15107,930 @@ var _elm_lang$svg$Svg_Events$onMouseOut = _elm_lang$svg$Svg_Events$simpleOn('mou
 var _elm_lang$svg$Svg_Events$onMouseOver = _elm_lang$svg$Svg_Events$simpleOn('mouseover');
 var _elm_lang$svg$Svg_Events$onMouseUp = _elm_lang$svg$Svg_Events$simpleOn('mouseup');
 
-var _user$project$Deck$maybeFromDeck = F2(
-	function (currentDeck, seed) {
-		var _p0 = A2(
-			_elm_lang$core$Random$step,
-			A2(
-				_elm_lang$core$Random$int,
-				0,
-				_elm_lang$core$List$length(currentDeck) - 1),
-			seed);
-		var index = _p0._0;
-		var newSeed = _p0._1;
-		var _p1 = _elm_lang$core$List$head(
-			A2(_elm_lang$core$List$drop, index, currentDeck));
-		if (_p1.ctor === 'Nothing') {
-			return _elm_lang$core$Maybe$Nothing;
-		} else {
-			var remainingElements = A2(
-				_elm_lang$core$Basics_ops['++'],
-				A2(_elm_lang$core$List$take, index, currentDeck),
-				A2(_elm_lang$core$List$drop, index + 1, currentDeck));
-			return _elm_lang$core$Maybe$Just(
-				{ctor: '_Tuple3', _0: _p1._0, _1: remainingElements, _2: newSeed});
-		}
-	});
-var _user$project$Deck$drawFromDeck = F4(
-	function ($default, deck, currentDeck, seed) {
-		var _p2 = A2(_user$project$Deck$maybeFromDeck, currentDeck, seed);
-		if (_p2.ctor === 'Nothing') {
-			var _p3 = A2(_user$project$Deck$maybeFromDeck, deck, seed);
-			if (_p3.ctor === 'Nothing') {
-				return {ctor: '_Tuple3', _0: $default, _1: deck, _2: seed};
-			} else {
-				return _p3._0;
-			}
-		} else {
-			return _p2._0;
-		}
-	});
-var _user$project$Deck$fillListFromDeckHelper = F6(
-	function ($default, deck, currentDeck, remainingLength, seed, result) {
-		fillListFromDeckHelper:
+var _robertjlooby$elm_generic_dict$GenericDict$foldr = F3(
+	function (f, acc, t) {
+		foldr:
 		while (true) {
-			if (_elm_lang$core$Native_Utils.eq(remainingLength, 0)) {
-				return {ctor: '_Tuple2', _0: result, _1: seed};
+			var _p0 = t;
+			if (_p0.ctor === 'RBEmpty_elm_builtin') {
+				return acc;
 			} else {
-				var _p4 = A4(_user$project$Deck$drawFromDeck, $default, deck, currentDeck, seed);
-				var drawnElement = _p4._0;
-				var newDeck = _p4._1;
-				var newSeed = _p4._2;
-				var _v3 = $default,
-					_v4 = deck,
-					_v5 = newDeck,
-					_v6 = remainingLength - 1,
-					_v7 = newSeed,
-					_v8 = A2(_elm_lang$core$List_ops['::'], drawnElement, result);
-				$default = _v3;
-				deck = _v4;
-				currentDeck = _v5;
-				remainingLength = _v6;
-				seed = _v7;
-				result = _v8;
-				continue fillListFromDeckHelper;
+				var _v1 = f,
+					_v2 = A3(
+					f,
+					_p0._1,
+					_p0._2,
+					A3(_robertjlooby$elm_generic_dict$GenericDict$foldr, f, acc, _p0._4)),
+					_v3 = _p0._3;
+				f = _v1;
+				acc = _v2;
+				t = _v3;
+				continue foldr;
 			}
 		}
 	});
-var _user$project$Deck$fillListFromDeck = F4(
-	function ($default, deck, length, seed) {
+var _robertjlooby$elm_generic_dict$GenericDict$keys = function (dict) {
+	return A3(
+		_robertjlooby$elm_generic_dict$GenericDict$foldr,
+		F3(
+			function (key, value, keyList) {
+				return A2(_elm_lang$core$List_ops['::'], key, keyList);
+			}),
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		dict);
+};
+var _robertjlooby$elm_generic_dict$GenericDict$values = function (dict) {
+	return A3(
+		_robertjlooby$elm_generic_dict$GenericDict$foldr,
+		F3(
+			function (key, value, valueList) {
+				return A2(_elm_lang$core$List_ops['::'], value, valueList);
+			}),
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		dict);
+};
+var _robertjlooby$elm_generic_dict$GenericDict$toList = function (dict) {
+	return A3(
+		_robertjlooby$elm_generic_dict$GenericDict$foldr,
+		F3(
+			function (key, value, list) {
+				return A2(
+					_elm_lang$core$List_ops['::'],
+					{ctor: '_Tuple2', _0: key, _1: value},
+					list);
+			}),
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		dict);
+};
+var _robertjlooby$elm_generic_dict$GenericDict$foldl = F3(
+	function (f, acc, dict) {
+		foldl:
+		while (true) {
+			var _p1 = dict;
+			if (_p1.ctor === 'RBEmpty_elm_builtin') {
+				return acc;
+			} else {
+				var _v5 = f,
+					_v6 = A3(
+					f,
+					_p1._1,
+					_p1._2,
+					A3(_robertjlooby$elm_generic_dict$GenericDict$foldl, f, acc, _p1._3)),
+					_v7 = _p1._4;
+				f = _v5;
+				acc = _v6;
+				dict = _v7;
+				continue foldl;
+			}
+		}
+	});
+var _robertjlooby$elm_generic_dict$GenericDict$reportRemBug = F4(
+	function (msg, c, lgot, rgot) {
+		return _elm_lang$core$Native_Utils.crash(
+			'GenericDict',
+			{
+				start: {line: 346, column: 5},
+				end: {line: 346, column: 16}
+			})(
+			_elm_lang$core$String$concat(
+				_elm_lang$core$Native_List.fromArray(
+					[
+						'Internal red-black tree invariant violated, expected ',
+						msg,
+						' and got ',
+						_elm_lang$core$Basics$toString(c),
+						'/',
+						lgot,
+						'/',
+						rgot,
+						'\nPlease report this bug to <https://github.com/elm-lang/core/issues>'
+					])));
+	});
+var _robertjlooby$elm_generic_dict$GenericDict$isBBlack = function (dict) {
+	var _p2 = dict;
+	_v8_2:
+	do {
+		if (_p2.ctor === 'RBNode_elm_builtin') {
+			if (_p2._0.ctor === 'BBlack') {
+				return true;
+			} else {
+				break _v8_2;
+			}
+		} else {
+			if (_p2._0.ctor === 'LBBlack') {
+				return true;
+			} else {
+				break _v8_2;
+			}
+		}
+	} while(false);
+	return false;
+};
+var _robertjlooby$elm_generic_dict$GenericDict$isEmpty = function (dict) {
+	var _p3 = dict;
+	if (_p3.ctor === 'RBEmpty_elm_builtin') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var _robertjlooby$elm_generic_dict$GenericDict$sizeHelp = F2(
+	function (n, dict) {
+		sizeHelp:
+		while (true) {
+			var _p4 = dict;
+			if (_p4.ctor === 'RBEmpty_elm_builtin') {
+				return n;
+			} else {
+				var _v11 = A2(_robertjlooby$elm_generic_dict$GenericDict$sizeHelp, n + 1, _p4._4),
+					_v12 = _p4._3;
+				n = _v11;
+				dict = _v12;
+				continue sizeHelp;
+			}
+		}
+	});
+var _robertjlooby$elm_generic_dict$GenericDict$size = function (dict) {
+	return A2(_robertjlooby$elm_generic_dict$GenericDict$sizeHelp, 0, dict);
+};
+var _robertjlooby$elm_generic_dict$GenericDict$get = F2(
+	function (targetKey, dict) {
+		get:
+		while (true) {
+			var _p5 = dict;
+			if (_p5.ctor === 'RBEmpty_elm_builtin') {
+				return _elm_lang$core$Maybe$Nothing;
+			} else {
+				var _p6 = A2(_p5._5, targetKey, _p5._1);
+				switch (_p6.ctor) {
+					case 'LT':
+						var _v15 = targetKey,
+							_v16 = _p5._3;
+						targetKey = _v15;
+						dict = _v16;
+						continue get;
+					case 'EQ':
+						return _elm_lang$core$Maybe$Just(_p5._2);
+					default:
+						var _v17 = targetKey,
+							_v18 = _p5._4;
+						targetKey = _v17;
+						dict = _v18;
+						continue get;
+				}
+			}
+		}
+	});
+var _robertjlooby$elm_generic_dict$GenericDict$member = F2(
+	function (key, dict) {
+		var _p7 = A2(_robertjlooby$elm_generic_dict$GenericDict$get, key, dict);
+		if (_p7.ctor === 'Just') {
+			return true;
+		} else {
+			return false;
+		}
+	});
+var _robertjlooby$elm_generic_dict$GenericDict$maxWithDefault = F3(
+	function (k, v, r) {
+		maxWithDefault:
+		while (true) {
+			var _p8 = r;
+			if (_p8.ctor === 'RBEmpty_elm_builtin') {
+				return {ctor: '_Tuple2', _0: k, _1: v};
+			} else {
+				var _v21 = _p8._1,
+					_v22 = _p8._2,
+					_v23 = _p8._4;
+				k = _v21;
+				v = _v22;
+				r = _v23;
+				continue maxWithDefault;
+			}
+		}
+	});
+var _robertjlooby$elm_generic_dict$GenericDict$getComparer = function (dict) {
+	var _p9 = dict;
+	if (_p9.ctor === 'RBNode_elm_builtin') {
+		return _p9._5;
+	} else {
+		return _p9._1;
+	}
+};
+var _robertjlooby$elm_generic_dict$GenericDict$NBlack = {ctor: 'NBlack'};
+var _robertjlooby$elm_generic_dict$GenericDict$BBlack = {ctor: 'BBlack'};
+var _robertjlooby$elm_generic_dict$GenericDict$Black = {ctor: 'Black'};
+var _robertjlooby$elm_generic_dict$GenericDict$blackish = function (t) {
+	var _p10 = t;
+	if (_p10.ctor === 'RBNode_elm_builtin') {
+		var _p11 = _p10._0;
+		return _elm_lang$core$Native_Utils.eq(_p11, _robertjlooby$elm_generic_dict$GenericDict$Black) || _elm_lang$core$Native_Utils.eq(_p11, _robertjlooby$elm_generic_dict$GenericDict$BBlack);
+	} else {
+		return true;
+	}
+};
+var _robertjlooby$elm_generic_dict$GenericDict$Red = {ctor: 'Red'};
+var _robertjlooby$elm_generic_dict$GenericDict$moreBlack = function (color) {
+	var _p12 = color;
+	switch (_p12.ctor) {
+		case 'Black':
+			return _robertjlooby$elm_generic_dict$GenericDict$BBlack;
+		case 'Red':
+			return _robertjlooby$elm_generic_dict$GenericDict$Black;
+		case 'NBlack':
+			return _robertjlooby$elm_generic_dict$GenericDict$Red;
+		default:
+			return _elm_lang$core$Native_Utils.crashCase(
+				'GenericDict',
+				{
+					start: {line: 293, column: 5},
+					end: {line: 304, column: 69}
+				},
+				_p12)('Can\'t make a double black node more black!');
+	}
+};
+var _robertjlooby$elm_generic_dict$GenericDict$lessBlack = function (color) {
+	var _p14 = color;
+	switch (_p14.ctor) {
+		case 'BBlack':
+			return _robertjlooby$elm_generic_dict$GenericDict$Black;
+		case 'Black':
+			return _robertjlooby$elm_generic_dict$GenericDict$Red;
+		case 'Red':
+			return _robertjlooby$elm_generic_dict$GenericDict$NBlack;
+		default:
+			return _elm_lang$core$Native_Utils.crashCase(
+				'GenericDict',
+				{
+					start: {line: 309, column: 5},
+					end: {line: 320, column: 71}
+				},
+				_p14)('Can\'t make a negative black node less black!');
+	}
+};
+var _robertjlooby$elm_generic_dict$GenericDict$LBBlack = {ctor: 'LBBlack'};
+var _robertjlooby$elm_generic_dict$GenericDict$LBlack = {ctor: 'LBlack'};
+var _robertjlooby$elm_generic_dict$GenericDict$RBEmpty_elm_builtin = F2(
+	function (a, b) {
+		return {ctor: 'RBEmpty_elm_builtin', _0: a, _1: b};
+	});
+var _robertjlooby$elm_generic_dict$GenericDict$empty = function (comparer) {
+	return A2(_robertjlooby$elm_generic_dict$GenericDict$RBEmpty_elm_builtin, _robertjlooby$elm_generic_dict$GenericDict$LBlack, comparer);
+};
+var _robertjlooby$elm_generic_dict$GenericDict$RBNode_elm_builtin = F6(
+	function (a, b, c, d, e, f) {
+		return {ctor: 'RBNode_elm_builtin', _0: a, _1: b, _2: c, _3: d, _4: e, _5: f};
+	});
+var _robertjlooby$elm_generic_dict$GenericDict$ensureBlackRoot = function (dict) {
+	var _p16 = dict;
+	if ((_p16.ctor === 'RBNode_elm_builtin') && (_p16._0.ctor === 'Red')) {
+		return A6(_robertjlooby$elm_generic_dict$GenericDict$RBNode_elm_builtin, _robertjlooby$elm_generic_dict$GenericDict$Black, _p16._1, _p16._2, _p16._3, _p16._4, _p16._5);
+	} else {
+		return dict;
+	}
+};
+var _robertjlooby$elm_generic_dict$GenericDict$lessBlackTree = function (dict) {
+	var _p17 = dict;
+	if (_p17.ctor === 'RBNode_elm_builtin') {
 		return A6(
-			_user$project$Deck$fillListFromDeckHelper,
-			$default,
-			deck,
-			deck,
-			length,
-			seed,
-			_elm_lang$core$Native_List.fromArray(
-				[]));
+			_robertjlooby$elm_generic_dict$GenericDict$RBNode_elm_builtin,
+			_robertjlooby$elm_generic_dict$GenericDict$lessBlack(_p17._0),
+			_p17._1,
+			_p17._2,
+			_p17._3,
+			_p17._4,
+			_p17._5);
+	} else {
+		return A2(_robertjlooby$elm_generic_dict$GenericDict$RBEmpty_elm_builtin, _robertjlooby$elm_generic_dict$GenericDict$LBlack, _p17._1);
+	}
+};
+var _robertjlooby$elm_generic_dict$GenericDict$balancedTree = function (col) {
+	return function (xk) {
+		return function (xv) {
+			return function (yk) {
+				return function (yv) {
+					return function (zk) {
+						return function (zv) {
+							return function (a) {
+								return function (b) {
+									return function (c) {
+										return function (d) {
+											return function (comparer) {
+												return A6(
+													_robertjlooby$elm_generic_dict$GenericDict$RBNode_elm_builtin,
+													_robertjlooby$elm_generic_dict$GenericDict$lessBlack(col),
+													yk,
+													yv,
+													A6(_robertjlooby$elm_generic_dict$GenericDict$RBNode_elm_builtin, _robertjlooby$elm_generic_dict$GenericDict$Black, xk, xv, a, b, comparer),
+													A6(_robertjlooby$elm_generic_dict$GenericDict$RBNode_elm_builtin, _robertjlooby$elm_generic_dict$GenericDict$Black, zk, zv, c, d, comparer),
+													comparer);
+											};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var _robertjlooby$elm_generic_dict$GenericDict$blacken = function (t) {
+	var _p18 = t;
+	if (_p18.ctor === 'RBEmpty_elm_builtin') {
+		return A2(_robertjlooby$elm_generic_dict$GenericDict$RBEmpty_elm_builtin, _robertjlooby$elm_generic_dict$GenericDict$LBlack, _p18._1);
+	} else {
+		return A6(_robertjlooby$elm_generic_dict$GenericDict$RBNode_elm_builtin, _robertjlooby$elm_generic_dict$GenericDict$Black, _p18._1, _p18._2, _p18._3, _p18._4, _p18._5);
+	}
+};
+var _robertjlooby$elm_generic_dict$GenericDict$redden = function (t) {
+	var _p19 = t;
+	if (_p19.ctor === 'RBEmpty_elm_builtin') {
+		return _elm_lang$core$Native_Utils.crashCase(
+			'GenericDict',
+			{
+				start: {line: 488, column: 5},
+				end: {line: 493, column: 52}
+			},
+			_p19)('can\'t make a Leaf red');
+	} else {
+		return A6(_robertjlooby$elm_generic_dict$GenericDict$RBNode_elm_builtin, _robertjlooby$elm_generic_dict$GenericDict$Red, _p19._1, _p19._2, _p19._3, _p19._4, _p19._5);
+	}
+};
+var _robertjlooby$elm_generic_dict$GenericDict$balanceHelp = function (tree) {
+	var _p21 = tree;
+	_v32_6:
+	do {
+		_v32_5:
+		do {
+			_v32_4:
+			do {
+				_v32_3:
+				do {
+					_v32_2:
+					do {
+						_v32_1:
+						do {
+							_v32_0:
+							do {
+								if (_p21.ctor === 'RBNode_elm_builtin') {
+									if (_p21._3.ctor === 'RBNode_elm_builtin') {
+										if (_p21._4.ctor === 'RBNode_elm_builtin') {
+											switch (_p21._3._0.ctor) {
+												case 'Red':
+													switch (_p21._4._0.ctor) {
+														case 'Red':
+															if ((_p21._3._3.ctor === 'RBNode_elm_builtin') && (_p21._3._3._0.ctor === 'Red')) {
+																break _v32_0;
+															} else {
+																if ((_p21._3._4.ctor === 'RBNode_elm_builtin') && (_p21._3._4._0.ctor === 'Red')) {
+																	break _v32_1;
+																} else {
+																	if ((_p21._4._3.ctor === 'RBNode_elm_builtin') && (_p21._4._3._0.ctor === 'Red')) {
+																		break _v32_2;
+																	} else {
+																		if ((_p21._4._4.ctor === 'RBNode_elm_builtin') && (_p21._4._4._0.ctor === 'Red')) {
+																			break _v32_3;
+																		} else {
+																			break _v32_6;
+																		}
+																	}
+																}
+															}
+														case 'NBlack':
+															if ((_p21._3._3.ctor === 'RBNode_elm_builtin') && (_p21._3._3._0.ctor === 'Red')) {
+																break _v32_0;
+															} else {
+																if ((_p21._3._4.ctor === 'RBNode_elm_builtin') && (_p21._3._4._0.ctor === 'Red')) {
+																	break _v32_1;
+																} else {
+																	if (((((_p21._0.ctor === 'BBlack') && (_p21._4._3.ctor === 'RBNode_elm_builtin')) && (_p21._4._3._0.ctor === 'Black')) && (_p21._4._4.ctor === 'RBNode_elm_builtin')) && (_p21._4._4._0.ctor === 'Black')) {
+																		break _v32_4;
+																	} else {
+																		break _v32_6;
+																	}
+																}
+															}
+														default:
+															if ((_p21._3._3.ctor === 'RBNode_elm_builtin') && (_p21._3._3._0.ctor === 'Red')) {
+																break _v32_0;
+															} else {
+																if ((_p21._3._4.ctor === 'RBNode_elm_builtin') && (_p21._3._4._0.ctor === 'Red')) {
+																	break _v32_1;
+																} else {
+																	break _v32_6;
+																}
+															}
+													}
+												case 'NBlack':
+													switch (_p21._4._0.ctor) {
+														case 'Red':
+															if ((_p21._4._3.ctor === 'RBNode_elm_builtin') && (_p21._4._3._0.ctor === 'Red')) {
+																break _v32_2;
+															} else {
+																if ((_p21._4._4.ctor === 'RBNode_elm_builtin') && (_p21._4._4._0.ctor === 'Red')) {
+																	break _v32_3;
+																} else {
+																	if (((((_p21._0.ctor === 'BBlack') && (_p21._3._3.ctor === 'RBNode_elm_builtin')) && (_p21._3._3._0.ctor === 'Black')) && (_p21._3._4.ctor === 'RBNode_elm_builtin')) && (_p21._3._4._0.ctor === 'Black')) {
+																		break _v32_5;
+																	} else {
+																		break _v32_6;
+																	}
+																}
+															}
+														case 'NBlack':
+															if (_p21._0.ctor === 'BBlack') {
+																if ((((_p21._4._3.ctor === 'RBNode_elm_builtin') && (_p21._4._3._0.ctor === 'Black')) && (_p21._4._4.ctor === 'RBNode_elm_builtin')) && (_p21._4._4._0.ctor === 'Black')) {
+																	break _v32_4;
+																} else {
+																	if ((((_p21._3._3.ctor === 'RBNode_elm_builtin') && (_p21._3._3._0.ctor === 'Black')) && (_p21._3._4.ctor === 'RBNode_elm_builtin')) && (_p21._3._4._0.ctor === 'Black')) {
+																		break _v32_5;
+																	} else {
+																		break _v32_6;
+																	}
+																}
+															} else {
+																break _v32_6;
+															}
+														default:
+															if (((((_p21._0.ctor === 'BBlack') && (_p21._3._3.ctor === 'RBNode_elm_builtin')) && (_p21._3._3._0.ctor === 'Black')) && (_p21._3._4.ctor === 'RBNode_elm_builtin')) && (_p21._3._4._0.ctor === 'Black')) {
+																break _v32_5;
+															} else {
+																break _v32_6;
+															}
+													}
+												default:
+													switch (_p21._4._0.ctor) {
+														case 'Red':
+															if ((_p21._4._3.ctor === 'RBNode_elm_builtin') && (_p21._4._3._0.ctor === 'Red')) {
+																break _v32_2;
+															} else {
+																if ((_p21._4._4.ctor === 'RBNode_elm_builtin') && (_p21._4._4._0.ctor === 'Red')) {
+																	break _v32_3;
+																} else {
+																	break _v32_6;
+																}
+															}
+														case 'NBlack':
+															if (((((_p21._0.ctor === 'BBlack') && (_p21._4._3.ctor === 'RBNode_elm_builtin')) && (_p21._4._3._0.ctor === 'Black')) && (_p21._4._4.ctor === 'RBNode_elm_builtin')) && (_p21._4._4._0.ctor === 'Black')) {
+																break _v32_4;
+															} else {
+																break _v32_6;
+															}
+														default:
+															break _v32_6;
+													}
+											}
+										} else {
+											switch (_p21._3._0.ctor) {
+												case 'Red':
+													if ((_p21._3._3.ctor === 'RBNode_elm_builtin') && (_p21._3._3._0.ctor === 'Red')) {
+														break _v32_0;
+													} else {
+														if ((_p21._3._4.ctor === 'RBNode_elm_builtin') && (_p21._3._4._0.ctor === 'Red')) {
+															break _v32_1;
+														} else {
+															break _v32_6;
+														}
+													}
+												case 'NBlack':
+													if (((((_p21._0.ctor === 'BBlack') && (_p21._3._3.ctor === 'RBNode_elm_builtin')) && (_p21._3._3._0.ctor === 'Black')) && (_p21._3._4.ctor === 'RBNode_elm_builtin')) && (_p21._3._4._0.ctor === 'Black')) {
+														break _v32_5;
+													} else {
+														break _v32_6;
+													}
+												default:
+													break _v32_6;
+											}
+										}
+									} else {
+										if (_p21._4.ctor === 'RBNode_elm_builtin') {
+											switch (_p21._4._0.ctor) {
+												case 'Red':
+													if ((_p21._4._3.ctor === 'RBNode_elm_builtin') && (_p21._4._3._0.ctor === 'Red')) {
+														break _v32_2;
+													} else {
+														if ((_p21._4._4.ctor === 'RBNode_elm_builtin') && (_p21._4._4._0.ctor === 'Red')) {
+															break _v32_3;
+														} else {
+															break _v32_6;
+														}
+													}
+												case 'NBlack':
+													if (((((_p21._0.ctor === 'BBlack') && (_p21._4._3.ctor === 'RBNode_elm_builtin')) && (_p21._4._3._0.ctor === 'Black')) && (_p21._4._4.ctor === 'RBNode_elm_builtin')) && (_p21._4._4._0.ctor === 'Black')) {
+														break _v32_4;
+													} else {
+														break _v32_6;
+													}
+												default:
+													break _v32_6;
+											}
+										} else {
+											break _v32_6;
+										}
+									}
+								} else {
+									break _v32_6;
+								}
+							} while(false);
+							return _robertjlooby$elm_generic_dict$GenericDict$balancedTree(_p21._0)(_p21._3._3._1)(_p21._3._3._2)(_p21._3._1)(_p21._3._2)(_p21._1)(_p21._2)(_p21._3._3._3)(_p21._3._3._4)(_p21._3._4)(_p21._4)(_p21._5);
+						} while(false);
+						return _robertjlooby$elm_generic_dict$GenericDict$balancedTree(_p21._0)(_p21._3._1)(_p21._3._2)(_p21._3._4._1)(_p21._3._4._2)(_p21._1)(_p21._2)(_p21._3._3)(_p21._3._4._3)(_p21._3._4._4)(_p21._4)(_p21._5);
+					} while(false);
+					return _robertjlooby$elm_generic_dict$GenericDict$balancedTree(_p21._0)(_p21._1)(_p21._2)(_p21._4._3._1)(_p21._4._3._2)(_p21._4._1)(_p21._4._2)(_p21._3)(_p21._4._3._3)(_p21._4._3._4)(_p21._4._4)(_p21._5);
+				} while(false);
+				return _robertjlooby$elm_generic_dict$GenericDict$balancedTree(_p21._0)(_p21._1)(_p21._2)(_p21._4._1)(_p21._4._2)(_p21._4._4._1)(_p21._4._4._2)(_p21._3)(_p21._4._3)(_p21._4._4._3)(_p21._4._4._4)(_p21._5);
+			} while(false);
+			var _p22 = _p21._5;
+			return A6(
+				_robertjlooby$elm_generic_dict$GenericDict$RBNode_elm_builtin,
+				_robertjlooby$elm_generic_dict$GenericDict$Black,
+				_p21._4._3._1,
+				_p21._4._3._2,
+				A6(_robertjlooby$elm_generic_dict$GenericDict$RBNode_elm_builtin, _robertjlooby$elm_generic_dict$GenericDict$Black, _p21._1, _p21._2, _p21._3, _p21._4._3._3, _p22),
+				A5(
+					_robertjlooby$elm_generic_dict$GenericDict$balance,
+					_robertjlooby$elm_generic_dict$GenericDict$Black,
+					_p21._4._1,
+					_p21._4._2,
+					_p21._4._3._4,
+					_robertjlooby$elm_generic_dict$GenericDict$redden(_p21._4._4)),
+				_p22);
+		} while(false);
+		var _p23 = _p21._5;
+		return A6(
+			_robertjlooby$elm_generic_dict$GenericDict$RBNode_elm_builtin,
+			_robertjlooby$elm_generic_dict$GenericDict$Black,
+			_p21._3._4._1,
+			_p21._3._4._2,
+			A5(
+				_robertjlooby$elm_generic_dict$GenericDict$balance,
+				_robertjlooby$elm_generic_dict$GenericDict$Black,
+				_p21._3._1,
+				_p21._3._2,
+				_robertjlooby$elm_generic_dict$GenericDict$redden(_p21._3._3),
+				_p21._3._4._3),
+			A6(_robertjlooby$elm_generic_dict$GenericDict$RBNode_elm_builtin, _robertjlooby$elm_generic_dict$GenericDict$Black, _p21._1, _p21._2, _p21._3._4._4, _p21._4, _p23),
+			_p23);
+	} while(false);
+	return tree;
+};
+var _robertjlooby$elm_generic_dict$GenericDict$balance = F5(
+	function (c, k, v, l, r) {
+		var tree = A6(
+			_robertjlooby$elm_generic_dict$GenericDict$RBNode_elm_builtin,
+			c,
+			k,
+			v,
+			l,
+			r,
+			_robertjlooby$elm_generic_dict$GenericDict$getComparer(l));
+		return _robertjlooby$elm_generic_dict$GenericDict$blackish(tree) ? _robertjlooby$elm_generic_dict$GenericDict$balanceHelp(tree) : tree;
+	});
+var _robertjlooby$elm_generic_dict$GenericDict$bubble = F5(
+	function (c, k, v, l, r) {
+		return (_robertjlooby$elm_generic_dict$GenericDict$isBBlack(l) || _robertjlooby$elm_generic_dict$GenericDict$isBBlack(r)) ? A5(
+			_robertjlooby$elm_generic_dict$GenericDict$balance,
+			_robertjlooby$elm_generic_dict$GenericDict$moreBlack(c),
+			k,
+			v,
+			_robertjlooby$elm_generic_dict$GenericDict$lessBlackTree(l),
+			_robertjlooby$elm_generic_dict$GenericDict$lessBlackTree(r)) : A6(
+			_robertjlooby$elm_generic_dict$GenericDict$RBNode_elm_builtin,
+			c,
+			k,
+			v,
+			l,
+			r,
+			_robertjlooby$elm_generic_dict$GenericDict$getComparer(l));
+	});
+var _robertjlooby$elm_generic_dict$GenericDict$removeMax = F5(
+	function (c, k, v, l, r) {
+		var _p24 = r;
+		if (_p24.ctor === 'RBEmpty_elm_builtin') {
+			return A3(_robertjlooby$elm_generic_dict$GenericDict$rem, c, l, r);
+		} else {
+			return A5(
+				_robertjlooby$elm_generic_dict$GenericDict$bubble,
+				c,
+				k,
+				v,
+				l,
+				A5(_robertjlooby$elm_generic_dict$GenericDict$removeMax, _p24._0, _p24._1, _p24._2, _p24._3, _p24._4));
+		}
+	});
+var _robertjlooby$elm_generic_dict$GenericDict$rem = F3(
+	function (c, l, r) {
+		var _p25 = {ctor: '_Tuple2', _0: l, _1: r};
+		if (_p25._0.ctor === 'RBEmpty_elm_builtin') {
+			if (_p25._1.ctor === 'RBEmpty_elm_builtin') {
+				var _p28 = _p25._0._1;
+				var _p26 = c;
+				switch (_p26.ctor) {
+					case 'Red':
+						return A2(_robertjlooby$elm_generic_dict$GenericDict$RBEmpty_elm_builtin, _robertjlooby$elm_generic_dict$GenericDict$LBlack, _p28);
+					case 'Black':
+						return A2(_robertjlooby$elm_generic_dict$GenericDict$RBEmpty_elm_builtin, _robertjlooby$elm_generic_dict$GenericDict$LBBlack, _p28);
+					default:
+						return _elm_lang$core$Native_Utils.crashCase(
+							'GenericDict',
+							{
+								start: {line: 364, column: 13},
+								end: {line: 372, column: 83}
+							},
+							_p26)('cannot have bblack or nblack nodes at this point');
+				}
+			} else {
+				var _p31 = _p25._1._0;
+				var _p30 = _p25._0._0;
+				var _p29 = {ctor: '_Tuple3', _0: c, _1: _p30, _2: _p31};
+				if ((((_p29.ctor === '_Tuple3') && (_p29._0.ctor === 'Black')) && (_p29._1.ctor === 'LBlack')) && (_p29._2.ctor === 'Red')) {
+					return A6(_robertjlooby$elm_generic_dict$GenericDict$RBNode_elm_builtin, _robertjlooby$elm_generic_dict$GenericDict$Black, _p25._1._1, _p25._1._2, _p25._1._3, _p25._1._4, _p25._0._1);
+				} else {
+					return A4(
+						_robertjlooby$elm_generic_dict$GenericDict$reportRemBug,
+						'Black/LBlack/Red',
+						c,
+						_elm_lang$core$Basics$toString(_p30),
+						_elm_lang$core$Basics$toString(_p31));
+				}
+			}
+		} else {
+			if (_p25._1.ctor === 'RBEmpty_elm_builtin') {
+				var _p34 = _p25._1._0;
+				var _p33 = _p25._0._0;
+				var _p32 = {ctor: '_Tuple3', _0: c, _1: _p33, _2: _p34};
+				if ((((_p32.ctor === '_Tuple3') && (_p32._0.ctor === 'Black')) && (_p32._1.ctor === 'Red')) && (_p32._2.ctor === 'LBlack')) {
+					return A6(_robertjlooby$elm_generic_dict$GenericDict$RBNode_elm_builtin, _robertjlooby$elm_generic_dict$GenericDict$Black, _p25._0._1, _p25._0._2, _p25._0._3, _p25._0._4, _p25._0._5);
+				} else {
+					return A4(
+						_robertjlooby$elm_generic_dict$GenericDict$reportRemBug,
+						'Black/Red/LBlack',
+						c,
+						_elm_lang$core$Basics$toString(_p33),
+						_elm_lang$core$Basics$toString(_p34));
+				}
+			} else {
+				var _p38 = _p25._0._2;
+				var _p37 = _p25._0._4;
+				var _p36 = _p25._0._1;
+				var l$ = A5(_robertjlooby$elm_generic_dict$GenericDict$removeMax, _p25._0._0, _p36, _p38, _p25._0._3, _p37);
+				var _p35 = A3(_robertjlooby$elm_generic_dict$GenericDict$maxWithDefault, _p36, _p38, _p37);
+				var k = _p35._0;
+				var v = _p35._1;
+				return A5(_robertjlooby$elm_generic_dict$GenericDict$bubble, c, k, v, l$, r);
+			}
+		}
+	});
+var _robertjlooby$elm_generic_dict$GenericDict$map = F2(
+	function (f, dict) {
+		var _p39 = dict;
+		if (_p39.ctor === 'RBEmpty_elm_builtin') {
+			return A2(_robertjlooby$elm_generic_dict$GenericDict$RBEmpty_elm_builtin, _robertjlooby$elm_generic_dict$GenericDict$LBlack, _p39._1);
+		} else {
+			var _p40 = _p39._1;
+			return A6(
+				_robertjlooby$elm_generic_dict$GenericDict$RBNode_elm_builtin,
+				_p39._0,
+				_p40,
+				A2(f, _p40, _p39._2),
+				A2(_robertjlooby$elm_generic_dict$GenericDict$map, f, _p39._3),
+				A2(_robertjlooby$elm_generic_dict$GenericDict$map, f, _p39._4),
+				_p39._5);
+		}
+	});
+var _robertjlooby$elm_generic_dict$GenericDict$Same = {ctor: 'Same'};
+var _robertjlooby$elm_generic_dict$GenericDict$Remove = {ctor: 'Remove'};
+var _robertjlooby$elm_generic_dict$GenericDict$Insert = {ctor: 'Insert'};
+var _robertjlooby$elm_generic_dict$GenericDict$update = F3(
+	function (k, alter, dict) {
+		var up = function (dict) {
+			var _p41 = dict;
+			if (_p41.ctor === 'RBEmpty_elm_builtin') {
+				var _p43 = _p41._1;
+				var _p42 = alter(_elm_lang$core$Maybe$Nothing);
+				if (_p42.ctor === 'Nothing') {
+					return {
+						ctor: '_Tuple2',
+						_0: _robertjlooby$elm_generic_dict$GenericDict$Same,
+						_1: _robertjlooby$elm_generic_dict$GenericDict$empty(_p43)
+					};
+				} else {
+					return {
+						ctor: '_Tuple2',
+						_0: _robertjlooby$elm_generic_dict$GenericDict$Insert,
+						_1: A6(
+							_robertjlooby$elm_generic_dict$GenericDict$RBNode_elm_builtin,
+							_robertjlooby$elm_generic_dict$GenericDict$Red,
+							k,
+							_p42._0,
+							_robertjlooby$elm_generic_dict$GenericDict$empty(_p43),
+							_robertjlooby$elm_generic_dict$GenericDict$empty(_p43),
+							_p43)
+					};
+				}
+			} else {
+				var _p55 = _p41._2;
+				var _p54 = _p41._4;
+				var _p53 = _p41._3;
+				var _p52 = _p41._1;
+				var _p51 = _p41._5;
+				var _p50 = _p41._0;
+				var _p44 = A2(_p51, k, _p52);
+				switch (_p44.ctor) {
+					case 'EQ':
+						var _p45 = alter(
+							_elm_lang$core$Maybe$Just(_p55));
+						if (_p45.ctor === 'Nothing') {
+							return {
+								ctor: '_Tuple2',
+								_0: _robertjlooby$elm_generic_dict$GenericDict$Remove,
+								_1: A3(_robertjlooby$elm_generic_dict$GenericDict$rem, _p50, _p53, _p54)
+							};
+						} else {
+							return {
+								ctor: '_Tuple2',
+								_0: _robertjlooby$elm_generic_dict$GenericDict$Same,
+								_1: A6(_robertjlooby$elm_generic_dict$GenericDict$RBNode_elm_builtin, _p50, _p52, _p45._0, _p53, _p54, _p51)
+							};
+						}
+					case 'LT':
+						var _p46 = up(_p53);
+						var flag = _p46._0;
+						var newLeft = _p46._1;
+						var _p47 = flag;
+						switch (_p47.ctor) {
+							case 'Same':
+								return {
+									ctor: '_Tuple2',
+									_0: _robertjlooby$elm_generic_dict$GenericDict$Same,
+									_1: A6(_robertjlooby$elm_generic_dict$GenericDict$RBNode_elm_builtin, _p50, _p52, _p55, newLeft, _p54, _p51)
+								};
+							case 'Insert':
+								return {
+									ctor: '_Tuple2',
+									_0: _robertjlooby$elm_generic_dict$GenericDict$Insert,
+									_1: A5(_robertjlooby$elm_generic_dict$GenericDict$balance, _p50, _p52, _p55, newLeft, _p54)
+								};
+							default:
+								return {
+									ctor: '_Tuple2',
+									_0: _robertjlooby$elm_generic_dict$GenericDict$Remove,
+									_1: A5(_robertjlooby$elm_generic_dict$GenericDict$bubble, _p50, _p52, _p55, newLeft, _p54)
+								};
+						}
+					default:
+						var _p48 = up(_p54);
+						var flag = _p48._0;
+						var newRight = _p48._1;
+						var _p49 = flag;
+						switch (_p49.ctor) {
+							case 'Same':
+								return {
+									ctor: '_Tuple2',
+									_0: _robertjlooby$elm_generic_dict$GenericDict$Same,
+									_1: A6(_robertjlooby$elm_generic_dict$GenericDict$RBNode_elm_builtin, _p50, _p52, _p55, _p53, newRight, _p51)
+								};
+							case 'Insert':
+								return {
+									ctor: '_Tuple2',
+									_0: _robertjlooby$elm_generic_dict$GenericDict$Insert,
+									_1: A5(_robertjlooby$elm_generic_dict$GenericDict$balance, _p50, _p52, _p55, _p53, newRight)
+								};
+							default:
+								return {
+									ctor: '_Tuple2',
+									_0: _robertjlooby$elm_generic_dict$GenericDict$Remove,
+									_1: A5(_robertjlooby$elm_generic_dict$GenericDict$bubble, _p50, _p52, _p55, _p53, newRight)
+								};
+						}
+				}
+			}
+		};
+		var _p56 = up(dict);
+		var flag = _p56._0;
+		var updatedDict = _p56._1;
+		var _p57 = flag;
+		switch (_p57.ctor) {
+			case 'Same':
+				return updatedDict;
+			case 'Insert':
+				return _robertjlooby$elm_generic_dict$GenericDict$ensureBlackRoot(updatedDict);
+			default:
+				return _robertjlooby$elm_generic_dict$GenericDict$blacken(updatedDict);
+		}
+	});
+var _robertjlooby$elm_generic_dict$GenericDict$insert = F3(
+	function (key, value, dict) {
+		return A3(
+			_robertjlooby$elm_generic_dict$GenericDict$update,
+			key,
+			_elm_lang$core$Basics$always(
+				_elm_lang$core$Maybe$Just(value)),
+			dict);
+	});
+var _robertjlooby$elm_generic_dict$GenericDict$singleton = F3(
+	function (comparer, key, value) {
+		return A3(
+			_robertjlooby$elm_generic_dict$GenericDict$insert,
+			key,
+			value,
+			_robertjlooby$elm_generic_dict$GenericDict$empty(comparer));
+	});
+var _robertjlooby$elm_generic_dict$GenericDict$union = F2(
+	function (t1, t2) {
+		var comparer = _robertjlooby$elm_generic_dict$GenericDict$getComparer(t1);
+		var reOrderedT2 = A3(
+			_robertjlooby$elm_generic_dict$GenericDict$foldl,
+			_robertjlooby$elm_generic_dict$GenericDict$insert,
+			_robertjlooby$elm_generic_dict$GenericDict$empty(comparer),
+			t2);
+		return A3(_robertjlooby$elm_generic_dict$GenericDict$foldl, _robertjlooby$elm_generic_dict$GenericDict$insert, reOrderedT2, t1);
+	});
+var _robertjlooby$elm_generic_dict$GenericDict$fromList = F2(
+	function (comparer, assocs) {
+		return A3(
+			_elm_lang$core$List$foldl,
+			F2(
+				function (_p58, dict) {
+					var _p59 = _p58;
+					return A3(_robertjlooby$elm_generic_dict$GenericDict$insert, _p59._0, _p59._1, dict);
+				}),
+			_robertjlooby$elm_generic_dict$GenericDict$empty(comparer),
+			assocs);
+	});
+var _robertjlooby$elm_generic_dict$GenericDict$filter = F2(
+	function (predicate, dictionary) {
+		var add = F3(
+			function (key, value, dict) {
+				return A2(predicate, key, value) ? A3(_robertjlooby$elm_generic_dict$GenericDict$insert, key, value, dict) : dict;
+			});
+		return A3(
+			_robertjlooby$elm_generic_dict$GenericDict$foldl,
+			add,
+			_robertjlooby$elm_generic_dict$GenericDict$empty(
+				_robertjlooby$elm_generic_dict$GenericDict$getComparer(dictionary)),
+			dictionary);
+	});
+var _robertjlooby$elm_generic_dict$GenericDict$intersect = F2(
+	function (t1, t2) {
+		return A2(
+			_robertjlooby$elm_generic_dict$GenericDict$filter,
+			F2(
+				function (k, _p60) {
+					return A2(_robertjlooby$elm_generic_dict$GenericDict$member, k, t2);
+				}),
+			t1);
+	});
+var _robertjlooby$elm_generic_dict$GenericDict$partition = F2(
+	function (predicate, dict) {
+		var add = F3(
+			function (key, value, _p61) {
+				var _p62 = _p61;
+				var _p64 = _p62._1;
+				var _p63 = _p62._0;
+				return A2(predicate, key, value) ? {
+					ctor: '_Tuple2',
+					_0: A3(_robertjlooby$elm_generic_dict$GenericDict$insert, key, value, _p63),
+					_1: _p64
+				} : {
+					ctor: '_Tuple2',
+					_0: _p63,
+					_1: A3(_robertjlooby$elm_generic_dict$GenericDict$insert, key, value, _p64)
+				};
+			});
+		var comparer = _robertjlooby$elm_generic_dict$GenericDict$getComparer(dict);
+		return A3(
+			_robertjlooby$elm_generic_dict$GenericDict$foldl,
+			add,
+			{
+				ctor: '_Tuple2',
+				_0: _robertjlooby$elm_generic_dict$GenericDict$empty(comparer),
+				_1: _robertjlooby$elm_generic_dict$GenericDict$empty(comparer)
+			},
+			dict);
+	});
+var _robertjlooby$elm_generic_dict$GenericDict$remove = F2(
+	function (key, dict) {
+		return A3(
+			_robertjlooby$elm_generic_dict$GenericDict$update,
+			key,
+			_elm_lang$core$Basics$always(_elm_lang$core$Maybe$Nothing),
+			dict);
+	});
+var _robertjlooby$elm_generic_dict$GenericDict$diff = F2(
+	function (t1, t2) {
+		return A3(
+			_robertjlooby$elm_generic_dict$GenericDict$foldl,
+			F3(
+				function (k, v, t) {
+					return A2(_robertjlooby$elm_generic_dict$GenericDict$remove, k, t);
+				}),
+			t1,
+			t2);
 	});
 
 var _user$project$Points$v2ToSVGString = function (vector) {
@@ -15493,8 +16059,9 @@ var _user$project$Points$piecePointsListToSVGString = F2(
 var _user$project$Points$spaceScale = 60;
 var _user$project$Points$circleRadius = _user$project$Points$spaceScale * 0.625;
 var _user$project$Points$spaceWidth = _user$project$Points$spaceScale * 2;
+var _user$project$Points$pieceScaleFactor = 40;
 var _user$project$Points$pointsListToPiecePointsList = _elm_lang$core$List$map(
-	_elm_community$elm_linear_algebra$Math_Vector2$scale(40));
+	_elm_community$elm_linear_algebra$Math_Vector2$scale(_user$project$Points$pieceScaleFactor));
 var _user$project$Points$pointsListToSVGString = function (_p1) {
 	return _user$project$Points$piecePointsListToSVGString(
 		_user$project$Points$pointsListToPiecePointsList(_p1));
@@ -15609,6 +16176,12 @@ var _user$project$Points$hexGrid = F2(
 			baseList);
 	});
 
+var _user$project$Extras$roundTo = F2(
+	function (places, value) {
+		var factor = Math.pow(10, places);
+		return _elm_lang$core$Basics$toFloat(
+			_elm_lang$core$Basics$round(value * factor)) / factor;
+	});
 var _user$project$Extras$getLowestAbsentIntHelper = F3(
 	function (list, lowerBound, upperBound) {
 		getLowestAbsentIntHelper:
@@ -15685,6 +16258,13 @@ var _user$project$Extras$indexOf = F2(
 	function (lst, element) {
 		return A3(_user$project$Extras$indexOfhelper, lst, element, 0);
 	});
+var _user$project$Extras$indexOfDefault = F2(
+	function (lst, element) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			-1,
+			A3(_user$project$Extras$indexOfhelper, lst, element, 0));
+	});
 var _user$project$Extras$filterOutListFromDict = F2(
 	function (list, dict) {
 		return A2(
@@ -15700,20 +16280,39 @@ var _user$project$Extras$ignoreFirstArg = F3(
 	function (f, c, a) {
 		return f(a);
 	});
+var _user$project$Extras$setAt = F3(
+	function (index, value, l) {
+		if (_elm_lang$core$Native_Utils.cmp(index, 0) < 0) {
+			return l;
+		} else {
+			var tail = _elm_lang$core$List$tail(
+				A2(_elm_lang$core$List$drop, index, l));
+			var head = A2(_elm_lang$core$List$take, index, l);
+			var _p2 = tail;
+			if (_p2.ctor === 'Nothing') {
+				return l;
+			} else {
+				return A2(
+					_elm_lang$core$List$append,
+					head,
+					A2(_elm_lang$core$List_ops['::'], value, _p2._0));
+			}
+		}
+	});
 var _user$project$Extras$andThen = _elm_lang$core$Basics$flip(_elm_lang$core$List$concatMap);
 var _user$project$Extras$remove = F2(
 	function (x, xs) {
-		var _p2 = xs;
-		if (_p2.ctor === '[]') {
+		var _p3 = xs;
+		if (_p3.ctor === '[]') {
 			return _elm_lang$core$Native_List.fromArray(
 				[]);
 		} else {
-			var _p4 = _p2._1;
-			var _p3 = _p2._0;
-			return _elm_lang$core$Native_Utils.eq(x, _p3) ? _p4 : A2(
+			var _p5 = _p3._1;
+			var _p4 = _p3._0;
+			return _elm_lang$core$Native_Utils.eq(x, _p4) ? _p5 : A2(
 				_elm_lang$core$List_ops['::'],
-				_p3,
-				A2(_user$project$Extras$remove, x, _p4));
+				_p4,
+				A2(_user$project$Extras$remove, x, _p5));
 		}
 	});
 
@@ -15804,6 +16403,17 @@ var _user$project$Spaces$Green = {ctor: 'Green'};
 var _user$project$Spaces$spaceTypePossibilities = _elm_lang$core$Native_List.fromArray(
 	[_user$project$Spaces$Green, _user$project$Spaces$Red, _user$project$Spaces$Yellow, _user$project$Spaces$EmptySpace]);
 
+var _user$project$PosInt$toInt = function (_p0) {
+	var _p1 = _p0;
+	return _p1._0;
+};
+var _user$project$PosInt$PosInt = function (a) {
+	return {ctor: 'PosInt', _0: a};
+};
+var _user$project$PosInt$fromInt = function (x) {
+	return (_elm_lang$core$Native_Utils.cmp(x, 0) > 0) ? _user$project$PosInt$PosInt(x) : _user$project$PosInt$PosInt(1);
+};
+
 var _user$project$Pieces$removePiecesAtPosition = F2(
 	function (position, pieces) {
 		return A2(
@@ -15843,6 +16453,14 @@ var _user$project$Pieces$getPiecesAtPosition = F2(
 			},
 			_elm_lang$core$Dict$values(pieces));
 	});
+var _user$project$Pieces$noPiecesAtPosition = F2(
+	function (pieces, position) {
+		var piecesOnSpace = A2(_user$project$Pieces$getPiecesAtPosition, pieces, position);
+		return _elm_lang$core$Native_Utils.eq(
+			piecesOnSpace,
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	});
 var _user$project$Pieces$addPiece = F2(
 	function (piece, pieces) {
 		var lowestFreeIndex = _user$project$Extras$getLowestAbsentInt(
@@ -15877,42 +16495,30 @@ var _user$project$Pieces$Piece = F2(
 	function (a, b) {
 		return {pieceType: a, position: b};
 	});
+var _user$project$Pieces$PieceType = F3(
+	function (a, b, c) {
+		return {moveEffect: a, controller: b, moveType: c};
+	});
+var _user$project$Pieces$AnySpace = {ctor: 'AnySpace'};
+var _user$project$Pieces$Unoccupied = {ctor: 'Unoccupied'};
+var _user$project$Pieces$Occupied = {ctor: 'Occupied'};
+var _user$project$Pieces$moveTypePossibilities = _elm_lang$core$Native_List.fromArray(
+	[_user$project$Pieces$Occupied, _user$project$Pieces$Unoccupied, _user$project$Pieces$AnySpace]);
 var _user$project$Pieces$None = {ctor: 'None'};
-var _user$project$Pieces$getControllability = function (pieceType) {
-	var _p1 = pieceType;
-	switch (_p1.ctor) {
-		case 'Star':
-			return _p1._0;
-		case 'WeirdThing':
-			return _p1._0;
-		case 'Triangle':
-			return _p1._0;
-		case 'Eye':
-			return _p1._0;
-		case 'Petals':
-			return _p1._0;
-		case 'TwistedPlus':
-			return _p1._0;
-		case 'Fangs':
-			return _p1._0;
-		default:
-			return _user$project$Pieces$None;
-	}
-};
 var _user$project$Pieces$isNoneControllable = function (piece) {
-	var controllability = _user$project$Pieces$getControllability(piece.pieceType);
+	var controllability = piece.pieceType.controller;
 	return _elm_lang$core$Native_Utils.eq(controllability, _user$project$Pieces$None);
 };
 var _user$project$Pieces$noneControlledCount = _user$project$Pieces$countPiecesThatFufillPredicate(_user$project$Pieces$isNoneControllable);
 var _user$project$Pieces$Both = {ctor: 'Both'};
 var _user$project$Pieces$isBothControllable = function (piece) {
-	var controllability = _user$project$Pieces$getControllability(piece.pieceType);
+	var controllability = piece.pieceType.controller;
 	return _elm_lang$core$Native_Utils.eq(controllability, _user$project$Pieces$Both);
 };
 var _user$project$Pieces$bothControlledCount = _user$project$Pieces$countPiecesThatFufillPredicate(_user$project$Pieces$isBothControllable);
 var _user$project$Pieces$Computer = {ctor: 'Computer'};
 var _user$project$Pieces$isComputerControllable = function (piece) {
-	var controllability = _user$project$Pieces$getControllability(piece.pieceType);
+	var controllability = piece.pieceType.controller;
 	return _elm_lang$core$Native_Utils.eq(controllability, _user$project$Pieces$Computer) || _elm_lang$core$Native_Utils.eq(controllability, _user$project$Pieces$Both);
 };
 var _user$project$Pieces$cpuControlledCount = _user$project$Pieces$countPiecesThatFufillPredicate(_user$project$Pieces$isComputerControllable);
@@ -15924,21 +16530,21 @@ var _user$project$Pieces$getCPUMovablePieces = function (pieces) {
 			pieces));
 };
 var _user$project$Pieces$isStrictlyComputerControllable = function (piece) {
-	var controllability = _user$project$Pieces$getControllability(piece.pieceType);
+	var controllability = piece.pieceType.controller;
 	return _elm_lang$core$Native_Utils.eq(controllability, _user$project$Pieces$Computer);
 };
 var _user$project$Pieces$strictCpuControlledCount = _user$project$Pieces$countPiecesThatFufillPredicate(_user$project$Pieces$isStrictlyComputerControllable);
 var _user$project$Pieces$Player = {ctor: 'Player'};
-var _user$project$Pieces$pieceControllabilityPossibilities = _elm_lang$core$Native_List.fromArray(
+var _user$project$Pieces$controllerPossibilities = _elm_lang$core$Native_List.fromArray(
 	[_user$project$Pieces$Player, _user$project$Pieces$Computer, _user$project$Pieces$Both, _user$project$Pieces$None]);
 var _user$project$Pieces$isPlayerControllable = function (piece) {
-	var controllability = _user$project$Pieces$getControllability(piece.pieceType);
+	var controllability = piece.pieceType.controller;
 	return _elm_lang$core$Native_Utils.eq(controllability, _user$project$Pieces$Player) || _elm_lang$core$Native_Utils.eq(controllability, _user$project$Pieces$Both);
 };
 var _user$project$Pieces$playerControlledCount = _user$project$Pieces$countPiecesThatFufillPredicate(_user$project$Pieces$isPlayerControllable);
 var _user$project$Pieces$controllabiltyCount = function (controlability) {
-	var _p2 = controlability;
-	switch (_p2.ctor) {
+	var _p1 = controlability;
+	switch (_p1.ctor) {
 		case 'Player':
 			return _user$project$Pieces$playerControlledCount;
 		case 'Computer':
@@ -15957,13 +16563,13 @@ var _user$project$Pieces$getPlayerMovablePieces = function (pieces) {
 			pieces));
 };
 var _user$project$Pieces$isStrictlyPlayerControllable = function (piece) {
-	var controllability = _user$project$Pieces$getControllability(piece.pieceType);
+	var controllability = piece.pieceType.controller;
 	return _elm_lang$core$Native_Utils.eq(controllability, _user$project$Pieces$Player);
 };
 var _user$project$Pieces$strictPlayerControlledCount = _user$project$Pieces$countPiecesThatFufillPredicate(_user$project$Pieces$isStrictlyPlayerControllable);
 var _user$project$Pieces$strictControllabiltyCount = function (controlability) {
-	var _p3 = controlability;
-	switch (_p3.ctor) {
+	var _p2 = controlability;
+	switch (_p2.ctor) {
 		case 'Player':
 			return _user$project$Pieces$strictPlayerControlledCount;
 		case 'Computer':
@@ -15974,69 +16580,332 @@ var _user$project$Pieces$strictControllabiltyCount = function (controlability) {
 			return _user$project$Pieces$noneControlledCount;
 	}
 };
-var _user$project$Pieces$NoPiece = {ctor: 'NoPiece'};
-var _user$project$Pieces$isActualPiece = function (piece) {
-	return !_elm_lang$core$Native_Utils.eq(piece.pieceType, _user$project$Pieces$NoPiece);
+var _user$project$Pieces$Eye = {ctor: 'Eye'};
+var _user$project$Pieces$PointsList = function (a) {
+	return {ctor: 'PointsList', _0: a};
 };
-var _user$project$Pieces$noPiecesAtPosition = F2(
-	function (pieces, position) {
-		var piecesOnSpace = A2(_user$project$Pieces$getPiecesAtPosition, pieces, position);
-		return A2(
-			F2(
-				function (x, y) {
-					return _elm_lang$core$Native_Utils.eq(x, y);
-				}),
-			_elm_lang$core$Native_List.fromArray(
-				[]),
-			A2(_elm_lang$core$List$filter, _user$project$Pieces$isActualPiece, piecesOnSpace));
-	});
-var _user$project$Pieces$filterOutNonActualPieces = function (pieces) {
-	return A2(
-		_elm_lang$core$Dict$filter,
-		_user$project$Extras$ignoreFirstArg(_user$project$Pieces$isActualPiece),
-		pieces);
+var _user$project$Pieces$NoEffect = {ctor: 'NoEffect'};
+var _user$project$Pieces$Copy = {ctor: 'Copy'};
+var _user$project$Pieces$Swap = {ctor: 'Swap'};
+var _user$project$Pieces$Bump = function (a) {
+	return {ctor: 'Bump', _0: a};
 };
-var _user$project$Pieces$Fangs = function (a) {
-	return {ctor: 'Fangs', _0: a};
-};
-var _user$project$Pieces$TwistedPlus = function (a) {
-	return {ctor: 'TwistedPlus', _0: a};
-};
-var _user$project$Pieces$Petals = function (a) {
-	return {ctor: 'Petals', _0: a};
-};
-var _user$project$Pieces$Eye = function (a) {
-	return {ctor: 'Eye', _0: a};
-};
-var _user$project$Pieces$Triangle = function (a) {
-	return {ctor: 'Triangle', _0: a};
-};
-var _user$project$Pieces$WeirdThing = function (a) {
-	return {ctor: 'WeirdThing', _0: a};
-};
-var _user$project$Pieces$Star = function (a) {
-	return {ctor: 'Star', _0: a};
-};
+var _user$project$Pieces$Capture = {ctor: 'Capture'};
+var _user$project$Pieces$someMoveEffectPossibilities = _elm_lang$core$Native_List.fromArray(
+	[
+		_user$project$Pieces$Capture,
+		_user$project$Pieces$Bump(
+		_user$project$PosInt$fromInt(1)),
+		_user$project$Pieces$Bump(
+		_user$project$PosInt$fromInt(2)),
+		_user$project$Pieces$Bump(
+		_user$project$PosInt$fromInt(64)),
+		_user$project$Pieces$Swap,
+		_user$project$Pieces$Copy,
+		_user$project$Pieces$NoEffect
+	]);
 var _user$project$Pieces$actualPieceTypePossibilities = A2(
 	_elm_lang$core$List$concatMap,
-	function (f) {
+	function (moveEffect) {
 		return A2(
 			_elm_lang$core$List$concatMap,
-			function (x) {
-				return _elm_lang$core$Native_List.fromArray(
-					[
-						f(x)
-					]);
+			function (controller) {
+				return A2(
+					_elm_lang$core$List$map,
+					A2(_user$project$Pieces$PieceType, moveEffect, controller),
+					_user$project$Pieces$moveTypePossibilities);
 			},
-			_user$project$Pieces$pieceControllabilityPossibilities);
+			_user$project$Pieces$controllerPossibilities);
 	},
-	_elm_lang$core$Native_List.fromArray(
-		[_user$project$Pieces$Star, _user$project$Pieces$WeirdThing, _user$project$Pieces$Triangle, _user$project$Pieces$Eye, _user$project$Pieces$Petals, _user$project$Pieces$Fangs, _user$project$Pieces$TwistedPlus]));
-var _user$project$Pieces$pieceTypePossibilities = A2(
+	_user$project$Pieces$someMoveEffectPossibilities);
+var _user$project$Pieces$NoPiece = {ctor: 'NoPiece'};
+var _user$project$Pieces$ActualPiece = function (a) {
+	return {ctor: 'ActualPiece', _0: a};
+};
+var _user$project$Pieces$protoPiecePossibilities = A2(
 	_elm_lang$core$Basics_ops['++'],
-	_user$project$Pieces$actualPieceTypePossibilities,
+	A2(_elm_lang$core$List$map, _user$project$Pieces$ActualPiece, _user$project$Pieces$actualPieceTypePossibilities),
 	_elm_lang$core$Native_List.fromArray(
 		[_user$project$Pieces$NoPiece]));
+
+var _user$project$Deck$maybeFromDeck = F2(
+	function (currentDeck, seed) {
+		var _p0 = A2(
+			_elm_lang$core$Random$step,
+			A2(
+				_elm_lang$core$Random$int,
+				0,
+				_elm_lang$core$List$length(currentDeck) - 1),
+			seed);
+		var index = _p0._0;
+		var newSeed = _p0._1;
+		var _p1 = _elm_lang$core$List$head(
+			A2(_elm_lang$core$List$drop, index, currentDeck));
+		if (_p1.ctor === 'Nothing') {
+			return _elm_lang$core$Maybe$Nothing;
+		} else {
+			var remainingElements = A2(
+				_elm_lang$core$Basics_ops['++'],
+				A2(_elm_lang$core$List$take, index, currentDeck),
+				A2(_elm_lang$core$List$drop, index + 1, currentDeck));
+			return _elm_lang$core$Maybe$Just(
+				{ctor: '_Tuple3', _0: _p1._0, _1: remainingElements, _2: newSeed});
+		}
+	});
+var _user$project$Deck$drawFromDeck = F4(
+	function ($default, deck, currentDeck, seed) {
+		var _p2 = A2(_user$project$Deck$maybeFromDeck, currentDeck, seed);
+		if (_p2.ctor === 'Nothing') {
+			var _p3 = A2(_user$project$Deck$maybeFromDeck, deck, seed);
+			if (_p3.ctor === 'Nothing') {
+				return {ctor: '_Tuple3', _0: $default, _1: deck, _2: seed};
+			} else {
+				return _p3._0;
+			}
+		} else {
+			return _p2._0;
+		}
+	});
+var _user$project$Deck$fillListFromDeckHelper = F6(
+	function ($default, deck, currentDeck, remainingLength, seed, result) {
+		fillListFromDeckHelper:
+		while (true) {
+			if (_elm_lang$core$Native_Utils.eq(remainingLength, 0)) {
+				return {ctor: '_Tuple2', _0: result, _1: seed};
+			} else {
+				var _p4 = A4(_user$project$Deck$drawFromDeck, $default, deck, currentDeck, seed);
+				var drawnElement = _p4._0;
+				var newDeck = _p4._1;
+				var newSeed = _p4._2;
+				var _v3 = $default,
+					_v4 = deck,
+					_v5 = newDeck,
+					_v6 = remainingLength - 1,
+					_v7 = newSeed,
+					_v8 = A2(_elm_lang$core$List_ops['::'], drawnElement, result);
+				$default = _v3;
+				deck = _v4;
+				currentDeck = _v5;
+				remainingLength = _v6;
+				seed = _v7;
+				result = _v8;
+				continue fillListFromDeckHelper;
+			}
+		}
+	});
+var _user$project$Deck$fillListFromDeck = F4(
+	function ($default, deck, length, seed) {
+		return A6(
+			_user$project$Deck$fillListFromDeckHelper,
+			$default,
+			deck,
+			deck,
+			length,
+			seed,
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	});
+
+var _user$project$PieceAppearances$getFill = function (control) {
+	var _p0 = control;
+	switch (_p0.ctor) {
+		case 'Player':
+			return '#fa0';
+		case 'Computer':
+			return '#0af';
+		case 'Both':
+			return '#faf';
+		default:
+			return '#0a0';
+	}
+};
+var _user$project$PieceAppearances$getShape = function (moveEffect) {
+	var _p1 = moveEffect;
+	switch (_p1.ctor) {
+		case 'Capture':
+			return _user$project$Pieces$PointsList(
+				_user$project$Points$pointsListToPiecePointsList(_user$project$Points$trianglePointsList));
+		case 'Bump':
+			var _p2 = _user$project$PosInt$toInt(_p1._0);
+			switch (_p2) {
+				case 1:
+					return _user$project$Pieces$PointsList(
+						_user$project$Points$pointsListToPiecePointsList(_user$project$Points$weirdThingPointsList));
+				case 2:
+					return _user$project$Pieces$PointsList(
+						_user$project$Points$pointsListToPiecePointsList(_user$project$Points$twistedPlusPointsList));
+				default:
+					return _user$project$Pieces$PointsList(
+						_user$project$Points$pointsListToPiecePointsList(_user$project$Points$fangsPointsList));
+			}
+		case 'Swap':
+			return _user$project$Pieces$Eye;
+		case 'Copy':
+			return _user$project$Pieces$PointsList(
+				_user$project$Points$pointsListToPiecePointsList(_user$project$Points$petalsPointsList));
+		default:
+			return _user$project$Pieces$PointsList(
+				_user$project$Points$pointsListToPiecePointsList(_user$project$Points$starPointsList));
+	}
+};
+var _user$project$PieceAppearances$update = _robertjlooby$elm_generic_dict$GenericDict$update;
+var _user$project$PieceAppearances$updateIcon = F3(
+	function (pieceType, icon, pieceAppearances) {
+		return A3(
+			_user$project$PieceAppearances$update,
+			pieceType,
+			function (maybeOldApppearance) {
+				var _p3 = maybeOldApppearance;
+				if (_p3.ctor === 'Just') {
+					return _elm_lang$core$Maybe$Just(
+						{ctor: '_Tuple3', _0: _p3._0._0, _1: _p3._0._1, _2: icon});
+				} else {
+					return _elm_lang$core$Maybe$Just(
+						{
+							ctor: '_Tuple3',
+							_0: _user$project$PieceAppearances$getShape(pieceType.moveEffect),
+							_1: _user$project$PieceAppearances$getFill(pieceType.controller),
+							_2: icon
+						});
+				}
+			},
+			pieceAppearances);
+	});
+var _user$project$PieceAppearances$toList = _robertjlooby$elm_generic_dict$GenericDict$toList;
+var _user$project$PieceAppearances$moveTypeCompare = F2(
+	function (moveType, moveType$) {
+		var moveTypeInt$ = A2(_user$project$Extras$indexOfDefault, _user$project$Pieces$moveTypePossibilities, moveType$);
+		var moveTypeInt = A2(_user$project$Extras$indexOfDefault, _user$project$Pieces$moveTypePossibilities, moveType);
+		return A2(_elm_lang$core$Basics$compare, moveTypeInt, moveTypeInt$);
+	});
+var _user$project$PieceAppearances$controllerCompare = F2(
+	function (controller, controller$) {
+		var controllerInt$ = A2(_user$project$Extras$indexOfDefault, _user$project$Pieces$controllerPossibilities, controller$);
+		var controllerInt = A2(_user$project$Extras$indexOfDefault, _user$project$Pieces$controllerPossibilities, controller);
+		return A2(_elm_lang$core$Basics$compare, controllerInt, controllerInt$);
+	});
+var _user$project$PieceAppearances$bumpOffset = _elm_lang$core$List$length(_user$project$Pieces$someMoveEffectPossibilities);
+var _user$project$PieceAppearances$getMoveEffectInt = function (moveEffect) {
+	var _p4 = moveEffect;
+	if (_p4.ctor === 'Bump') {
+		return _user$project$PosInt$toInt(_p4._0) + _user$project$PieceAppearances$bumpOffset;
+	} else {
+		return A2(_user$project$Extras$indexOfDefault, _user$project$Pieces$someMoveEffectPossibilities, moveEffect);
+	}
+};
+var _user$project$PieceAppearances$moveEffectCompare = F2(
+	function (moveEffect, moveEffect$) {
+		var moveEffectInt$ = _user$project$PieceAppearances$getMoveEffectInt(moveEffect$);
+		var moveEffectInt = _user$project$PieceAppearances$getMoveEffectInt(moveEffect);
+		return A2(_elm_lang$core$Basics$compare, moveEffectInt, moveEffectInt$);
+	});
+var _user$project$PieceAppearances$comparer = F2(
+	function (_p5, other) {
+		var _p6 = _p5;
+		var _p7 = A2(_user$project$PieceAppearances$moveEffectCompare, _p6.moveEffect, other.moveEffect);
+		if (_p7.ctor === 'EQ') {
+			var _p8 = A2(_user$project$PieceAppearances$controllerCompare, _p6.controller, other.controller);
+			if (_p8.ctor === 'EQ') {
+				return A2(_user$project$PieceAppearances$moveTypeCompare, _p6.moveType, other.moveType);
+			} else {
+				return _p8;
+			}
+		} else {
+			return _p7;
+		}
+	});
+var _user$project$PieceAppearances$fromList = _robertjlooby$elm_generic_dict$GenericDict$fromList(_user$project$PieceAppearances$comparer);
+var _user$project$PieceAppearances$NoIcon = {ctor: 'NoIcon'};
+var _user$project$PieceAppearances$get = F2(
+	function (pieceType, pieceAppearances) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			{ctor: '_Tuple3', _0: _user$project$Pieces$Eye, _1: '#f0f', _2: _user$project$PieceAppearances$NoIcon},
+			A2(_robertjlooby$elm_generic_dict$GenericDict$get, pieceType, pieceAppearances));
+	});
+var _user$project$PieceAppearances$ShapeIcon = function (a) {
+	return {ctor: 'ShapeIcon', _0: a};
+};
+var _user$project$PieceAppearances$ShapeSpaceIcon = function (a) {
+	return {ctor: 'ShapeSpaceIcon', _0: a};
+};
+var _user$project$PieceAppearances$triangleIcon = _user$project$PieceAppearances$ShapeSpaceIcon(
+	_user$project$Pieces$PointsList(
+		_user$project$Points$pointsListToPiecePointsList(_user$project$Points$trianglePointsList)));
+var _user$project$PieceAppearances$EmptySpaceIcon = {ctor: 'EmptySpaceIcon'};
+var _user$project$PieceAppearances$getIcon = function (moveType) {
+	var _p9 = moveType;
+	switch (_p9.ctor) {
+		case 'AnySpace':
+			return _user$project$PieceAppearances$NoIcon;
+		case 'Occupied':
+			return _user$project$PieceAppearances$triangleIcon;
+		default:
+			return _user$project$PieceAppearances$EmptySpaceIcon;
+	}
+};
+var _user$project$PieceAppearances$updatePoints = F3(
+	function (pieceType, list, pieceAppearances) {
+		return A3(
+			_user$project$PieceAppearances$update,
+			pieceType,
+			function (maybeOldApppearance) {
+				var _p10 = maybeOldApppearance;
+				if (_p10.ctor === 'Just') {
+					return _elm_lang$core$Maybe$Just(
+						{
+							ctor: '_Tuple3',
+							_0: _user$project$Pieces$PointsList(list),
+							_1: _p10._0._1,
+							_2: _p10._0._2
+						});
+				} else {
+					return _elm_lang$core$Maybe$Just(
+						{
+							ctor: '_Tuple3',
+							_0: _user$project$Pieces$PointsList(list),
+							_1: _user$project$PieceAppearances$getFill(pieceType.controller),
+							_2: _user$project$PieceAppearances$getIcon(pieceType.moveType)
+						});
+				}
+			},
+			pieceAppearances);
+	});
+var _user$project$PieceAppearances$updateColour = F3(
+	function (pieceType, colour, pieceAppearances) {
+		return A3(
+			_user$project$PieceAppearances$update,
+			pieceType,
+			function (maybeOldApppearance) {
+				var _p11 = maybeOldApppearance;
+				if (_p11.ctor === 'Just') {
+					return _elm_lang$core$Maybe$Just(
+						{ctor: '_Tuple3', _0: _p11._0._0, _1: colour, _2: _p11._0._2});
+				} else {
+					return _elm_lang$core$Maybe$Just(
+						{
+							ctor: '_Tuple3',
+							_0: _user$project$PieceAppearances$getShape(pieceType.moveEffect),
+							_1: colour,
+							_2: _user$project$PieceAppearances$getIcon(pieceType.moveType)
+						});
+				}
+			},
+			pieceAppearances);
+	});
+var _user$project$PieceAppearances$pairWithAppearance = function (_p12) {
+	var _p13 = _p12;
+	return {
+		ctor: '_Tuple2',
+		_0: _p13,
+		_1: {
+			ctor: '_Tuple3',
+			_0: _user$project$PieceAppearances$getShape(_p13.moveEffect),
+			_1: _user$project$PieceAppearances$getFill(_p13.controller),
+			_2: _user$project$PieceAppearances$getIcon(_p13.moveType)
+		}
+	};
+};
 
 var _user$project$Model$getLossConString = function (model) {
 	var _p0 = model.gameEndCons;
@@ -16046,74 +16915,99 @@ var _user$project$Model$getWinConString = function (model) {
 	var _p1 = model.gameEndCons;
 	return _elm_lang$core$Basics$toString(_p1._0);
 };
-var _user$project$Model$makePieces = F3(
-	function (spaces, deck, seed) {
+var _user$project$Model$attemptPiece = F2(
+	function (protoPiece, position) {
+		var _p2 = protoPiece;
+		if (_p2.ctor === 'ActualPiece') {
+			return _elm_lang$core$Maybe$Just(
+				A2(_user$project$Pieces$Piece, _p2._0, position));
+		} else {
+			return _elm_lang$core$Maybe$Nothing;
+		}
+	});
+var _user$project$Model$makePieces = F4(
+	function (spaces, protoPieceDeck, moveTypeDeck, seed) {
 		var filteredPositions = _user$project$Spaces$getActualSpacePositions(spaces);
-		var _p2 = A4(
-			_user$project$Deck$fillListFromDeck,
-			_user$project$Pieces$NoPiece,
-			deck,
-			_elm_lang$core$List$length(filteredPositions),
-			seed);
-		var pieceTypes = _p2._0;
-		var newSeed = _p2._1;
-		var pieces = _user$project$Pieces$filterOutNonActualPieces(
-			_elm_lang$core$Dict$fromList(
+		var pieceAmount = _elm_lang$core$List$length(filteredPositions);
+		var _p3 = A4(_user$project$Deck$fillListFromDeck, _user$project$Pieces$NoPiece, protoPieceDeck, pieceAmount, seed);
+		var pieceTypes = _p3._0;
+		var postPieceTypesSeed = _p3._1;
+		var _p4 = A4(_user$project$Deck$fillListFromDeck, _user$project$Pieces$AnySpace, moveTypeDeck, pieceAmount, postPieceTypesSeed);
+		var moveTypes = _p4._0;
+		var newSeed = _p4._1;
+		var pieces = _elm_lang$core$Dict$fromList(
+			A2(
+				_elm_lang$core$List$indexedMap,
+				F2(
+					function (v0, v1) {
+						return {ctor: '_Tuple2', _0: v0, _1: v1};
+					}),
 				A2(
-					_elm_lang$core$List$indexedMap,
-					F2(
-						function (v0, v1) {
-							return {ctor: '_Tuple2', _0: v0, _1: v1};
-						}),
-					A3(_elm_lang$core$List$map2, _user$project$Pieces$Piece, pieceTypes, filteredPositions))));
+					_elm_lang$core$List$filterMap,
+					_elm_lang$core$Basics$identity,
+					A3(_elm_lang$core$List$map2, _user$project$Model$attemptPiece, pieceTypes, filteredPositions))));
 		return {ctor: '_Tuple2', _0: pieces, _1: newSeed};
 	});
 var _user$project$Model$makeGridPoints = F2(
 	function (width, height) {
 		return A2(
 			_elm_lang$core$List$map,
-			function (_p3) {
-				var _p4 = _p3;
+			function (_p5) {
+				var _p6 = _p5;
 				return {
 					ctor: '_Tuple2',
-					_0: _p4._0,
+					_0: _p6._0,
 					_1: A2(
 						_elm_community$elm_linear_algebra$Math_Vector2$add,
 						A2(_elm_community$elm_linear_algebra$Math_Vector2$vec2, 100, 100),
-						A2(_elm_community$elm_linear_algebra$Math_Vector2$scale, 60, _p4._1))
+						A2(_elm_community$elm_linear_algebra$Math_Vector2$scale, 60, _p6._1))
 				};
 			},
 			A2(_user$project$Points$hexGrid, width, height));
 	});
 var _user$project$Model$putSpaceTogether = F2(
-	function (_p5, spaceType) {
-		var _p6 = _p5;
+	function (_p7, spaceType) {
+		var _p8 = _p7;
 		return {
 			ctor: '_Tuple2',
-			_0: _p6._0,
-			_1: A2(_user$project$Spaces$Space, _p6._1, spaceType)
+			_0: _p8._0,
+			_1: A2(_user$project$Spaces$Space, _p8._1, spaceType)
 		};
 	});
 var _user$project$Model$makeSpaces = F4(
 	function (width, height, deck, seed) {
 		var gridPoints = A2(_user$project$Model$makeGridPoints, width, height);
-		var _p7 = A4(
+		var _p9 = A4(
 			_user$project$Deck$fillListFromDeck,
 			_user$project$Spaces$EmptySpace,
 			deck,
 			_elm_lang$core$List$length(gridPoints),
 			seed);
-		var spaceTypes = _p7._0;
-		var newSeed = _p7._1;
+		var spaceTypes = _p9._0;
+		var newSeed = _p9._1;
 		var spaces = _elm_lang$core$Dict$fromList(
 			A3(_elm_lang$core$List$map2, _user$project$Model$putSpaceTogether, gridPoints, spaceTypes));
 		return {ctor: '_Tuple2', _0: spaces, _1: newSeed};
 	});
-var _user$project$Model$defaultPieceDeck = A2(
-	_elm_lang$core$Basics_ops['++'],
-	_user$project$Pieces$pieceTypePossibilities,
+var _user$project$Model$defaultpieceAppearances = _user$project$PieceAppearances$fromList(
+	A2(_elm_lang$core$List$map, _user$project$PieceAppearances$pairWithAppearance, _user$project$Pieces$actualPieceTypePossibilities));
+var _user$project$Model$defaultMoveTypeDeck = _user$project$Pieces$moveTypePossibilities;
+var _user$project$Model$defaultPieceTypeDeck = A2(
+	F2(
+		function (x, y) {
+			return A2(_elm_lang$core$Basics_ops['++'], x, y);
+		}),
 	_elm_lang$core$Native_List.fromArray(
-		[_user$project$Pieces$NoPiece]));
+		[_user$project$Pieces$NoPiece, _user$project$Pieces$NoPiece]),
+	A2(
+		_elm_lang$core$List$map,
+		_user$project$Pieces$ActualPiece,
+		A2(
+			_elm_lang$core$List$filter,
+			function (p) {
+				return _elm_lang$core$Native_Utils.eq(p.moveType, _user$project$Pieces$AnySpace);
+			},
+			_user$project$Pieces$actualPieceTypePossibilities)));
 var _user$project$Model$defaultSpaceDeck = _elm_lang$core$Native_List.fromArray(
 	[_user$project$Spaces$Green, _user$project$Spaces$Green, _user$project$Spaces$Red, _user$project$Spaces$Red, _user$project$Spaces$EmptySpace]);
 var _user$project$Model$defaultHeight = 5;
@@ -16126,10 +17020,11 @@ var _user$project$Model$defaultSpaces = _elm_lang$core$Basics$fst(
 		_user$project$Model$defaultSpaceDeck,
 		_elm_lang$core$Random$initialSeed(-42)));
 var _user$project$Model$defaultPieces = _elm_lang$core$Basics$fst(
-	A3(
+	A4(
 		_user$project$Model$makePieces,
 		_user$project$Model$defaultSpaces,
-		_user$project$Model$defaultPieceDeck,
+		_user$project$Model$defaultPieceTypeDeck,
+		_user$project$Model$defaultMoveTypeDeck,
 		_elm_lang$core$Random$initialSeed(-421)));
 var _user$project$Model$Model = function (a) {
 	return function (b) {
@@ -16150,7 +17045,11 @@ var _user$project$Model$Model = function (a) {
 																return function (q) {
 																	return function (r) {
 																		return function (s) {
-																			return {allowSelfMoves: a, pieceSelected: b, pieces: c, spaces: d, gridWidth: e, gridHeight: f, spaceDeck: g, pieceDeck: h, seed: i, tabIndex: j, gameResult: k, ignoreGameResult: l, gameEndCons: m, debug: n, showSpaceOutlines: o, allowMovingAllPieces: p, viewScale: q, windowSize: r, mdl: s};
+																			return function (t) {
+																				return function (u) {
+																					return {allowSelfMoves: a, pieceSelected: b, pieces: c, spaces: d, gridWidth: e, gridHeight: f, spaceDeck: g, pieceDeck: h, moveTypeDeck: i, pieceAppearances: j, seed: k, tabIndex: l, gameResult: m, ignoreGameResult: n, gameEndCons: o, debug: p, showSpaceOutlines: q, allowMovingAllPieces: r, viewScale: s, windowSize: t, mdl: u};
+																				};
+																			};
 																		};
 																	};
 																};
@@ -16194,18 +17093,20 @@ var _user$project$Model$defaultState = {
 	pieceSelected: _elm_lang$core$Maybe$Nothing,
 	pieces: _user$project$Model$defaultPieces,
 	spaces: _user$project$Model$defaultSpaces,
-	seed: _elm_lang$core$Random$initialSeed(42),
 	gridWidth: _user$project$Model$defaultWidth,
 	gridHeight: _user$project$Model$defaultHeight,
 	spaceDeck: _user$project$Model$defaultSpaceDeck,
-	pieceDeck: _user$project$Model$defaultPieceDeck,
+	pieceDeck: _user$project$Model$defaultPieceTypeDeck,
+	moveTypeDeck: _user$project$Model$defaultMoveTypeDeck,
+	pieceAppearances: _user$project$Model$defaultpieceAppearances,
+	seed: _elm_lang$core$Random$initialSeed(42),
 	tabIndex: 0,
 	gameResult: _user$project$Model$TBD,
 	ignoreGameResult: false,
 	gameEndCons: A2(
 		_user$project$Model$GameEndCons,
 		_user$project$Model$NoPiecesOfGivenTypeCanMove(
-			_user$project$Pieces$Star(_user$project$Pieces$Both)),
+			A3(_user$project$Pieces$PieceType, _user$project$Pieces$NoEffect, _user$project$Pieces$Both, _user$project$Pieces$Unoccupied)),
 		_user$project$Model$NoPiecesControlledBy(_user$project$Pieces$Player)),
 	debug: true,
 	showSpaceOutlines: true,
@@ -16249,18 +17150,18 @@ var _user$project$Model$decrementGamePredicate = function (predicate) {
 			}));
 };
 var _user$project$Model$decrementWinCon = function (gameEndCons) {
-	var _p8 = gameEndCons;
+	var _p10 = gameEndCons;
 	return A2(
 		_user$project$Model$GameEndCons,
-		_user$project$Model$decrementGamePredicate(_p8._0),
-		_p8._1);
+		_user$project$Model$decrementGamePredicate(_p10._0),
+		_p10._1);
 };
 var _user$project$Model$decrementLossCon = function (gameEndCons) {
-	var _p9 = gameEndCons;
+	var _p11 = gameEndCons;
 	return A2(
 		_user$project$Model$GameEndCons,
-		_p9._0,
-		_user$project$Model$decrementGamePredicate(_p9._1));
+		_p11._0,
+		_user$project$Model$decrementGamePredicate(_p11._1));
 };
 var _user$project$Model$incrementGamePredicate = function (predicate) {
 	return A2(
@@ -16283,24 +17184,29 @@ var _user$project$Model$incrementGamePredicate = function (predicate) {
 			}));
 };
 var _user$project$Model$incrementWinCon = function (gameEndCons) {
-	var _p10 = gameEndCons;
+	var _p12 = gameEndCons;
 	return A2(
 		_user$project$Model$GameEndCons,
-		_user$project$Model$incrementGamePredicate(_p10._0),
-		_p10._1);
+		_user$project$Model$incrementGamePredicate(_p12._0),
+		_p12._1);
 };
 var _user$project$Model$incrementLossCon = function (gameEndCons) {
-	var _p11 = gameEndCons;
+	var _p13 = gameEndCons;
 	return A2(
 		_user$project$Model$GameEndCons,
-		_p11._0,
-		_user$project$Model$incrementGamePredicate(_p11._1));
+		_p13._0,
+		_user$project$Model$incrementGamePredicate(_p13._1));
 };
 
-var _user$project$Msg$MakeAIMove = {ctor: 'MakeAIMove'};
-var _user$project$Msg$Resize = function (a) {
-	return {ctor: 'Resize', _0: a};
-};
+var _user$project$Msg$NoOp = {ctor: 'NoOp'};
+var _user$project$Msg$SetIcon = F2(
+	function (a, b) {
+		return {ctor: 'SetIcon', _0: a, _1: b};
+	});
+var _user$project$Msg$EditPoints = F2(
+	function (a, b) {
+		return {ctor: 'EditPoints', _0: a, _1: b};
+	});
 var _user$project$Msg$IncrementLossCon = {ctor: 'IncrementLossCon'};
 var _user$project$Msg$DecrementLossCon = {ctor: 'DecrementLossCon'};
 var _user$project$Msg$IncrementWinCon = {ctor: 'IncrementWinCon'};
@@ -16309,29 +17215,41 @@ var _user$project$Msg$ToggleIgnoreGameResult = {ctor: 'ToggleIgnoreGameResult'};
 var _user$project$Msg$ToggleAllowMovingAllPieces = {ctor: 'ToggleAllowMovingAllPieces'};
 var _user$project$Msg$ToggleSelfMoves = {ctor: 'ToggleSelfMoves'};
 var _user$project$Msg$ToggleSpaceOutlines = {ctor: 'ToggleSpaceOutlines'};
+var _user$project$Msg$UpdateColour = F2(
+	function (a, b) {
+		return {ctor: 'UpdateColour', _0: a, _1: b};
+	});
 var _user$project$Msg$DecrementViewScale = {ctor: 'DecrementViewScale'};
 var _user$project$Msg$IncrementViewScale = {ctor: 'IncrementViewScale'};
 var _user$project$Msg$DecrementGridHeight = {ctor: 'DecrementGridHeight'};
 var _user$project$Msg$IncrementGridHeight = {ctor: 'IncrementGridHeight'};
 var _user$project$Msg$DecrementGridWidth = {ctor: 'DecrementGridWidth'};
 var _user$project$Msg$IncrementGridWidth = {ctor: 'IncrementGridWidth'};
-var _user$project$Msg$PieceDeckDecrement = function (a) {
-	return {ctor: 'PieceDeckDecrement', _0: a};
-};
-var _user$project$Msg$PieceDeckIncrement = function (a) {
-	return {ctor: 'PieceDeckIncrement', _0: a};
-};
-var _user$project$Msg$SpaceDeckDecrement = function (a) {
-	return {ctor: 'SpaceDeckDecrement', _0: a};
-};
-var _user$project$Msg$SpaceDeckIncrement = function (a) {
-	return {ctor: 'SpaceDeckIncrement', _0: a};
-};
+var _user$project$Msg$PieceDeckDecrement = F2(
+	function (a, b) {
+		return {ctor: 'PieceDeckDecrement', _0: a, _1: b};
+	});
+var _user$project$Msg$PieceDeckIncrement = F2(
+	function (a, b) {
+		return {ctor: 'PieceDeckIncrement', _0: a, _1: b};
+	});
+var _user$project$Msg$SpaceDeckDecrement = F2(
+	function (a, b) {
+		return {ctor: 'SpaceDeckDecrement', _0: a, _1: b};
+	});
+var _user$project$Msg$SpaceDeckIncrement = F2(
+	function (a, b) {
+		return {ctor: 'SpaceDeckIncrement', _0: a, _1: b};
+	});
 var _user$project$Msg$Mdl = function (a) {
 	return {ctor: 'Mdl', _0: a};
 };
 var _user$project$Msg$SelectTab = function (a) {
 	return {ctor: 'SelectTab', _0: a};
+};
+var _user$project$Msg$MakeAIMove = {ctor: 'MakeAIMove'};
+var _user$project$Msg$Resize = function (a) {
+	return {ctor: 'Resize', _0: a};
 };
 var _user$project$Msg$GenerateBoard = {ctor: 'GenerateBoard'};
 var _user$project$Msg$GetSeed = function (a) {
@@ -16378,38 +17296,32 @@ var _user$project$PiecesAndSpaces$isSpaceUnoccupied = F3(
 					spaceIndex,
 					_user$project$Spaces$getActualSpaces(spaces))));
 	});
-var _user$project$PiecesAndSpaces$getUnoccupiedSpaceIndicies = F2(
+var _user$project$PiecesAndSpaces$getSpaceIndiciesParitionedByOccupation = F2(
 	function (pieces, spaces) {
+		var actualSpaces = _user$project$Spaces$getActualSpaces(spaces);
 		return A2(
-			_elm_lang$core$List$filter,
-			A2(_user$project$PiecesAndSpaces$isSpaceUnoccupied, pieces, spaces),
-			_elm_lang$core$Dict$keys(
-				_user$project$Spaces$getActualSpaces(spaces)));
+			_elm_lang$core$Debug$log,
+			'parts',
+			A2(
+				_elm_lang$core$List$partition,
+				A2(_user$project$PiecesAndSpaces$isSpaceUnoccupied, pieces, actualSpaces),
+				_elm_lang$core$Dict$keys(actualSpaces)));
 	});
-var _user$project$PiecesAndSpaces$canPieceMoveToSpace = F5(
-	function (allowSelfMoves, pieces, spaces, index, spaceIndex) {
-		if (allowSelfMoves || A4(_user$project$PiecesAndSpaces$pieceIsNotAtSpace, pieces, spaces, index, spaceIndex)) {
-			var maybePiece = A2(_elm_lang$core$Dict$get, index, pieces);
-			return A2(
-				_elm_lang$core$Maybe$withDefault,
-				false,
+var _user$project$PiecesAndSpaces$isSpaceOccupied = F3(
+	function (pieces, spaces, spaceIndex) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			false,
+			A2(
+				_elm_lang$core$Maybe$map,
+				function (space) {
+					return _elm_lang$core$Basics$not(
+						A2(_user$project$Pieces$noPiecesAtPosition, pieces, space.position));
+				},
 				A2(
-					_elm_lang$core$Maybe$map,
-					function (piece) {
-						var _p1 = piece.pieceType;
-						switch (_p1.ctor) {
-							case 'Star':
-								return A3(_user$project$PiecesAndSpaces$isSpaceUnoccupied, pieces, spaces, spaceIndex);
-							case 'Fangs':
-								return A3(_user$project$PiecesAndSpaces$isSpaceUnoccupied, pieces, spaces, spaceIndex);
-							default:
-								return A2(_user$project$Spaces$indexIsOfActualSpace, spaces, spaceIndex);
-						}
-					},
-					maybePiece));
-		} else {
-			return false;
-		}
+					_elm_lang$core$Dict$get,
+					spaceIndex,
+					_user$project$Spaces$getActualSpaces(spaces))));
 	});
 var _user$project$PiecesAndSpaces$getNonSelfSpaceIdicies = F3(
 	function (pieces, spaces, index) {
@@ -16438,6 +17350,165 @@ var _user$project$PiecesAndSpaces$getSelfMoves = F3(
 					maybeSpaceIndex);
 			},
 			pieceList);
+	});
+
+var _user$project$Movement$getBumpTargetID = F2(
+	function (_p1, _p0) {
+		var _p2 = _p1;
+		var _p3 = _p0;
+		var _p5 = _p3._1;
+		var _p4 = _p3._0;
+		return {ctor: '_Tuple2', _0: _p4 + (_p4 - _p2._0), _1: _p5 + (_p5 - _p2._1)};
+	});
+var _user$project$Movement$getBumpTargetSpacePosition = F3(
+	function (spaces, piecePosition, spacePosition) {
+		var maybeBumpedSpaceID = A2(_user$project$Spaces$getSpaceFromPosition, spaces, spacePosition);
+		var maybeBumpingSpaceID = A2(_user$project$Spaces$getSpaceFromPosition, spaces, piecePosition);
+		return A2(
+			_elm_lang$core$Maybe$map,
+			function (_) {
+				return _.position;
+			},
+			A2(
+				_elm_lang$core$Maybe$andThen,
+				A3(_elm_lang$core$Maybe$map2, _user$project$Movement$getBumpTargetID, maybeBumpingSpaceID, maybeBumpedSpaceID),
+				function (targetID) {
+					return A2(_elm_lang$core$Dict$get, targetID, spaces);
+				}));
+	});
+var _user$project$Movement$bumpPiecesOnce = F4(
+	function (spaces, piecePosition, spacePosition, pieces) {
+		var _p6 = A3(_user$project$Movement$getBumpTargetSpacePosition, spaces, piecePosition, spacePosition);
+		if (_p6.ctor === 'Just') {
+			var _p7 = _p6._0;
+			return A2(_user$project$Spaces$positionIsOnActualSpace, spaces, _p7) ? A3(_user$project$Pieces$movePieces, spacePosition, _p7, pieces) : A2(_user$project$Pieces$removePiecesAtPosition, spacePosition, pieces);
+		} else {
+			return A2(_user$project$Pieces$removePiecesAtPosition, spacePosition, pieces);
+		}
+	});
+var _user$project$Movement$bumpPiecesNTimes = F5(
+	function (n, spaces, position, targetSpacePosition, pieces) {
+		if (_elm_lang$core$Native_Utils.cmp(n, 0) < 1) {
+			return pieces;
+		} else {
+			var bumpOnce = A3(_user$project$Movement$bumpPiecesOnce, spaces, position, targetSpacePosition);
+			var _p8 = A3(_user$project$Movement$getBumpTargetSpacePosition, spaces, position, targetSpacePosition);
+			if (_p8.ctor === 'Just') {
+				return bumpOnce(
+					A5(_user$project$Movement$bumpPiecesNTimes, n - 1, spaces, targetSpacePosition, _p8._0, pieces));
+			} else {
+				return bumpOnce(pieces);
+			}
+		}
+	});
+var _user$project$Movement$canPieceMoveToSpace = F5(
+	function (allowSelfMoves, pieces, spaces, index, spaceIndex) {
+		if (allowSelfMoves || A4(_user$project$PiecesAndSpaces$pieceIsNotAtSpace, pieces, spaces, index, spaceIndex)) {
+			var maybePiece = A2(_elm_lang$core$Dict$get, index, pieces);
+			return A2(
+				_elm_lang$core$Maybe$withDefault,
+				false,
+				A2(
+					_elm_lang$core$Maybe$map,
+					function (piece) {
+						var _p9 = piece.pieceType.moveType;
+						switch (_p9.ctor) {
+							case 'Occupied':
+								return A3(_user$project$PiecesAndSpaces$isSpaceOccupied, pieces, spaces, spaceIndex);
+							case 'Unoccupied':
+								return A3(_user$project$PiecesAndSpaces$isSpaceUnoccupied, pieces, spaces, spaceIndex);
+							default:
+								return A2(_user$project$Spaces$indexIsOfActualSpace, spaces, spaceIndex);
+						}
+					},
+					maybePiece));
+		} else {
+			return false;
+		}
+	});
+var _user$project$Movement$getPossibleMoveList = function (model) {
+	var actualSpaceIndicies = _elm_lang$core$Dict$keys(
+		_user$project$Spaces$getActualSpaces(model.spaces));
+	var cpuMovablePieces = _user$project$Pieces$getCPUMovablePieces(model.pieces);
+	var allConcievableMoves = A2(
+		_user$project$Extras$andThen,
+		cpuMovablePieces,
+		function (x) {
+			return A2(
+				_user$project$Extras$andThen,
+				actualSpaceIndicies,
+				function (y) {
+					return _elm_lang$core$Native_List.fromArray(
+						[
+							{ctor: '_Tuple2', _0: x, _1: y}
+						]);
+				});
+		});
+	return A2(
+		_elm_lang$core$List$filter,
+		function (_p10) {
+			var _p11 = _p10;
+			return A5(_user$project$Movement$canPieceMoveToSpace, model.allowSelfMoves, model.pieces, model.spaces, _p11._0, _p11._1);
+		},
+		allConcievableMoves);
+};
+var _user$project$Movement$movePieceToSpace = F5(
+	function (pieceAppearances, pieces, spaces, index, spaceIndex) {
+		var _p12 = {
+			ctor: '_Tuple2',
+			_0: A2(_elm_lang$core$Dict$get, index, pieces),
+			_1: A2(_user$project$Spaces$getPosition, spaceIndex, spaces)
+		};
+		if (((_p12.ctor === '_Tuple2') && (_p12._0.ctor === 'Just')) && (_p12._1.ctor === 'Just')) {
+			var _p16 = _p12._1._0;
+			var _p15 = _p12._0._0;
+			var _p13 = _p15.pieceType.moveEffect;
+			switch (_p13.ctor) {
+				case 'Capture':
+					return A3(
+						_user$project$Pieces$setPieceLocation,
+						index,
+						_p16,
+						A2(
+							_user$project$Extras$filterOutListFromDict,
+							A2(_user$project$Pieces$getPiecesAtPosition, pieces, _p16),
+							pieces));
+				case 'Bump':
+					var _p14 = _user$project$PosInt$toInt(_p13._0);
+					if (_p14 === 1) {
+						return A3(
+							_user$project$Pieces$setPieceLocation,
+							index,
+							_p16,
+							A4(_user$project$Movement$bumpPiecesOnce, spaces, _p15.position, _p16, pieces));
+					} else {
+						return A3(
+							_user$project$Pieces$setPieceLocation,
+							index,
+							_p16,
+							A5(_user$project$Movement$bumpPiecesNTimes, _p14, spaces, _p15.position, _p16, pieces));
+					}
+				case 'Swap':
+					return A3(
+						_user$project$Pieces$setPieceLocation,
+						index,
+						_p16,
+						A3(_user$project$Pieces$movePieces, _p16, _p15.position, pieces));
+				case 'Copy':
+					return A2(_user$project$Pieces$noPiecesAtPosition, pieces, _p16) ? A2(
+						_user$project$Pieces$addPiece,
+						_p15,
+						A3(_user$project$Pieces$setPieceLocation, index, _p16, pieces)) : pieces;
+				default:
+					return A2(_user$project$Pieces$noPiecesAtPosition, pieces, _p16) ? A3(_user$project$Pieces$setPieceLocation, index, _p16, pieces) : pieces;
+			}
+		} else {
+			return pieces;
+		}
+	});
+var _user$project$Movement$getNewPieces = F3(
+	function (model, pieceID, spaceID) {
+		return A5(_user$project$Movement$canPieceMoveToSpace, model.allowSelfMoves, model.pieces, model.spaces, pieceID, spaceID) ? A5(_user$project$Movement$movePieceToSpace, model.pieceAppearances, model.pieces, model.spaces, pieceID, spaceID) : model.pieces;
 	});
 
 var _user$project$Playfield$space = F4(
@@ -16489,19 +17560,6 @@ var _user$project$Playfield$space = F4(
 			_elm_lang$core$Native_List.fromArray(
 				[]));
 	});
-var _user$project$Playfield$getFill = function (control) {
-	var _p1 = control;
-	switch (_p1.ctor) {
-		case 'Player':
-			return '#fa0';
-		case 'Computer':
-			return '#0af';
-		case 'Both':
-			return '#faf';
-		default:
-			return '#0a0';
-	}
-};
 var _user$project$Playfield$eyePieceSclera = F4(
 	function (centerX, xString, centerY, yString) {
 		var rightSideString = A2(
@@ -16532,8 +17590,8 @@ var _user$project$Playfield$eyePieceSclera = F4(
 			_elm_lang$core$Native_List.fromArray(
 				['M', leftSideString, 'Q', controlPointString, rightSideString, 'Q', secondControlPointString, leftSideString]));
 	});
-var _user$project$Playfield$eyePiece = F2(
-	function (attributes, center) {
+var _user$project$Playfield$eyePieceSized = F3(
+	function (radius, attributes, center) {
 		var centerY = _elm_community$elm_linear_algebra$Math_Vector2$getY(center);
 		var yString = _elm_lang$core$Basics$toString(centerY);
 		var centerX = _elm_community$elm_linear_algebra$Math_Vector2$getX(center);
@@ -16596,7 +17654,7 @@ var _user$project$Playfield$eyePiece = F2(
 								_elm_lang$svg$Svg_Attributes$cx(xString),
 								_elm_lang$svg$Svg_Attributes$cy(yString),
 								_elm_lang$svg$Svg_Attributes$r(
-								_elm_lang$core$Basics$toString(_user$project$Points$circleRadius / 2.25))
+								_elm_lang$core$Basics$toString(radius / 2.25))
 							]),
 						attributes),
 					_elm_lang$core$Native_List.fromArray(
@@ -16610,7 +17668,7 @@ var _user$project$Playfield$eyePiece = F2(
 								_elm_lang$svg$Svg_Attributes$cx(xString),
 								_elm_lang$svg$Svg_Attributes$cy(yString),
 								_elm_lang$svg$Svg_Attributes$r(
-								_elm_lang$core$Basics$toString(_user$project$Points$circleRadius)),
+								_elm_lang$core$Basics$toString(radius)),
 								_elm_lang$svg$Svg_Attributes$mask(
 								A2(
 									_elm_lang$core$Basics_ops['++'],
@@ -16621,6 +17679,10 @@ var _user$project$Playfield$eyePiece = F2(
 					_elm_lang$core$Native_List.fromArray(
 						[]))
 				]));
+	});
+var _user$project$Playfield$eyePiece = F2(
+	function (attributes, center) {
+		return A3(_user$project$Playfield$eyePieceSized, _user$project$Points$circleRadius, attributes, center);
 	});
 var _user$project$Playfield$polygonPiece = function (finalAttributes) {
 	return A2(
@@ -16634,100 +17696,132 @@ var _user$project$Playfield$basicPieceAttributes = _elm_lang$core$Native_List.fr
 		_elm_lang$svg$Svg_Attributes$strokeWidth('4'),
 		_elm_lang$svg$Svg_Attributes$cursor('move')
 	]);
-var _user$project$Playfield$nullSVG = A2(
-	_elm_lang$svg$Svg$polygon,
-	_elm_lang$core$Native_List.fromArray(
-		[]),
-	_elm_lang$core$Native_List.fromArray(
-		[]));
-var _user$project$Playfield$piece = F3(
-	function (extras, center, pieceType) {
+var _user$project$Playfield$iconScale = 0.25;
+var _user$project$Playfield$pieceScale = _user$project$Playfield$iconScale * (_user$project$Points$pieceScaleFactor / _user$project$Points$spaceScale);
+var _user$project$Playfield$scaledSpacePointsList = A2(
+	_elm_lang$core$List$map,
+	_elm_community$elm_linear_algebra$Math_Vector2$scale(_user$project$Playfield$iconScale),
+	_user$project$Points$spacePointsList);
+var _user$project$Playfield$iconOffset = A2(
+	_elm_community$elm_linear_algebra$Math_Vector2$scale,
+	0.6,
+	A2(_elm_community$elm_linear_algebra$Math_Vector2$vec2, _user$project$Points$pieceScaleFactor, _user$project$Points$pieceScaleFactor));
+var _user$project$Playfield$emptySpaceIcon = function (center) {
+	var iconCenter = A2(_elm_community$elm_linear_algebra$Math_Vector2$add, _user$project$Playfield$iconOffset, center);
+	return A2(
+		_elm_lang$svg$Svg$polygon,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$svg$Svg_Attributes$points(
+				A2(_user$project$Points$piecePointsListToSVGString, _user$project$Playfield$scaledSpacePointsList, iconCenter)),
+				_elm_lang$svg$Svg_Attributes$strokeWidth('4'),
+				_elm_lang$svg$Svg_Attributes$fillOpacity('0.0'),
+				_elm_lang$svg$Svg_Attributes$stroke('black')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[]));
+};
+var _user$project$Playfield$makeShapeIcon = F2(
+	function (center, shape) {
+		var iconCenter = A2(_elm_community$elm_linear_algebra$Math_Vector2$add, _user$project$Playfield$iconOffset, center);
+		var _p1 = shape;
+		if (_p1.ctor === 'PointsList') {
+			return _user$project$Playfield$polygonPiece(
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$svg$Svg_Attributes$points(
+						A2(
+							_user$project$Points$piecePointsListToSVGString,
+							A2(
+								_elm_lang$core$List$map,
+								_elm_community$elm_linear_algebra$Math_Vector2$scale(_user$project$Playfield$pieceScale),
+								_p1._0),
+							iconCenter)),
+						_elm_lang$svg$Svg_Attributes$strokeWidth('4'),
+						_elm_lang$svg$Svg_Attributes$fillOpacity('0.0'),
+						_elm_lang$svg$Svg_Attributes$stroke('black')
+					]));
+		} else {
+			return A3(
+				_user$project$Playfield$eyePieceSized,
+				_user$project$Points$circleRadius * _user$project$Playfield$pieceScale,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$svg$Svg_Attributes$strokeWidth('4'),
+						_elm_lang$svg$Svg_Attributes$fillOpacity('0.0'),
+						_elm_lang$svg$Svg_Attributes$stroke('black')
+					]),
+				iconCenter);
+		}
+	});
+var _user$project$Playfield$addIcon = F3(
+	function (icon, center, pieceView) {
+		var baseList = function () {
+			var _p2 = icon;
+			switch (_p2.ctor) {
+				case 'NoIcon':
+					return _elm_lang$core$Native_List.fromArray(
+						[]);
+				case 'EmptySpaceIcon':
+					return _elm_lang$core$Native_List.fromArray(
+						[
+							_user$project$Playfield$emptySpaceIcon(center)
+						]);
+				case 'ShapeSpaceIcon':
+					return _elm_lang$core$Native_List.fromArray(
+						[
+							A2(_user$project$Playfield$makeShapeIcon, center, _p2._0),
+							_user$project$Playfield$emptySpaceIcon(center)
+						]);
+				default:
+					return _elm_lang$core$Native_List.fromArray(
+						[
+							A2(_user$project$Playfield$makeShapeIcon, center, _p2._0),
+							_user$project$Playfield$emptySpaceIcon(center)
+						]);
+			}
+		}();
+		return A2(
+			_elm_lang$svg$Svg$g,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			A2(_elm_lang$core$List_ops['::'], pieceView, baseList));
+	});
+var _user$project$Playfield$piece = F4(
+	function (pieceAppearances, extras, center, pieceType) {
 		var otherAttributes = A2(_elm_lang$core$Basics_ops['++'], _user$project$Playfield$basicPieceAttributes, extras);
-		var _p2 = pieceType;
-		switch (_p2.ctor) {
-			case 'Star':
-				return _user$project$Playfield$polygonPiece(
+		var _p3 = {
+			ctor: '_Tuple2',
+			_0: A2(_user$project$PieceAppearances$get, pieceType, pieceAppearances),
+			_1: pieceType.moveType
+		};
+		if (_p3._0._0.ctor === 'PointsList') {
+			return A3(
+				_user$project$Playfield$addIcon,
+				_p3._0._2,
+				center,
+				_user$project$Playfield$polygonPiece(
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						_elm_lang$core$Native_List.fromArray(
 							[
-								_elm_lang$svg$Svg_Attributes$fill(
-								_user$project$Playfield$getFill(_p2._0)),
+								_elm_lang$svg$Svg_Attributes$fill(_p3._0._1),
 								_elm_lang$svg$Svg_Attributes$points(
-								_user$project$Points$star(center))
+								A2(_user$project$Points$piecePointsListToSVGString, _p3._0._0._0, center))
 							]),
-						otherAttributes));
-			case 'WeirdThing':
-				return _user$project$Playfield$polygonPiece(
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$svg$Svg_Attributes$fill(
-								_user$project$Playfield$getFill(_p2._0)),
-								_elm_lang$svg$Svg_Attributes$points(
-								_user$project$Points$weirdThing(center))
-							]),
-						otherAttributes));
-			case 'Triangle':
-				return _user$project$Playfield$polygonPiece(
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$svg$Svg_Attributes$fill(
-								_user$project$Playfield$getFill(_p2._0)),
-								_elm_lang$svg$Svg_Attributes$points(
-								_user$project$Points$triangle(center))
-							]),
-						otherAttributes));
-			case 'Petals':
-				return _user$project$Playfield$polygonPiece(
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$svg$Svg_Attributes$fill(
-								_user$project$Playfield$getFill(_p2._0)),
-								_elm_lang$svg$Svg_Attributes$points(
-								_user$project$Points$petals(center))
-							]),
-						otherAttributes));
-			case 'TwistedPlus':
-				return _user$project$Playfield$polygonPiece(
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$svg$Svg_Attributes$fill(
-								_user$project$Playfield$getFill(_p2._0)),
-								_elm_lang$svg$Svg_Attributes$points(
-								_user$project$Points$twistedPlus(center))
-							]),
-						otherAttributes));
-			case 'Fangs':
-				return _user$project$Playfield$polygonPiece(
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$svg$Svg_Attributes$fill(
-								_user$project$Playfield$getFill(_p2._0)),
-								_elm_lang$svg$Svg_Attributes$points(
-								_user$project$Points$fangs(center))
-							]),
-						otherAttributes));
-			case 'Eye':
-				return A2(
+						otherAttributes)));
+		} else {
+			return A3(
+				_user$project$Playfield$addIcon,
+				_p3._0._2,
+				center,
+				A2(
 					_user$project$Playfield$eyePiece,
 					A2(
 						_elm_lang$core$List_ops['::'],
-						_elm_lang$svg$Svg_Attributes$fill(
-							_user$project$Playfield$getFill(_p2._0)),
+						_elm_lang$svg$Svg_Attributes$fill(_p3._0._1),
 						otherAttributes),
-					center);
-			default:
-				return _user$project$Playfield$nullSVG;
+					center));
 		}
 	});
 var _user$project$Playfield$shouldAllowSelecting = F2(
@@ -16736,10 +17830,10 @@ var _user$project$Playfield$shouldAllowSelecting = F2(
 	});
 var _user$project$Playfield$getPieceAttributes = F3(
 	function (model, currentID, currentPiece) {
-		var _p3 = model.pieceSelected;
-		if (_p3.ctor === 'Just') {
-			var _p5 = _p3._0;
-			if (_elm_lang$core$Native_Utils.eq(_p5, currentID)) {
+		var _p4 = model.pieceSelected;
+		if (_p4.ctor === 'Just') {
+			var _p6 = _p4._0;
+			if (_elm_lang$core$Native_Utils.eq(_p6, currentID)) {
 				return _elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$svg$Svg_Events$onClick(_user$project$Msg$ClearPieceSelection),
@@ -16747,12 +17841,12 @@ var _user$project$Playfield$getPieceAttributes = F3(
 						_elm_lang$svg$Svg_Attributes$fillOpacity('0.5')
 					]);
 			} else {
-				var _p4 = A2(_user$project$Spaces$getSpaceFromPosition, model.spaces, currentPiece.position);
-				if (_p4.ctor === 'Just') {
+				var _p5 = A2(_user$project$Spaces$getSpaceFromPosition, model.spaces, currentPiece.position);
+				if (_p5.ctor === 'Just') {
 					return _elm_lang$core$Native_List.fromArray(
 						[
 							_elm_lang$svg$Svg_Events$onClick(
-							A2(_user$project$Msg$MovePiece, _p5, _p4._0)),
+							A2(_user$project$Msg$MovePiece, _p6, _p5._0)),
 							_elm_lang$svg$Svg_Attributes$cursor('pointer'),
 							_elm_lang$svg$Svg_Attributes$stroke('grey')
 						]);
@@ -16780,17 +17874,23 @@ var _user$project$Playfield$getPieceAttributes = F3(
 var _user$project$Playfield$getPieceView = F3(
 	function (model, currentID, currentPiece) {
 		var selectedAttributes = A3(_user$project$Playfield$getPieceAttributes, model, currentID, currentPiece);
-		return A3(_user$project$Playfield$piece, selectedAttributes, currentPiece.position, currentPiece.pieceType);
+		return A4(_user$project$Playfield$piece, model.pieceAppearances, selectedAttributes, currentPiece.position, currentPiece.pieceType);
 	});
+var _user$project$Playfield$nullSVG = A2(
+	_elm_lang$svg$Svg$polygon,
+	_elm_lang$core$Native_List.fromArray(
+		[]),
+	_elm_lang$core$Native_List.fromArray(
+		[]));
 var _user$project$Playfield$getSpaceHighlightView = F3(
-	function (showOutlines, pieceSelectedInfo, _p6) {
-		var _p7 = _p6;
-		var _p9 = _p7._1;
-		var _p8 = pieceSelectedInfo;
-		if (_p8.ctor === 'Nothing') {
+	function (showOutlines, pieceSelectedInfo, _p7) {
+		var _p8 = _p7;
+		var _p10 = _p8._1;
+		var _p9 = pieceSelectedInfo;
+		if (_p9.ctor === 'Nothing') {
 			return _user$project$Playfield$nullSVG;
 		} else {
-			return _p8._0 ? A4(
+			return _p9._0 ? A4(
 				_user$project$Playfield$space,
 				showOutlines,
 				_elm_lang$core$Native_List.fromArray(
@@ -16799,17 +17899,17 @@ var _user$project$Playfield$getSpaceHighlightView = F3(
 						_elm_lang$svg$Svg_Attributes$stroke('white'),
 						_elm_lang$svg$Svg_Attributes$strokeWidth('4')
 					]),
-				_p9.position,
-				_p9.spaceType) : _user$project$Playfield$nullSVG;
+				_p10.position,
+				_p10.spaceType) : _user$project$Playfield$nullSVG;
 		}
 	});
 var _user$project$Playfield$getSpaceView = F3(
-	function (showOutlines, pieceSelectedInfo, _p10) {
-		var _p11 = _p10;
-		var _p13 = _p11._1;
+	function (showOutlines, pieceSelectedInfo, _p11) {
+		var _p12 = _p11;
+		var _p14 = _p12._1;
 		var extras = function () {
-			var _p12 = pieceSelectedInfo;
-			if (_p12.ctor === 'Nothing') {
+			var _p13 = pieceSelectedInfo;
+			if (_p13.ctor === 'Nothing') {
 				return _elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$svg$Svg_Attributes$stroke('grey')
@@ -16818,10 +17918,10 @@ var _user$project$Playfield$getSpaceView = F3(
 				var baseExtras = _elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$svg$Svg_Events$onClick(
-						A2(_user$project$Msg$MovePiece, _p12._0._0, _p11._0)),
+						A2(_user$project$Msg$MovePiece, _p13._0._0, _p12._0)),
 						_elm_lang$svg$Svg_Attributes$cursor('pointer')
 					]);
-				return _p12._0._1 ? baseExtras : A2(
+				return _p13._0._1 ? baseExtras : A2(
 					_elm_lang$core$Basics_ops['++'],
 					baseExtras,
 					_elm_lang$core$Native_List.fromArray(
@@ -16830,7 +17930,7 @@ var _user$project$Playfield$getSpaceView = F3(
 						]));
 			}
 		}();
-		var spaceType = _p13.spaceType;
+		var spaceType = _p14.spaceType;
 		var finalExtras = _elm_lang$core$Native_Utils.eq(spaceType, _user$project$Spaces$EmptySpace) ? A2(
 			_elm_lang$core$Basics_ops['++'],
 			extras,
@@ -16838,7 +17938,7 @@ var _user$project$Playfield$getSpaceView = F3(
 				[
 					_elm_lang$svg$Svg_Attributes$pointerEvents('none')
 				])) : extras;
-		return A4(_user$project$Playfield$space, showOutlines, finalExtras, _p13.position, spaceType);
+		return A4(_user$project$Playfield$space, showOutlines, finalExtras, _p14.position, spaceType);
 	});
 var _user$project$Playfield$getPieceSelectedInfo = F2(
 	function (model, spaceIndex) {
@@ -16848,7 +17948,7 @@ var _user$project$Playfield$getPieceSelectedInfo = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: index,
-					_1: A5(_user$project$PiecesAndSpaces$canPieceMoveToSpace, model.allowSelfMoves, model.pieces, model.spaces, index, spaceIndex)
+					_1: A5(_user$project$Movement$canPieceMoveToSpace, model.allowSelfMoves, model.pieces, model.spaces, index, spaceIndex)
 				};
 			},
 			model.pieceSelected);
@@ -16891,7 +17991,427 @@ var _user$project$Playfield$getPieces = function (model) {
 			model.pieces));
 };
 
-var _user$project$DevControls$amountOfItemInDeck = F2(
+var _user$project$DevControlsCommon$pOf = function (thing) {
+	return A2(
+		_elm_lang$html$Html$p,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text(
+				_elm_lang$core$Basics$toString(thing))
+			]));
+};
+var _user$project$DevControlsCommon$displaySpaceType = function (spaceType) {
+	return _elm_lang$core$Native_List.fromArray(
+		[
+			_user$project$DevControlsCommon$pOf(spaceType)
+		]);
+};
+var _user$project$DevControlsCommon$displayPiecetype = function (pieceType) {
+	return _elm_lang$core$Native_List.fromArray(
+		[
+			_user$project$DevControlsCommon$pOf(pieceType.moveEffect),
+			_user$project$DevControlsCommon$pOf(pieceType.controller),
+			_user$project$DevControlsCommon$pOf(pieceType.moveType)
+		]);
+};
+var _user$project$DevControlsCommon$pieceTypeToSVG = F3(
+	function (pieceAppearances, center, pieceType) {
+		return A4(
+			_user$project$Playfield$piece,
+			pieceAppearances,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$svg$Svg_Attributes$stroke('grey')
+				]),
+			center,
+			pieceType);
+	});
+var _user$project$DevControlsCommon$positionedSvgMakerToHtmlMaker = F2(
+	function (svgMaker, identifier) {
+		return A2(
+			_elm_lang$svg$Svg$svg,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$svg$Svg_Attributes$width('50'),
+					_elm_lang$svg$Svg_Attributes$height('50'),
+					_elm_lang$svg$Svg_Attributes$viewBox('0 0 150 150')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					svgMaker,
+					A2(_elm_community$elm_linear_algebra$Math_Vector2$vec2, 75, 75),
+					identifier)
+				]));
+	});
+
+var _user$project$AppearanceTab$cleanColourString = function (input) {
+	return A4(
+		_elm_lang$core$Regex$replace,
+		_elm_lang$core$Regex$All,
+		_elm_lang$core$Regex$regex('[^#0-9A-Za-z]'),
+		_elm_lang$core$Basics$always(''),
+		input);
+};
+var _user$project$AppearanceTab$updatePoint = F6(
+	function (msgMaker, list, index, vector, component, inputString) {
+		var _p0 = _elm_lang$core$String$toFloat(inputString);
+		if (_p0.ctor === 'Ok') {
+			var _p2 = _p0._0;
+			var newVector = function () {
+				var _p1 = component;
+				if (_p1.ctor === 'X') {
+					return A2(
+						_elm_community$elm_linear_algebra$Math_Vector2$vec2,
+						_p2,
+						_elm_community$elm_linear_algebra$Math_Vector2$getY(vector));
+				} else {
+					return A2(
+						_elm_community$elm_linear_algebra$Math_Vector2$vec2,
+						_elm_community$elm_linear_algebra$Math_Vector2$getX(vector),
+						_p2);
+				}
+			}();
+			return msgMaker(
+				A3(_user$project$Extras$setAt, index, newVector, list));
+		} else {
+			return msgMaker(list);
+		}
+	});
+var _user$project$AppearanceTab$Y = {ctor: 'Y'};
+var _user$project$AppearanceTab$X = {ctor: 'X'};
+var _user$project$AppearanceTab$editAblePoints = F4(
+	function (msgMaker, list, index, vector) {
+		return A2(
+			_elm_lang$html$Html$p,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_elm_lang$html$Html$input,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$type$('number'),
+							_elm_lang$html$Html_Attributes$step('any'),
+							_elm_lang$html$Html_Events$onInput(
+							A5(_user$project$AppearanceTab$updatePoint, msgMaker, list, index, vector, _user$project$AppearanceTab$X)),
+							_elm_lang$html$Html_Attributes$value(
+							_elm_lang$core$Basics$toString(
+								_elm_community$elm_linear_algebra$Math_Vector2$getX(vector))),
+							_elm_lang$html$Html_Attributes$style(
+							_elm_lang$core$Native_List.fromArray(
+								[
+									{ctor: '_Tuple2', _0: 'width', _1: '4rem'}
+								]))
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[])),
+					_elm_lang$html$Html$text(','),
+					A2(
+					_elm_lang$html$Html$input,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$type$('number'),
+							_elm_lang$html$Html_Attributes$step('any'),
+							_elm_lang$html$Html_Events$onInput(
+							A5(_user$project$AppearanceTab$updatePoint, msgMaker, list, index, vector, _user$project$AppearanceTab$Y)),
+							_elm_lang$html$Html_Attributes$value(
+							_elm_lang$core$Basics$toString(
+								_elm_community$elm_linear_algebra$Math_Vector2$getY(vector))),
+							_elm_lang$html$Html_Attributes$style(
+							_elm_lang$core$Native_List.fromArray(
+								[
+									{ctor: '_Tuple2', _0: 'width', _1: '4rem'}
+								]))
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[]))
+				]));
+	});
+var _user$project$AppearanceTab$editAblePointsList = F2(
+	function (msgMaker, list) {
+		return A2(
+			_elm_lang$core$List$indexedMap,
+			A2(_user$project$AppearanceTab$editAblePoints, msgMaker, list),
+			list);
+	});
+var _user$project$AppearanceTab$pieceAppearancesTable = F3(
+	function (index, mdl, pieceAppearances) {
+		return A2(
+			_debois$elm_mdl$Material_Table$table,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(_debois$elm_mdl$Material_Options$css, 'background-color', '#DDDDDD')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_debois$elm_mdl$Material_Table$thead,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A2(
+							_debois$elm_mdl$Material_Table$tr,
+							_elm_lang$core$Native_List.fromArray(
+								[]),
+							_elm_lang$core$Native_List.fromArray(
+								[
+									A2(
+									_debois$elm_mdl$Material_Table$th,
+									_elm_lang$core$Native_List.fromArray(
+										[]),
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$html$Html$text('preview')
+										])),
+									A2(
+									_debois$elm_mdl$Material_Table$th,
+									_elm_lang$core$Native_List.fromArray(
+										[]),
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$html$Html$text('piece type')
+										])),
+									A2(
+									_debois$elm_mdl$Material_Table$th,
+									_elm_lang$core$Native_List.fromArray(
+										[]),
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$html$Html$text('points')
+										])),
+									A2(
+									_debois$elm_mdl$Material_Table$th,
+									_elm_lang$core$Native_List.fromArray(
+										[]),
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$html$Html$text('colour')
+										])),
+									A2(
+									_debois$elm_mdl$Material_Table$th,
+									_elm_lang$core$Native_List.fromArray(
+										[]),
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$html$Html$text('icon')
+										]))
+								]))
+						])),
+					A2(
+					_debois$elm_mdl$Material_Table$tbody,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					A2(
+						_elm_lang$core$List$indexedMap,
+						F2(
+							function (index, _p3) {
+								var _p4 = _p3;
+								var _p8 = _p4._0;
+								var _p7 = _p4._1._2;
+								return A2(
+									_debois$elm_mdl$Material_Table$tr,
+									_elm_lang$core$Native_List.fromArray(
+										[]),
+									_elm_lang$core$Native_List.fromArray(
+										[
+											A2(
+											_debois$elm_mdl$Material_Table$td,
+											_elm_lang$core$Native_List.fromArray(
+												[]),
+											_elm_lang$core$Native_List.fromArray(
+												[
+													A2(
+													_user$project$DevControlsCommon$positionedSvgMakerToHtmlMaker,
+													_user$project$DevControlsCommon$pieceTypeToSVG(pieceAppearances),
+													_p8)
+												])),
+											A2(
+											_debois$elm_mdl$Material_Table$td,
+											_elm_lang$core$Native_List.fromArray(
+												[]),
+											_user$project$DevControlsCommon$displayPiecetype(_p8)),
+											A2(
+											_debois$elm_mdl$Material_Table$td,
+											_elm_lang$core$Native_List.fromArray(
+												[]),
+											function () {
+												var _p5 = _p4._1._0;
+												if (_p5.ctor === 'Eye') {
+													return _elm_lang$core$Native_List.fromArray(
+														[
+															_elm_lang$html$Html$text('hardcoded')
+														]);
+												} else {
+													return A2(
+														_user$project$AppearanceTab$editAblePointsList,
+														_user$project$Msg$EditPoints(_p8),
+														_p5._0);
+												}
+											}()),
+											A2(
+											_debois$elm_mdl$Material_Table$td,
+											_elm_lang$core$Native_List.fromArray(
+												[]),
+											_elm_lang$core$Native_List.fromArray(
+												[
+													A2(
+													_elm_lang$html$Html$input,
+													_elm_lang$core$Native_List.fromArray(
+														[
+															_elm_lang$html$Html_Events$onInput(
+															function (_p6) {
+																return A2(
+																	_user$project$Msg$UpdateColour,
+																	_p8,
+																	_user$project$AppearanceTab$cleanColourString(_p6));
+															}),
+															_elm_lang$html$Html_Attributes$value(_p4._1._1),
+															_elm_lang$html$Html_Attributes$style(
+															_elm_lang$core$Native_List.fromArray(
+																[
+																	{ctor: '_Tuple2', _0: 'width', _1: '6rem'}
+																]))
+														]),
+													_elm_lang$core$Native_List.fromArray(
+														[]))
+												])),
+											A2(
+											_debois$elm_mdl$Material_Table$td,
+											_elm_lang$core$Native_List.fromArray(
+												[]),
+											_elm_lang$core$Native_List.fromArray(
+												[
+													A2(
+													_elm_lang$html$Html$p,
+													_elm_lang$core$Native_List.fromArray(
+														[]),
+													_elm_lang$core$Native_List.fromArray(
+														[
+															A5(
+															_debois$elm_mdl$Material_Toggles$radio,
+															_user$project$Msg$Mdl,
+															A2(
+																_elm_lang$core$Basics_ops['++'],
+																_elm_lang$core$Native_List.fromArray(
+																	[-10]),
+																_elm_lang$core$Native_List.fromArray(
+																	[index])),
+															mdl,
+															_elm_lang$core$Native_List.fromArray(
+																[
+																	_debois$elm_mdl$Material_Toggles$value(
+																	_elm_lang$core$Native_Utils.eq(_p7, _user$project$PieceAppearances$EmptySpaceIcon)),
+																	_debois$elm_mdl$Material_Toggles$group('pieceAppearancesGroup'),
+																	_debois$elm_mdl$Material_Toggles$onClick(
+																	A2(_user$project$Msg$SetIcon, _user$project$PieceAppearances$EmptySpaceIcon, _p8))
+																]),
+															_elm_lang$core$Native_List.fromArray(
+																[
+																	_elm_lang$html$Html$text('Empty space')
+																]))
+														])),
+													A2(
+													_elm_lang$html$Html$p,
+													_elm_lang$core$Native_List.fromArray(
+														[]),
+													_elm_lang$core$Native_List.fromArray(
+														[
+															A5(
+															_debois$elm_mdl$Material_Toggles$radio,
+															_user$project$Msg$Mdl,
+															A2(
+																_elm_lang$core$Basics_ops['++'],
+																_elm_lang$core$Native_List.fromArray(
+																	[-11]),
+																_elm_lang$core$Native_List.fromArray(
+																	[index])),
+															mdl,
+															_elm_lang$core$Native_List.fromArray(
+																[
+																	_debois$elm_mdl$Material_Toggles$value(
+																	_elm_lang$core$Native_Utils.eq(_p7, _user$project$PieceAppearances$triangleIcon)),
+																	_debois$elm_mdl$Material_Toggles$group('pieceAppearancesGroup'),
+																	_debois$elm_mdl$Material_Toggles$onClick(
+																	A2(_user$project$Msg$SetIcon, _user$project$PieceAppearances$triangleIcon, _p8))
+																]),
+															_elm_lang$core$Native_List.fromArray(
+																[
+																	_elm_lang$html$Html$text('Triangle on space')
+																]))
+														])),
+													A2(
+													_elm_lang$html$Html$p,
+													_elm_lang$core$Native_List.fromArray(
+														[]),
+													_elm_lang$core$Native_List.fromArray(
+														[
+															A5(
+															_debois$elm_mdl$Material_Toggles$radio,
+															_user$project$Msg$Mdl,
+															A2(
+																_elm_lang$core$Basics_ops['++'],
+																_elm_lang$core$Native_List.fromArray(
+																	[-12]),
+																_elm_lang$core$Native_List.fromArray(
+																	[index])),
+															mdl,
+															_elm_lang$core$Native_List.fromArray(
+																[
+																	_debois$elm_mdl$Material_Toggles$value(
+																	_elm_lang$core$Native_Utils.eq(_p7, _user$project$PieceAppearances$NoIcon)),
+																	_debois$elm_mdl$Material_Toggles$group('pieceAppearancesGroup'),
+																	_debois$elm_mdl$Material_Toggles$onClick(
+																	A2(_user$project$Msg$SetIcon, _user$project$PieceAppearances$NoIcon, _p8))
+																]),
+															_elm_lang$core$Native_List.fromArray(
+																[
+																	_elm_lang$html$Html$text('No icon')
+																]))
+														]))
+												]))
+										]));
+							}),
+						_user$project$PieceAppearances$toList(pieceAppearances)))
+				]));
+	});
+var _user$project$AppearanceTab$render = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_debois$elm_mdl$Material_Grid$grid,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_debois$elm_mdl$Material_Grid$cell,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 6)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								A3(
+								_user$project$AppearanceTab$pieceAppearancesTable,
+								_elm_lang$core$Native_List.fromArray(
+									[14]),
+								model.mdl,
+								model.pieceAppearances)
+							]))
+					]))
+			]));
+};
+
+var _user$project$EditTab$amountOfItemInDeck = F2(
 	function (item, deck) {
 		return _elm_lang$core$List$length(
 			A2(
@@ -16902,8 +18422,8 @@ var _user$project$DevControls$amountOfItemInDeck = F2(
 					})(item),
 				deck));
 	});
-var _user$project$DevControls$deckControl = F7(
-	function (index, mdl, possibilities, currentDeck, addMessage, removeMessage, elementView) {
+var _user$project$EditTab$deckControl = F9(
+	function (index, mdl, possibilities, currentDeck, typeHeading, typeDisplay, removeMessage, addMessage, elementView) {
 		return A2(
 			_debois$elm_mdl$Material_Table$table,
 			_elm_lang$core$Native_List.fromArray(
@@ -16938,7 +18458,7 @@ var _user$project$DevControls$deckControl = F7(
 										[]),
 									_elm_lang$core$Native_List.fromArray(
 										[
-											_elm_lang$html$Html$text('remove')
+											_elm_lang$html$Html$text(typeHeading)
 										])),
 									A2(
 									_debois$elm_mdl$Material_Table$th,
@@ -16947,14 +18467,6 @@ var _user$project$DevControls$deckControl = F7(
 									_elm_lang$core$Native_List.fromArray(
 										[
 											_elm_lang$html$Html$text('Quantity')
-										])),
-									A2(
-									_debois$elm_mdl$Material_Table$th,
-									_elm_lang$core$Native_List.fromArray(
-										[]),
-									_elm_lang$core$Native_List.fromArray(
-										[
-											_elm_lang$html$Html$text('add')
 										]))
 								]))
 						])),
@@ -16983,90 +18495,63 @@ var _user$project$DevControls$deckControl = F7(
 										_debois$elm_mdl$Material_Table$td,
 										_elm_lang$core$Native_List.fromArray(
 											[]),
-										_elm_lang$core$Native_List.fromArray(
-											[
-												A5(
-												_debois$elm_mdl$Material_Button$render,
-												_user$project$Msg$Mdl,
-												A2(
-													_elm_lang$core$Basics_ops['++'],
-													index,
-													_elm_lang$core$Native_List.fromArray(
-														[0])),
-												mdl,
-												_elm_lang$core$Native_List.fromArray(
-													[
-														_debois$elm_mdl$Material_Button$onClick(
-														addMessage(item))
-													]),
-												_elm_lang$core$Native_List.fromArray(
-													[
-														_debois$elm_mdl$Material_Icon$i('remove')
-													]))
-											])),
+										typeDisplay(item)),
 										A2(
 										_debois$elm_mdl$Material_Table$td,
 										_elm_lang$core$Native_List.fromArray(
 											[]),
 										_elm_lang$core$Native_List.fromArray(
 											[
-												_elm_lang$html$Html$text(
-												_elm_lang$core$Basics$toString(
-													A2(_user$project$DevControls$amountOfItemInDeck, item, currentDeck)))
-											])),
-										A2(
-										_debois$elm_mdl$Material_Table$td,
-										_elm_lang$core$Native_List.fromArray(
-											[]),
-										_elm_lang$core$Native_List.fromArray(
-											[
-												A5(
-												_debois$elm_mdl$Material_Button$render,
-												_user$project$Msg$Mdl,
-												A2(
-													_elm_lang$core$Basics_ops['++'],
-													index,
+												function () {
+												var currentAmount = A2(_user$project$EditTab$amountOfItemInDeck, item, currentDeck);
+												return A2(
+													_elm_lang$html$Html$input,
 													_elm_lang$core$Native_List.fromArray(
-														[1])),
-												mdl,
-												_elm_lang$core$Native_List.fromArray(
-													[
-														_debois$elm_mdl$Material_Button$onClick(
-														removeMessage(item))
-													]),
-												_elm_lang$core$Native_List.fromArray(
-													[
-														_debois$elm_mdl$Material_Icon$i('add')
-													]))
+														[
+															_elm_lang$html$Html_Attributes$type$('number'),
+															_elm_lang$html$Html_Attributes$min('0'),
+															_elm_lang$html$Html_Attributes$step('any'),
+															_elm_lang$html$Html_Events$onInput(
+															function (_p0) {
+																return function (newAmount) {
+																	return (_elm_lang$core$Native_Utils.cmp(newAmount, currentAmount) > 0) ? A2(
+																		addMessage,
+																		item,
+																		A2(_elm_lang$core$Debug$log, 'diff add', newAmount - currentAmount)) : ((_elm_lang$core$Native_Utils.cmp(newAmount, currentAmount) < 0) ? A2(
+																		removeMessage,
+																		item,
+																		A2(_elm_lang$core$Debug$log, 'diff remove', currentAmount - newAmount)) : _user$project$Msg$NoOp);
+																}(
+																	A2(
+																		_elm_lang$core$Debug$log,
+																		'',
+																		A2(
+																			_elm_lang$core$Result$withDefault,
+																			currentAmount,
+																			_elm_lang$core$String$toInt(_p0))));
+															}),
+															_elm_lang$html$Html_Attributes$value(
+															_elm_lang$core$Basics$toString(currentAmount)),
+															_elm_lang$html$Html_Attributes$style(
+															_elm_lang$core$Native_List.fromArray(
+																[
+																	{ctor: '_Tuple2', _0: 'width', _1: '4rem'}
+																]))
+														]),
+													_elm_lang$core$Native_List.fromArray(
+														[]));
+											}()
 											]))
 									]));
 						},
 						possibilities))
 				]));
 	});
-var _user$project$DevControls$tup = F2(
+var _user$project$EditTab$tup = F2(
 	function (v0, v1) {
 		return {ctor: '_Tuple2', _0: v0, _1: v1};
 	});
-var _user$project$DevControls$positionedSvgMakerToHtmlMaker = F2(
-	function (svgMaker, identifier) {
-		return A2(
-			_elm_lang$svg$Svg$svg,
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$svg$Svg_Attributes$width('50'),
-					_elm_lang$svg$Svg_Attributes$height('50'),
-					_elm_lang$svg$Svg_Attributes$viewBox('0 0 150 150')
-				]),
-			_elm_lang$core$Native_List.fromArray(
-				[
-					A2(
-					svgMaker,
-					A2(_elm_community$elm_linear_algebra$Math_Vector2$vec2, 75, 75),
-					identifier)
-				]));
-	});
-var _user$project$DevControls$makeStepper = F6(
+var _user$project$EditTab$makeStepper = F6(
 	function (index, mdl, label, decrementMsg, incrementMsg, value) {
 		return _elm_lang$core$Native_List.fromArray(
 			[
@@ -17163,7 +18648,7 @@ var _user$project$DevControls$makeStepper = F6(
 					]))
 			]);
 	});
-var _user$project$DevControls$toggleSwitchCell = F5(
+var _user$project$EditTab$toggleSwitchCell = F5(
 	function (index, mdl, toggleMessage, labelText, bool) {
 		return A2(
 			_debois$elm_mdl$Material_Grid$cell,
@@ -17190,7 +18675,27 @@ var _user$project$DevControls$toggleSwitchCell = F5(
 						]))
 				]));
 	});
-var _user$project$DevControls$editTab = function (model) {
+var _user$project$EditTab$protoPieceToSVG = F3(
+	function (pieceAppearances, center, protoPiece) {
+		var _p1 = protoPiece;
+		if (_p1.ctor === 'ActualPiece') {
+			return A3(_user$project$DevControlsCommon$pieceTypeToSVG, pieceAppearances, center, _p1._0);
+		} else {
+			return _user$project$Playfield$nullSVG;
+		}
+	});
+var _user$project$EditTab$displayProtoPieceType = function (protoPiece) {
+	var _p2 = protoPiece;
+	if (_p2.ctor === 'ActualPiece') {
+		return _user$project$DevControlsCommon$displayPiecetype(_p2._0);
+	} else {
+		return _elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text('No piece')
+			]);
+	}
+};
+var _user$project$EditTab$render = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
@@ -17244,7 +18749,7 @@ var _user$project$DevControls$editTab = function (model) {
 				_elm_lang$core$Native_List.fromArray(
 					[
 						A5(
-						_user$project$DevControls$toggleSwitchCell,
+						_user$project$EditTab$toggleSwitchCell,
 						_elm_lang$core$Native_List.fromArray(
 							[8]),
 						model.mdl,
@@ -17252,7 +18757,7 @@ var _user$project$DevControls$editTab = function (model) {
 						'Show outlines of empty spaces',
 						model.showSpaceOutlines),
 						A5(
-						_user$project$DevControls$toggleSwitchCell,
+						_user$project$EditTab$toggleSwitchCell,
 						_elm_lang$core$Native_List.fromArray(
 							[9]),
 						model.mdl,
@@ -17260,7 +18765,7 @@ var _user$project$DevControls$editTab = function (model) {
 						'Allow \"moving\" to same space',
 						model.allowSelfMoves),
 						A5(
-						_user$project$DevControls$toggleSwitchCell,
+						_user$project$EditTab$toggleSwitchCell,
 						_elm_lang$core$Native_List.fromArray(
 							[10]),
 						model.mdl,
@@ -17268,7 +18773,7 @@ var _user$project$DevControls$editTab = function (model) {
 						'Allow moving all pieces',
 						model.allowMovingAllPieces),
 						A5(
-						_user$project$DevControls$toggleSwitchCell,
+						_user$project$EditTab$toggleSwitchCell,
 						_elm_lang$core$Native_List.fromArray(
 							[11]),
 						model.mdl,
@@ -17289,7 +18794,7 @@ var _user$project$DevControls$editTab = function (model) {
 								A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 4)
 							]),
 						A6(
-							_user$project$DevControls$makeStepper,
+							_user$project$EditTab$makeStepper,
 							_elm_lang$core$Native_List.fromArray(
 								[12]),
 							model.mdl,
@@ -17304,7 +18809,7 @@ var _user$project$DevControls$editTab = function (model) {
 								A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 4)
 							]),
 						A6(
-							_user$project$DevControls$makeStepper,
+							_user$project$EditTab$makeStepper,
 							_elm_lang$core$Native_List.fromArray(
 								[13]),
 							model.mdl,
@@ -17319,7 +18824,7 @@ var _user$project$DevControls$editTab = function (model) {
 								A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 4)
 							]),
 						A6(
-							_user$project$DevControls$makeStepper,
+							_user$project$EditTab$makeStepper,
 							_elm_lang$core$Native_List.fromArray(
 								[5]),
 							model.mdl,
@@ -17334,7 +18839,7 @@ var _user$project$DevControls$editTab = function (model) {
 								A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 4)
 							]),
 						A6(
-							_user$project$DevControls$makeStepper,
+							_user$project$EditTab$makeStepper,
 							_elm_lang$core$Native_List.fromArray(
 								[6]),
 							model.mdl,
@@ -17349,7 +18854,7 @@ var _user$project$DevControls$editTab = function (model) {
 								A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 4)
 							]),
 						A6(
-							_user$project$DevControls$makeStepper,
+							_user$project$EditTab$makeStepper,
 							_elm_lang$core$Native_List.fromArray(
 								[7]),
 							model.mdl,
@@ -17372,16 +18877,18 @@ var _user$project$DevControls$editTab = function (model) {
 							]),
 						_elm_lang$core$Native_List.fromArray(
 							[
-								A7(
-								_user$project$DevControls$deckControl,
+								A9(
+								_user$project$EditTab$deckControl,
 								_elm_lang$core$Native_List.fromArray(
 									[2]),
 								model.mdl,
 								_user$project$Spaces$spaceTypePossibilities,
 								model.spaceDeck,
+								'space type',
+								_user$project$DevControlsCommon$displaySpaceType,
 								_user$project$Msg$SpaceDeckDecrement,
 								_user$project$Msg$SpaceDeckIncrement,
-								_user$project$DevControls$positionedSvgMakerToHtmlMaker(
+								_user$project$DevControlsCommon$positionedSvgMakerToHtmlMaker(
 									A2(
 										_user$project$Playfield$space,
 										model.showSpaceOutlines,
@@ -17398,25 +18905,24 @@ var _user$project$DevControls$editTab = function (model) {
 							]),
 						_elm_lang$core$Native_List.fromArray(
 							[
-								A7(
-								_user$project$DevControls$deckControl,
+								A9(
+								_user$project$EditTab$deckControl,
 								_elm_lang$core$Native_List.fromArray(
 									[3]),
 								model.mdl,
-								_user$project$Pieces$pieceTypePossibilities,
+								_user$project$Pieces$protoPiecePossibilities,
 								model.pieceDeck,
+								'piece type',
+								_user$project$EditTab$displayProtoPieceType,
 								_user$project$Msg$PieceDeckDecrement,
 								_user$project$Msg$PieceDeckIncrement,
-								_user$project$DevControls$positionedSvgMakerToHtmlMaker(
-									_user$project$Playfield$piece(
-										_elm_lang$core$Native_List.fromArray(
-											[
-												_elm_lang$svg$Svg_Attributes$stroke('grey')
-											]))))
+								_user$project$DevControlsCommon$positionedSvgMakerToHtmlMaker(
+									_user$project$EditTab$protoPieceToSVG(model.pieceAppearances)))
 							]))
 					]))
 			]));
 };
+
 var _user$project$DevControls$make = function (model) {
 	return _elm_lang$core$Native_List.fromArray(
 		[
@@ -17455,7 +18961,24 @@ var _user$project$DevControls$make = function (model) {
 								]),
 							_elm_lang$core$Native_List.fromArray(
 								[])),
-							_elm_lang$html$Html$text('edit')
+							_elm_lang$html$Html$text('edit rules')
+						])),
+					A2(
+					_debois$elm_mdl$Material_Tabs$label,
+					_elm_lang$core$Native_List.fromArray(
+						[_debois$elm_mdl$Material_Options$center]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_debois$elm_mdl$Material_Icon$i('palette'),
+							A2(
+							_debois$elm_mdl$Material_Options$span,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									A2(_debois$elm_mdl$Material_Options$css, 'width', '4px')
+								]),
+							_elm_lang$core$Native_List.fromArray(
+								[])),
+							_elm_lang$html$Html$text('edit appearance')
 						])),
 					A2(
 					_debois$elm_mdl$Material_Tabs$label,
@@ -17479,26 +19002,29 @@ var _user$project$DevControls$make = function (model) {
 				[
 					function () {
 					var _p0 = model.tabIndex;
-					if (_p0 === 0) {
-						return _user$project$DevControls$editTab(model);
-					} else {
-						return A2(
-							_elm_lang$html$Html$div,
-							_elm_lang$core$Native_List.fromArray(
-								[]),
-							_elm_lang$core$Native_List.fromArray(
-								[
-									_elm_lang$html$Html$text(
-									_elm_lang$core$Basics$toString(model.gameResult)),
-									A2(
-									_elm_lang$html$Html$hr,
-									_elm_lang$core$Native_List.fromArray(
-										[]),
-									_elm_lang$core$Native_List.fromArray(
-										[])),
-									_elm_lang$html$Html$text(
-									_elm_lang$core$Basics$toString(model))
-								]));
+					switch (_p0) {
+						case 0:
+							return _user$project$EditTab$render(model);
+						case 1:
+							return _user$project$AppearanceTab$render(model);
+						default:
+							return A2(
+								_elm_lang$html$Html$div,
+								_elm_lang$core$Native_List.fromArray(
+									[]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text(
+										_elm_lang$core$Basics$toString(model.gameResult)),
+										A2(
+										_elm_lang$html$Html$hr,
+										_elm_lang$core$Native_List.fromArray(
+											[]),
+										_elm_lang$core$Native_List.fromArray(
+											[])),
+										_elm_lang$html$Html$text(
+										_elm_lang$core$Basics$toString(model))
+									]));
 					}
 				}()
 				]))
@@ -17650,163 +19176,6 @@ var _user$project$Ports$sound = _elm_lang$core$Native_Platform.outgoingPort(
 		return v;
 	});
 
-var _user$project$Movement$getBumpTargetID = F2(
-	function (_p1, _p0) {
-		var _p2 = _p1;
-		var _p3 = _p0;
-		var _p5 = _p3._1;
-		var _p4 = _p3._0;
-		return {ctor: '_Tuple2', _0: _p4 + (_p4 - _p2._0), _1: _p5 + (_p5 - _p2._1)};
-	});
-var _user$project$Movement$getBumpTargetSpacePosition = F3(
-	function (spaces, piecePosition, spacePosition) {
-		var maybeBumpedSpaceID = A2(_user$project$Spaces$getSpaceFromPosition, spaces, spacePosition);
-		var maybeBumpingSpaceID = A2(_user$project$Spaces$getSpaceFromPosition, spaces, piecePosition);
-		return A2(
-			_elm_lang$core$Maybe$map,
-			function (_) {
-				return _.position;
-			},
-			A2(
-				_elm_lang$core$Maybe$andThen,
-				A3(_elm_lang$core$Maybe$map2, _user$project$Movement$getBumpTargetID, maybeBumpingSpaceID, maybeBumpedSpaceID),
-				function (targetID) {
-					return A2(_elm_lang$core$Dict$get, targetID, spaces);
-				}));
-	});
-var _user$project$Movement$bumpPiecesOnce = F4(
-	function (spaces, piecePosition, spacePosition, pieces) {
-		var _p6 = A3(_user$project$Movement$getBumpTargetSpacePosition, spaces, piecePosition, spacePosition);
-		if (_p6.ctor === 'Just') {
-			var _p7 = _p6._0;
-			return A2(_user$project$Spaces$positionIsOnActualSpace, spaces, _p7) ? A3(_user$project$Pieces$movePieces, spacePosition, _p7, pieces) : A2(_user$project$Pieces$removePiecesAtPosition, spacePosition, pieces);
-		} else {
-			return A2(_user$project$Pieces$removePiecesAtPosition, spacePosition, pieces);
-		}
-	});
-var _user$project$Movement$bumpPiecesNTimes = F5(
-	function (n, spaces, position, targetSpacePosition, pieces) {
-		if (_elm_lang$core$Native_Utils.cmp(n, 0) < 1) {
-			return pieces;
-		} else {
-			var bumpOnce = A3(_user$project$Movement$bumpPiecesOnce, spaces, position, targetSpacePosition);
-			var _p8 = A3(_user$project$Movement$getBumpTargetSpacePosition, spaces, position, targetSpacePosition);
-			if (_p8.ctor === 'Just') {
-				return bumpOnce(
-					A5(_user$project$Movement$bumpPiecesNTimes, n - 1, spaces, targetSpacePosition, _p8._0, pieces));
-			} else {
-				return bumpOnce(pieces);
-			}
-		}
-	});
-var _user$project$Movement$getPossibleMoveList = function (model) {
-	var cpuMovablePieces = _user$project$Pieces$getCPUMovablePieces(model.pieces);
-	var unoccupiedSpaceIndicies = A2(_user$project$PiecesAndSpaces$getUnoccupiedSpaceIndicies, model.pieces, model.spaces);
-	var nonSelfMoves = A2(
-		_user$project$Extras$andThen,
-		cpuMovablePieces,
-		function (x) {
-			var _p9 = A2(_elm_lang$core$Dict$get, x, model.pieces);
-			if (_p9.ctor === 'Just') {
-				var _p11 = _p9._0;
-				var availableIndicies = function () {
-					var _p10 = _p11.pieceType;
-					if (_p10.ctor === 'Star') {
-						return unoccupiedSpaceIndicies;
-					} else {
-						return A2(
-							_user$project$Spaces$getNonMatchingSpaceIndicies,
-							_user$project$Spaces$getActualSpaces(model.spaces),
-							_p11.position);
-					}
-				}();
-				return A2(
-					_user$project$Extras$andThen,
-					availableIndicies,
-					function (y) {
-						return _elm_lang$core$Native_List.fromArray(
-							[
-								{ctor: '_Tuple2', _0: x, _1: y}
-							]);
-					});
-			} else {
-				return _elm_lang$core$Native_List.fromArray(
-					[]);
-			}
-		});
-	return model.allowSelfMoves ? A2(
-		_elm_lang$core$Basics_ops['++'],
-		nonSelfMoves,
-		A3(_user$project$PiecesAndSpaces$getSelfMoves, cpuMovablePieces, model.pieces, model.spaces)) : nonSelfMoves;
-};
-var _user$project$Movement$movePieceToSpace = F4(
-	function (pieces, spaces, index, spaceIndex) {
-		var _p12 = {
-			ctor: '_Tuple2',
-			_0: A2(_elm_lang$core$Dict$get, index, pieces),
-			_1: A2(_user$project$Spaces$getPosition, spaceIndex, spaces)
-		};
-		if (((_p12.ctor === '_Tuple2') && (_p12._0.ctor === 'Just')) && (_p12._1.ctor === 'Just')) {
-			var _p15 = _p12._1._0;
-			var _p14 = _p12._0._0;
-			var _p13 = {
-				ctor: '_Tuple2',
-				_0: _p14.pieceType,
-				_1: A2(_user$project$Pieces$getPiecesAtPosition, pieces, _p15)
-			};
-			_v7_5:
-			do {
-				if (_p13.ctor === '_Tuple2') {
-					switch (_p13._0.ctor) {
-						case 'Triangle':
-							return A3(
-								_user$project$Pieces$setPieceLocation,
-								index,
-								_p15,
-								A2(_user$project$Extras$filterOutListFromDict, _p13._1, pieces));
-						case 'WeirdThing':
-							return A3(
-								_user$project$Pieces$setPieceLocation,
-								index,
-								_p15,
-								A4(_user$project$Movement$bumpPiecesOnce, spaces, _p14.position, _p15, pieces));
-						case 'TwistedPlus':
-							return A3(
-								_user$project$Pieces$setPieceLocation,
-								index,
-								_p15,
-								A5(_user$project$Movement$bumpPiecesNTimes, 2, spaces, _p14.position, _p15, pieces));
-						case 'Eye':
-							return A3(
-								_user$project$Pieces$setPieceLocation,
-								index,
-								_p15,
-								A3(_user$project$Pieces$movePieces, _p15, _p14.position, pieces));
-						case 'Petals':
-							return A2(_user$project$Pieces$noPiecesAtPosition, pieces, _p15) ? A2(
-								_user$project$Pieces$addPiece,
-								A2(
-									_user$project$Pieces$Piece,
-									_user$project$Pieces$Petals(_p13._0._0),
-									_p14.position),
-								A3(_user$project$Pieces$setPieceLocation, index, _p15, pieces)) : pieces;
-						default:
-							break _v7_5;
-					}
-				} else {
-					break _v7_5;
-				}
-			} while(false);
-			return A2(_user$project$Pieces$noPiecesAtPosition, pieces, _p15) ? A3(_user$project$Pieces$setPieceLocation, index, _p15, pieces) : pieces;
-		} else {
-			return pieces;
-		}
-	});
-var _user$project$Movement$getNewPieces = F3(
-	function (model, pieceID, spaceID) {
-		return A5(_user$project$PiecesAndSpaces$canPieceMoveToSpace, model.allowSelfMoves, model.pieces, model.spaces, pieceID, spaceID) ? A4(_user$project$Movement$movePieceToSpace, model.pieces, model.spaces, pieceID, spaceID) : model.pieces;
-	});
-
 var _user$project$Update$lowerScale = function (oldScale) {
 	return (_elm_lang$core$Native_Utils.cmp(oldScale, 1) > 0) ? (oldScale - 0.5) : oldScale;
 };
@@ -17849,7 +19218,7 @@ var _user$project$Update$checkPredicate = F3(
 						_elm_lang$core$List$any,
 						function (_p3) {
 							var _p4 = _p3;
-							return A5(_user$project$PiecesAndSpaces$canPieceMoveToSpace, model.allowSelfMoves, pieces, model.spaces, _p4._0, _p4._1);
+							return A5(_user$project$Movement$canPieceMoveToSpace, model.allowSelfMoves, pieces, model.spaces, _p4._0, _p4._1);
 						},
 						indexPairs));
 		}
@@ -17926,7 +19295,7 @@ var _user$project$Update$update = F2(
 				var _p8 = A4(_user$project$Model$makeSpaces, model.gridWidth, model.gridHeight, model.spaceDeck, model.seed);
 				var spaces = _p8._0;
 				var postSpacesSeed = _p8._1;
-				var _p9 = A3(_user$project$Model$makePieces, spaces, model.pieceDeck, postSpacesSeed);
+				var _p9 = A4(_user$project$Model$makePieces, spaces, model.pieceDeck, model.moveTypeDeck, postSpacesSeed);
 				var pieces = _p9._0;
 				var newSeed = _p9._1;
 				return A2(
@@ -17955,7 +19324,10 @@ var _user$project$Update$update = F2(
 					_elm_lang$core$Native_Utils.update(
 						model,
 						{
-							spaceDeck: A2(_elm_lang$core$List_ops['::'], _p7._0, model.spaceDeck)
+							spaceDeck: A2(
+								_elm_lang$core$Basics_ops['++'],
+								A2(_elm_lang$core$List$repeat, _p7._1, _p7._0),
+								model.spaceDeck)
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -17965,7 +19337,12 @@ var _user$project$Update$update = F2(
 					_elm_lang$core$Native_Utils.update(
 						model,
 						{
-							spaceDeck: A2(_user$project$Extras$remove, _p7._0, model.spaceDeck)
+							spaceDeck: A3(
+								_elm_lang$core$List$foldl,
+								_user$project$Extras$ignoreFirstArg(
+									_user$project$Extras$remove(_p7._0)),
+								model.spaceDeck,
+								_elm_lang$core$Native_List.range(1, _p7._1))
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -17975,7 +19352,10 @@ var _user$project$Update$update = F2(
 					_elm_lang$core$Native_Utils.update(
 						model,
 						{
-							pieceDeck: A2(_elm_lang$core$List_ops['::'], _p7._0, model.pieceDeck)
+							pieceDeck: A2(
+								_elm_lang$core$Basics_ops['++'],
+								A2(_elm_lang$core$List$repeat, _p7._1, _p7._0),
+								model.pieceDeck)
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -17985,7 +19365,12 @@ var _user$project$Update$update = F2(
 					_elm_lang$core$Native_Utils.update(
 						model,
 						{
-							pieceDeck: A2(_user$project$Extras$remove, _p7._0, model.pieceDeck)
+							pieceDeck: A3(
+								_elm_lang$core$List$foldl,
+								_user$project$Extras$ignoreFirstArg(
+									_user$project$Extras$remove(_p7._0)),
+								model.pieceDeck,
+								_elm_lang$core$Native_List.range(1, _p7._1))
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -18022,6 +19407,16 @@ var _user$project$Update$update = F2(
 						model,
 						{
 							gridHeight: A2(_elm_lang$core$Basics$max, 0, model.gridHeight - 1)
+						}),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			case 'UpdateColour':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{
+							pieceAppearances: A3(_user$project$PieceAppearances$updateColour, _p7._0, _p7._1, model.pieceAppearances)
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -18125,6 +19520,26 @@ var _user$project$Update$update = F2(
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
+			case 'EditPoints':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{
+							pieceAppearances: A3(_user$project$PieceAppearances$updatePoints, _p7._0, _p7._1, model.pieceAppearances)
+						}),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			case 'SetIcon':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{
+							pieceAppearances: A3(_user$project$PieceAppearances$updateIcon, _p7._1, _p7._0, model.pieceAppearances)
+						}),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
 			case 'MakeAIMove':
 				return _user$project$Model$canMove(model) ? A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
@@ -18165,6 +19580,14 @@ var _user$project$Update$update = F2(
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
+			case 'NoOp':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					model,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_user$project$Ports$sound('tableHit')
+						]));
 			default:
 				return A2(_debois$elm_mdl$Material$update, _p7._0, model);
 		}
