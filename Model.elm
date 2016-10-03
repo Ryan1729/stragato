@@ -152,10 +152,20 @@ defaultSpaces =
 
 
 defaultPieceTypeDeck =
-    Pieces.protoPiecePossibilities
-        ++ [ NoPiece
-             --  , NoPiece
-           ]
+    Pieces.actualPieceTypePossibilities
+        |> List.filter (\p -> p.moveType == Pieces.AnySpace)
+        |> List.map Pieces.ActualPiece
+        |> (++)
+            [ NoPiece
+            , NoPiece
+            ]
+
+
+
+-- Pieces.protoPiecePossibilities
+--     ++ [ NoPiece
+--         , NoPiece
+--        ]
 
 
 defaultMoveTypeDeck =
