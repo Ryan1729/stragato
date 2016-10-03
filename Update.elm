@@ -138,6 +138,15 @@ update message model =
             }
                 ! []
 
+        SetIcon icon pieceType ->
+            { model
+                | pieceAppearances =
+                    PieceAppearances.updateIcon pieceType
+                        icon
+                        model.pieceAppearances
+            }
+                ! []
+
         MakeAIMove ->
             if Model.canMove model then
                 randomAIMove model ! [ Ports.sound "clack" ]

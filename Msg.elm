@@ -5,6 +5,7 @@ import Material
 import Spaces exposing (SpaceType)
 import Pieces exposing (ProtoPiece, PieceType)
 import Math.Vector2 exposing (Vec2)
+import PieceAppearances exposing (Icon)
 
 
 type Msg
@@ -39,4 +40,5 @@ type Msg
     | DecrementLossCon
     | IncrementLossCon
     | EditPoints PieceType (List Vec2)
+    | SetIcon Icon PieceType
     | NoOp

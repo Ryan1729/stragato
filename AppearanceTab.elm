@@ -9,11 +9,12 @@ import Material
 import Material.Options as Options exposing (css)
 import Material.Icon as Icon
 import Material.Table as Table
+import Material.Toggles as Toggles
 import Material.Grid exposing (grid, cell, size, offset, Device(All, Tablet))
 import Math.Vector2 as V2 exposing (Vec2, vec2)
 import Pieces exposing (Piece, PieceType, ProtoPiece(..), Controller(..), MoveType(..), Shape(..))
 import Spaces
-import PieceAppearances exposing (PieceAppearances)
+import PieceAppearances exposing (PieceAppearances, Icon(..))
 import Extras
 import String
 import DevControlsCommon
@@ -43,14 +44,14 @@ pieceAppearancesTable index mdl pieceAppearances =
                 , Table.th [] [ text "piece type" ]
                 , Table.th [] [ text "points" ]
                 , Table.th [] [ text "colour" ]
+                , Table.th [] [ text "icon" ]
                 ]
             ]
         , Table.tbody []
             (pieceAppearances
                 |> PieceAppearances.toList
-                |> List.map
-                    (\( pieceType, ( shape, colourString, icon ) ) ->
-                        --TODO display icon controls
+                |> List.indexedMap
+                    (\index ( pieceType, ( shape, colourString, icon ) ) ->
                         Table.tr []
                             [ Table.td []
                                 [ DevControlsCommon.positionedSvgMakerToHtmlMaker (DevControlsCommon.pieceTypeToSVG pieceAppearances)
@@ -75,6 +76,38 @@ pieceAppearancesTable index mdl pieceAppearances =
                                     , style [ ( "width", "6rem" ) ]
                                     ]
                                     []
+                                ]
+                            , Table.td []
+                                [ Html.p []
+                                    [ Toggles.radio Mdl
+                                        ([ -10 ] ++ [ index ])
+                                        mdl
+                                        [ Toggles.value (icon == EmptySpaceIcon)
+                                        , Toggles.group "pieceAppearancesGroup"
+                                        , Toggles.onClick (SetIcon EmptySpaceIcon pieceType)
+                                        ]
+                                        [ text "Empty space" ]
+                                    ]
+                                , Html.p []
+                                    [ Toggles.radio Mdl
+                                        ([ -11 ] ++ [ index ])
+                                        mdl
+                                        [ Toggles.value (icon == PieceAppearances.triangleIcon)
+                                        , Toggles.group "pieceAppearancesGroup"
+                                        , Toggles.onClick (SetIcon PieceAppearances.triangleIcon pieceType)
+                                        ]
+                                        [ text "Triangle on space" ]
+                                    ]
+                                , Html.p []
+                                    [ Toggles.radio Mdl
+                                        ([ -12 ] ++ [ index ])
+                                        mdl
+                                        [ Toggles.value (icon == NoIcon)
+                                        , Toggles.group "pieceAppearancesGroup"
+                                        , Toggles.onClick (SetIcon NoIcon pieceType)
+                                        ]
+                                        [ text "No icon" ]
+                                    ]
                                 ]
                             ]
                     )

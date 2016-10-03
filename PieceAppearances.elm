@@ -184,6 +184,13 @@ type Icon
     | NoIcon
 
 
+triangleIcon =
+    Points.trianglePointsList
+        |> Points.pointsListToPiecePointsList
+        |> PointsList
+        |> ShapeSpaceIcon
+
+
 getIcon : MoveType -> Icon
 getIcon moveType =
     case moveType of
@@ -191,10 +198,7 @@ getIcon moveType =
             NoIcon
 
         Occupied ->
-            Points.trianglePointsList
-                |> Points.pointsListToPiecePointsList
-                |> PointsList
-                |> ShapeSpaceIcon
+            triangleIcon
 
         Unoccupied ->
             EmptySpaceIcon
