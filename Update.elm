@@ -1,7 +1,7 @@
 module Update exposing (update)
 
-import Model exposing (Model, GamePredicate(..), GameEndCons(..), GameResult)
-import Msg exposing (Msg(..))
+import Model exposing (Model, GamePredicate(..), GameEndCons(..), GameResult, ExportModel)
+import Msg exposing (Msg(..), ExportMsg(..))
 import Ports
 import Mouse
 import Math.Vector2 as V2 exposing (Vec2, vec2)
@@ -44,15 +44,15 @@ update message model =
         GenerateBoard ->
             let
                 ( spaces, postSpacesSeed ) =
-                    Model.makeSpaces model.gridWidth
-                        model.gridHeight
-                        model.spaceDeck
+                    Model.makeSpaces model.exportModel.gridWidth
+                        model.exportModel.gridHeight
+                        model.exportModel.spaceDeck
                         model.seed
 
                 ( pieces, newSeed ) =
                     Model.makePieces spaces
-                        model.pieceDeck
-                        model.moveTypeDeck
+                        model.exportModel.pieceDeck
+                        model.exportModel.moveTypeDeck
                         postSpacesSeed
             in
                 { model
@@ -66,38 +66,8 @@ update message model =
         SelectTab tabIndex ->
             { model | tabIndex = tabIndex } ! []
 
-        SpaceDeckIncrement item amount ->
-            { model | spaceDeck = List.repeat amount item ++ model.spaceDeck } ! []
-
-        SpaceDeckDecrement item amount ->
-            { model | spaceDeck = List.foldl (Extras.ignoreFirstArg <| Extras.remove item) model.spaceDeck [1..amount] } ! []
-
-        PieceDeckIncrement item amount ->
-            { model | pieceDeck = List.repeat amount item ++ model.pieceDeck } ! []
-
-        PieceDeckDecrement item amount ->
-            { model | pieceDeck = List.foldl (Extras.ignoreFirstArg <| Extras.remove item) model.pieceDeck [1..amount] } ! []
-
-        IncrementGridWidth ->
-            { model | gridWidth = model.gridWidth + 1 } ! []
-
-        DecrementGridWidth ->
-            { model | gridWidth = max 0 (model.gridWidth - 1) } ! []
-
-        IncrementGridHeight ->
-            { model | gridHeight = model.gridHeight + 1 } ! []
-
-        DecrementGridHeight ->
-            { model | gridHeight = max 0 (model.gridHeight - 1) } ! []
-
-        UpdateColour pieceType colourString ->
-            { model
-                | pieceAppearances =
-                    PieceAppearances.updateColour pieceType
-                        colourString
-                        model.pieceAppearances
-            }
-                ! []
+        UpdateExportModel exportMsg ->
+            { model | exportModel = updateExportModel exportMsg model.exportModel } ! []
 
         ToggleSpaceOutlines ->
             { model | showSpaceOutlines = not model.showSpaceOutlines } ! []
@@ -107,42 +77,6 @@ update message model =
 
         ToggleIgnoreGameResult ->
             { model | ignoreGameResult = not model.ignoreGameResult } ! []
-
-        IncrementViewScale ->
-            { model | viewScale = higherScale model.viewScale } ! []
-
-        DecrementViewScale ->
-            { model | viewScale = lowerScale model.viewScale } ! []
-
-        DecrementWinCon ->
-            { model | gameEndCons = Model.decrementWinCon model.gameEndCons } ! []
-
-        IncrementWinCon ->
-            { model | gameEndCons = Model.incrementWinCon model.gameEndCons } ! []
-
-        DecrementLossCon ->
-            { model | gameEndCons = Model.decrementLossCon model.gameEndCons } ! []
-
-        IncrementLossCon ->
-            { model | gameEndCons = Model.incrementLossCon model.gameEndCons } ! []
-
-        EditPoints pieceType newPoints ->
-            { model
-                | pieceAppearances =
-                    PieceAppearances.updatePoints pieceType
-                        newPoints
-                        model.pieceAppearances
-            }
-                ! []
-
-        SetIcon icon pieceType ->
-            { model
-                | pieceAppearances =
-                    PieceAppearances.updateIcon pieceType
-                        icon
-                        model.pieceAppearances
-            }
-                ! []
 
         MakeAIMove ->
             if Model.canMove model then
@@ -182,6 +116,76 @@ update message model =
                 model
 
 
+updateExportModel : ExportMsg -> ExportModel -> ExportModel
+updateExportModel msg model =
+    case msg of
+        SpaceDeckIncrement item amount ->
+            { model | spaceDeck = List.repeat amount item ++ model.spaceDeck }
+
+        SpaceDeckDecrement item amount ->
+            { model | spaceDeck = List.foldl (Extras.ignoreFirstArg <| Extras.remove item) model.spaceDeck [1..amount] }
+
+        PieceDeckIncrement item amount ->
+            { model | pieceDeck = List.repeat amount item ++ model.pieceDeck }
+
+        PieceDeckDecrement item amount ->
+            { model | pieceDeck = List.foldl (Extras.ignoreFirstArg <| Extras.remove item) model.pieceDeck [1..amount] }
+
+        IncrementGridWidth ->
+            { model | gridWidth = model.gridWidth + 1 }
+
+        DecrementGridWidth ->
+            { model | gridWidth = max 0 (model.gridWidth - 1) }
+
+        IncrementGridHeight ->
+            { model | gridHeight = model.gridHeight + 1 }
+
+        DecrementGridHeight ->
+            { model | gridHeight = max 0 (model.gridHeight - 1) }
+
+        UpdateColour pieceType colourString ->
+            { model
+                | pieceAppearances =
+                    PieceAppearances.updateColour pieceType
+                        colourString
+                        model.pieceAppearances
+            }
+
+        IncrementViewScale ->
+            { model | viewScale = higherScale model.viewScale }
+
+        DecrementViewScale ->
+            { model | viewScale = lowerScale model.viewScale }
+
+        DecrementWinCon ->
+            { model | gameEndCons = Model.decrementWinCon model.gameEndCons }
+
+        IncrementWinCon ->
+            { model | gameEndCons = Model.incrementWinCon model.gameEndCons }
+
+        DecrementLossCon ->
+            { model | gameEndCons = Model.decrementLossCon model.gameEndCons }
+
+        IncrementLossCon ->
+            { model | gameEndCons = Model.incrementLossCon model.gameEndCons }
+
+        EditPoints pieceType newPoints ->
+            { model
+                | pieceAppearances =
+                    PieceAppearances.updatePoints pieceType
+                        newPoints
+                        model.pieceAppearances
+            }
+
+        SetIcon icon pieceType ->
+            { model
+                | pieceAppearances =
+                    PieceAppearances.updateIcon pieceType
+                        icon
+                        model.pieceAppearances
+            }
+
+
 randomAIMove : Model -> Model
 randomAIMove model =
     let
@@ -206,7 +210,7 @@ randomAIMove model =
 
 getGameResult : Model -> Pieces -> GameResult
 getGameResult model pieces =
-    case model.gameEndCons of
+    case model.exportModel.gameEndCons of
         GameEndCons winCondition loseCondition ->
             if checkPredicate model winCondition pieces then
                 Model.Win

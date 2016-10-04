@@ -20,7 +20,7 @@ getNewPieces model pieceID spaceID =
             pieceID
             spaceID
     then
-        movePieceToSpace model.pieceAppearances model.pieces model.spaces pieceID spaceID
+        movePieceToSpace model.exportModel.pieceAppearances model.pieces model.spaces pieceID spaceID
     else
         model.pieces
 

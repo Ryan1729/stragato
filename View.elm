@@ -57,10 +57,10 @@ view model =
         -- windowWidth = size.width
         -- windowHeight = size.height
         viewWidth =
-            playfieldWidth * model.viewScale
+            playfieldWidth * model.exportModel.viewScale
 
         viewHeight =
-            playfieldHeight * model.viewScale
+            playfieldHeight * model.exportModel.viewScale
 
         gameResultText =
             case model.gameResult of

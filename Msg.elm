@@ -20,7 +20,16 @@ type Msg
     | MakeAIMove
     | SelectTab Int
     | Mdl (Material.Msg Msg)
-    | SpaceDeckIncrement SpaceType Int
+    | ToggleSpaceOutlines
+    | ToggleAllowMovingAllPieces
+    | ToggleIgnoreGameResult
+    | UpdateExportModel ExportMsg
+    | SaveAs
+    | NoOp
+
+
+type ExportMsg
+    = SpaceDeckIncrement SpaceType Int
     | SpaceDeckDecrement SpaceType Int
     | PieceDeckIncrement ProtoPiece Int
     | PieceDeckDecrement ProtoPiece Int
@@ -30,15 +39,10 @@ type Msg
     | DecrementGridHeight
     | IncrementViewScale
     | DecrementViewScale
-    | UpdateColour PieceType String
-    | ToggleSpaceOutlines
-    | ToggleAllowMovingAllPieces
-    | ToggleIgnoreGameResult
     | DecrementWinCon
     | IncrementWinCon
     | DecrementLossCon
     | IncrementLossCon
+    | UpdateColour PieceType String
     | EditPoints PieceType (List Vec2)
     | SetIcon Icon PieceType
-    | SaveAs
-    | NoOp

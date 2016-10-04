@@ -121,7 +121,7 @@ getPieceView model currentID currentPiece =
         selectedAttributes =
             getPieceAttributes model currentID currentPiece
     in
-        piece model.pieceAppearances selectedAttributes currentPiece.position currentPiece.pieceType
+        piece model.exportModel.pieceAppearances selectedAttributes currentPiece.position currentPiece.pieceType
 
 
 getPieceAttributes model currentID currentPiece =

@@ -4,7 +4,7 @@ import Html exposing (Html, div, text)
 import Html.Attributes exposing (style)
 import Html.Events exposing (onInput)
 import Model exposing (Model)
-import Msg exposing (Msg(..))
+import Msg exposing (Msg(..), ExportMsg(..))
 import Material
 import Material.Options as Options exposing (css)
 import Material.Button as Button
@@ -65,28 +65,28 @@ render model =
                     "gridWidth"
                     DecrementGridWidth
                     IncrementGridWidth
-                    (toString model.gridWidth)
+                    (toString model.exportModel.gridWidth)
             , cell [ size All 4 ]
                 <| makeStepper [ 6 ]
                     model.mdl
                     "gridHeight"
                     DecrementGridHeight
                     IncrementGridHeight
-                    (toString model.gridHeight)
+                    (toString model.exportModel.gridHeight)
             , cell [ size All 4 ]
                 <| makeStepper [ 7 ]
                     model.mdl
                     "scale"
                     DecrementViewScale
                     IncrementViewScale
-                    (toString model.viewScale)
+                    (toString model.exportModel.viewScale)
             ]
         , grid []
             [ cell [ size All 6 ]
-                [ deckControl [ 2 ]
+                [ exportDeckControl [ 2 ]
                     model.mdl
                     Spaces.spaceTypePossibilities
-                    model.spaceDeck
+                    model.exportModel.spaceDeck
                     "space type"
                     DCC.displaySpaceType
                     Msg.SpaceDeckDecrement
@@ -96,16 +96,16 @@ render model =
                     )
                 ]
             , cell [ size All 6 ]
-                [ deckControl [ 3 ]
+                [ exportDeckControl [ 3 ]
                     model.mdl
                     Pieces.protoPiecePossibilities
-                    model.pieceDeck
+                    model.exportModel.pieceDeck
                     "piece type"
                     displayProtoPieceType
                     Msg.PieceDeckDecrement
                     Msg.PieceDeckIncrement
                     (DCC.positionedSvgMakerToHtmlMaker
-                        <| protoPieceToSVG model.pieceAppearances
+                        <| protoPieceToSVG model.exportModel.pieceAppearances
                     )
                 ]
             ]
@@ -146,7 +146,7 @@ toggleSwitchCell index mdl toggleMessage labelText bool =
         ]
 
 
-makeStepper : List Int -> Material.Model -> String -> Msg -> Msg -> String -> List (Html Msg)
+makeStepper : List Int -> Material.Model -> String -> ExportMsg -> ExportMsg -> String -> List (Html Msg)
 makeStepper index mdl label decrementMsg incrementMsg value =
     [ text label
     , div [ style [ ( "border", "1px solid" ) ] ]
@@ -155,7 +155,7 @@ makeStepper index mdl label decrementMsg incrementMsg value =
                 [ Button.render Msg.Mdl
                     (index ++ [ 1 ])
                     mdl
-                    [ Button.onClick incrementMsg
+                    [ Button.onClick (UpdateExportModel incrementMsg)
                     ]
                     [ Icon.i "add"
                     ]
@@ -165,7 +165,7 @@ makeStepper index mdl label decrementMsg incrementMsg value =
                 [ Button.render Msg.Mdl
                     (index ++ [ 0 ])
                     mdl
-                    [ Button.onClick decrementMsg
+                    [ Button.onClick (UpdateExportModel decrementMsg)
                     ]
                     [ Icon.i "remove"
                     ]
@@ -240,6 +240,39 @@ deckControl index mdl possibilities currentDeck typeHeading typeDisplay removeMe
                     )
             )
         ]
+
+
+exportDeckControl :
+    List Int
+    -> Material.Model
+    -> List a
+    -> List a
+    -> String
+    -> (a -> List (Html Msg))
+    -> (a -> Int -> ExportMsg)
+    -> (a -> Int -> ExportMsg)
+    -> (a -> Html Msg)
+    -> Html Msg
+exportDeckControl index mdl possibilities currentDeck typeHeading typeDisplay removeMessage addMessage elementView =
+    deckControl index
+        mdl
+        possibilities
+        currentDeck
+        typeHeading
+        typeDisplay
+        (UpdateExportModel ... removeMessage)
+        (UpdateExportModel ... addMessage)
+        elementView
+
+
+
+-- the blackbird combinator
+-- see https://youtu.be/seVSlKazsNk?t=11m53s
+
+
+(...) : (a -> b) -> (c -> d -> a) -> c -> d -> b
+(...) =
+    (<<) << (<<)
 
 
 amountOfItemInDeck : a -> List a -> Int

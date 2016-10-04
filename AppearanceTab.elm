@@ -4,7 +4,7 @@ import Html exposing (Html, div, text)
 import Html.Attributes exposing (style)
 import Html.Events exposing (onInput)
 import Model exposing (Model)
-import Msg exposing (Msg(..))
+import Msg exposing (Msg(..), ExportMsg(..))
 import Material
 import Material.Button as Button
 import Material.Icon as Icon
@@ -26,7 +26,7 @@ render model =
     div []
         [ grid []
             [ cell [ size All 6 ]
-                [ pieceAppearancesTable [ 14 ] model.mdl model.pieceAppearances
+                [ pieceAppearancesTable [ 14 ] model.mdl model.exportModel.pieceAppearances
                 ]
             ]
         ]
@@ -79,6 +79,7 @@ pieceAppearancesTable index mdl pieceAppearances =
                                     [ Html.input
                                         [ cleanColourString
                                             >> UpdateColour pieceType
+                                            >> UpdateExportModel
                                             |> onInput
                                         , colourString |> Html.Attributes.value
                                         , style [ ( "width", "6rem" ), ( "background-color", DCC.background ) ]
@@ -92,7 +93,7 @@ pieceAppearancesTable index mdl pieceAppearances =
                                             mdl
                                             [ Toggles.value (icon == EmptySpaceIcon)
                                             , Toggles.group "pieceAppearancesGroup"
-                                            , Toggles.onClick (SetIcon EmptySpaceIcon pieceType)
+                                            , Toggles.onClick (UpdateExportModel <| SetIcon EmptySpaceIcon pieceType)
                                             ]
                                             [ text "Empty space" ]
                                         ]
@@ -102,7 +103,7 @@ pieceAppearancesTable index mdl pieceAppearances =
                                             mdl
                                             [ Toggles.value (icon == PieceAppearances.triangleIcon)
                                             , Toggles.group "pieceAppearancesGroup"
-                                            , Toggles.onClick (SetIcon PieceAppearances.triangleIcon pieceType)
+                                            , Toggles.onClick (UpdateExportModel <| SetIcon PieceAppearances.triangleIcon pieceType)
                                             ]
                                             [ text "Triangle on space" ]
                                         ]
@@ -112,7 +113,7 @@ pieceAppearancesTable index mdl pieceAppearances =
                                             mdl
                                             [ Toggles.value (icon == NoIcon)
                                             , Toggles.group "pieceAppearancesGroup"
-                                            , Toggles.onClick (SetIcon NoIcon pieceType)
+                                            , Toggles.onClick (UpdateExportModel <| SetIcon NoIcon pieceType)
                                             ]
                                             [ text "No icon" ]
                                         ]
@@ -123,24 +124,24 @@ pieceAppearancesTable index mdl pieceAppearances =
         ]
 
 
-editAblePointsList : List Int -> Material.Model -> (List Vec2 -> Msg) -> List Vec2 -> List (Html Msg)
+editAblePointsList : List Int -> Material.Model -> (List Vec2 -> ExportMsg) -> List Vec2 -> List (Html Msg)
 editAblePointsList index mdl msgMaker list =
     [ Button.render Msg.Mdl
         (index ++ [ 0 ])
         mdl
-        [ Button.onClick (msgMaker <| Maybe.withDefault [] <| List.tail list)
+        [ Button.onClick (UpdateExportModel <| msgMaker <| Maybe.withDefault [] <| List.tail list)
         ]
         [ Icon.i "remove"
         ]
     , Button.render Msg.Mdl
         (index ++ [ 1 ])
         mdl
-        [ Button.onClick (msgMaker <| vec2 0 0 :: list)
+        [ Button.onClick (UpdateExportModel <| msgMaker <| vec2 0 0 :: list)
         ]
         [ Icon.i "add"
         ]
     ]
-        ++ List.indexedMap (editAblePoints msgMaker list) list
+        ++ List.indexedMap (editAblePoints (UpdateExportModel << msgMaker) list) list
 
 
 type V2Component

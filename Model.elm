@@ -17,21 +17,14 @@ type alias Model =
     { pieceSelected : Maybe Int
     , pieces : Pieces
     , spaces : Spaces
-    , gridWidth : Int
-    , gridHeight : Int
-    , spaceDeck : List SpaceType
-    , pieceDeck : List ProtoPiece
-    , moveTypeDeck : List MoveType
-    , pieceAppearances : PieceAppearances
     , seed : Seed
     , tabIndex : Int
+    , exportModel : ExportModel
     , gameResult : GameResult
     , ignoreGameResult : Bool
-    , gameEndCons : GameEndCons
     , debug : Bool
     , showSpaceOutlines : Bool
     , allowMovingAllPieces : Bool
-    , viewScale : Float
     , windowSize : { width : Int, height : Int }
     , mdl : Material.Model
     }
@@ -41,16 +34,38 @@ defaultState =
     { pieceSelected = Nothing
     , pieces = defaultPieces
     , spaces = defaultSpaces
-    , gridWidth = defaultWidth
+    , seed = (Random.initialSeed 42)
+    , tabIndex = 0
+    , exportModel = defaultExportModel
+    , gameResult = TBD
+    , ignoreGameResult = False
+    , debug = True
+    , showSpaceOutlines = True
+    , allowMovingAllPieces = False
+    , windowSize = { width = 600, height = 600 }
+    , mdl = Material.model
+    }
+
+
+type alias ExportModel =
+    { gridWidth : Int
+    , gridHeight : Int
+    , spaceDeck : List SpaceType
+    , pieceDeck : List ProtoPiece
+    , moveTypeDeck : List MoveType
+    , pieceAppearances : PieceAppearances
+    , gameEndCons : GameEndCons
+    , viewScale : Float
+    }
+
+
+defaultExportModel =
+    { gridWidth = defaultWidth
     , gridHeight = defaultHeight
     , spaceDeck = defaultSpaceDeck
     , pieceDeck = defaultPieceTypeDeck
     , moveTypeDeck = defaultMoveTypeDeck
     , pieceAppearances = defaultpieceAppearances
-    , seed = (Random.initialSeed 42)
-    , tabIndex = 0
-    , gameResult = TBD
-    , ignoreGameResult = False
     , gameEndCons =
         GameEndCons
             (NoPiecesOfGivenTypeCanMove
@@ -60,12 +75,7 @@ defaultState =
                 )
             )
             (NoPiecesControlledBy Player)
-    , debug = True
-    , showSpaceOutlines = True
-    , allowMovingAllPieces = False
     , viewScale = 1.0
-    , windowSize = { width = 600, height = 600 }
-    , mdl = Material.model
     }
 
 
@@ -267,14 +277,14 @@ canMove model =
 
 getWinConString : Model -> String
 getWinConString model =
-    case model.gameEndCons of
+    case model.exportModel.gameEndCons of
         GameEndCons winCon _ ->
             toString winCon
 
 
 getLossConString : Model -> String
 getLossConString model =
-    case model.gameEndCons of
+    case model.exportModel.gameEndCons of
         GameEndCons _ lossCon ->
             toString lossCon
 
