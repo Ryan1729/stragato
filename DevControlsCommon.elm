@@ -40,3 +40,7 @@ displaySpaceType spaceType =
 pOf : a -> Html Msg
 pOf thing =
     Html.p [] [ toString thing |> text ]
+
+
+background =
+    "#DDDDDD"

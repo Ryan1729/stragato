@@ -21,7 +21,7 @@ import Pieces exposing (Piece, PieceType, ProtoPiece(..), Controller(..), MoveTy
 import Spaces
 import PieceAppearances exposing (PieceAppearances)
 import String
-import DevControlsCommon
+import DevControlsCommon as DCC
 
 
 render : Model -> Html Msg
@@ -93,10 +93,10 @@ render model =
                     Spaces.spaceTypePossibilities
                     model.spaceDeck
                     "space type"
-                    DevControlsCommon.displaySpaceType
+                    DCC.displaySpaceType
                     Msg.SpaceDeckDecrement
                     Msg.SpaceDeckIncrement
-                    (DevControlsCommon.positionedSvgMakerToHtmlMaker
+                    (DCC.positionedSvgMakerToHtmlMaker
                         <| Playfield.space model.showSpaceOutlines [ stroke "grey" ]
                     )
                 ]
@@ -109,7 +109,7 @@ render model =
                     displayProtoPieceType
                     Msg.PieceDeckDecrement
                     Msg.PieceDeckIncrement
-                    (DevControlsCommon.positionedSvgMakerToHtmlMaker
+                    (DCC.positionedSvgMakerToHtmlMaker
                         <| protoPieceToSVG model.pieceAppearances
                     )
                 ]
@@ -121,7 +121,7 @@ displayProtoPieceType : ProtoPiece -> List (Html Msg)
 displayProtoPieceType protoPiece =
     case protoPiece of
         ActualPiece pieceType ->
-            DevControlsCommon.displayPiecetype pieceType
+            DCC.displayPiecetype pieceType
 
         NoPiece ->
             [ text "No piece" ]
@@ -131,7 +131,7 @@ protoPieceToSVG : PieceAppearances -> Vec2 -> ProtoPiece -> Svg Msg
 protoPieceToSVG pieceAppearances center protoPiece =
     case protoPiece of
         ActualPiece pieceType ->
-            DevControlsCommon.pieceTypeToSVG pieceAppearances center pieceType
+            DCC.pieceTypeToSVG pieceAppearances center pieceType
 
         NoPiece ->
             Playfield.nullSVG
@@ -196,7 +196,7 @@ deckControl :
     -> (a -> Html Msg)
     -> Html Msg
 deckControl index mdl possibilities currentDeck typeHeading typeDisplay removeMessage addMessage elementView =
-    Table.table [ css "background-color" "#DDDDDD" ]
+    Table.table [ css "background-color" DCC.background ]
         [ Table.thead []
             [ Table.tr []
                 [ Table.th [{- Table.onClick Reorder -}]
@@ -237,7 +237,7 @@ deckControl index mdl possibilities currentDeck typeHeading typeDisplay removeMe
                                                )
                                             |> onInput
                                         , currentAmount |> toString |> Html.Attributes.value
-                                        , style [ ( "width", "4rem" ) ]
+                                        , style [ ( "width", "4rem" ), ( "background-color", DCC.background ) ]
                                         ]
                                         []
                                 ]

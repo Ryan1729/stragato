@@ -17,7 +17,7 @@ import Spaces
 import PieceAppearances exposing (PieceAppearances, Icon(..))
 import Extras
 import String
-import DevControlsCommon as DDC
+import DevControlsCommon as DCC
 import Regex
 
 
@@ -37,7 +37,7 @@ pieceAppearancesTable :
     -> PieceAppearances
     -> Html Msg
 pieceAppearancesTable index mdl pieceAppearances =
-    Table.table [ css "background-color" "#DDDDDD" ]
+    Table.table [ css "background-color" DCC.background ]
         [ Table.thead []
             [ Table.tr []
                 [ Table.th [] [ text "preview" ]
@@ -55,10 +55,10 @@ pieceAppearancesTable index mdl pieceAppearances =
                         Table.tr []
                             [ Table.td []
                                 [ pieceType
-                                    |> DDC.positionedSvgMakerToHtmlMaker (DDC.pieceTypeToSVG pieceAppearances)
+                                    |> DCC.positionedSvgMakerToHtmlMaker (DCC.pieceTypeToSVG pieceAppearances)
                                 ]
                             , Table.td []
-                                <| DDC.displayPiecetype pieceType
+                                <| DCC.displayPiecetype pieceType
                             , Table.td []
                                 <| (case shape of
                                         Eye ->
@@ -73,7 +73,7 @@ pieceAppearancesTable index mdl pieceAppearances =
                                         >> UpdateColour pieceType
                                         |> onInput
                                     , colourString |> Html.Attributes.value
-                                    , style [ ( "width", "6rem" ) ]
+                                    , style [ ( "width", "6rem" ), ( "background-color", DCC.background ) ]
                                     ]
                                     []
                                 ]
@@ -125,6 +125,10 @@ type V2Component
     | Y
 
 
+pointsStyle =
+    style [ ( "width", "4rem" ), ( "background-color", DCC.background ) ]
+
+
 editAblePoints : (List Vec2 -> Msg) -> List Vec2 -> Int -> Vec2 -> Html Msg
 editAblePoints msgMaker list index vector =
     Html.p []
@@ -133,7 +137,7 @@ editAblePoints msgMaker list index vector =
             , Html.Attributes.step "any"
             , updatePoint msgMaker list index vector X |> onInput
             , vector |> V2.getX |> toString |> Html.Attributes.value
-            , style [ ( "width", "4rem" ) ]
+            , pointsStyle
             ]
             []
         , text ","
@@ -142,7 +146,7 @@ editAblePoints msgMaker list index vector =
             , Html.Attributes.step "any"
             , updatePoint msgMaker list index vector Y |> onInput
             , vector |> V2.getY |> toString |> Html.Attributes.value
-            , style [ ( "width", "4rem" ) ]
+            , pointsStyle
             ]
             []
         ]
