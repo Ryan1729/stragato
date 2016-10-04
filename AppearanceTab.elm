@@ -6,8 +6,9 @@ import Html.Events exposing (onInput)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
 import Material
-import Material.Options as Options exposing (css)
+import Material.Button as Button
 import Material.Icon as Icon
+import Material.Options as Options exposing (css)
 import Material.Table as Table
 import Material.Toggles as Toggles
 import Material.Grid exposing (grid, cell, size, offset, Device(All, Tablet))
@@ -52,72 +53,94 @@ pieceAppearancesTable index mdl pieceAppearances =
                 |> PieceAppearances.toList
                 |> List.indexedMap
                     (\index ( pieceType, ( shape, colourString, icon ) ) ->
-                        Table.tr []
-                            [ Table.td []
-                                [ pieceType
-                                    |> DCC.positionedSvgMakerToHtmlMaker (DCC.pieceTypeToSVG pieceAppearances)
-                                ]
-                            , Table.td []
-                                <| DCC.displayPiecetype pieceType
-                            , Table.td []
-                                <| (case shape of
-                                        Eye ->
-                                            [ text "hardcoded" ]
+                        let
+                            indexList =
+                                [ index ]
+                        in
+                            Table.tr []
+                                [ Table.td []
+                                    [ pieceType
+                                        |> DCC.positionedSvgMakerToHtmlMaker (DCC.pieceTypeToSVG pieceAppearances)
+                                    ]
+                                , Table.td []
+                                    <| DCC.displayPiecetype pieceType
+                                , Table.td []
+                                    <| (case shape of
+                                            Eye ->
+                                                [ text "hardcoded" ]
 
-                                        PointsList list ->
-                                            editAblePointsList (EditPoints pieceType) list
-                                   )
-                            , Table.td []
-                                [ Html.input
-                                    [ cleanColourString
-                                        >> UpdateColour pieceType
-                                        |> onInput
-                                    , colourString |> Html.Attributes.value
-                                    , style [ ( "width", "6rem" ), ( "background-color", DCC.background ) ]
+                                            PointsList list ->
+                                                editAblePointsList indexList
+                                                    mdl
+                                                    (EditPoints pieceType)
+                                                    list
+                                       )
+                                , Table.td []
+                                    [ Html.input
+                                        [ cleanColourString
+                                            >> UpdateColour pieceType
+                                            |> onInput
+                                        , colourString |> Html.Attributes.value
+                                        , style [ ( "width", "6rem" ), ( "background-color", DCC.background ) ]
+                                        ]
+                                        []
                                     ]
-                                    []
+                                , Table.td []
+                                    [ Html.p []
+                                        [ Toggles.radio Mdl
+                                            ([ -10 ] ++ indexList)
+                                            mdl
+                                            [ Toggles.value (icon == EmptySpaceIcon)
+                                            , Toggles.group "pieceAppearancesGroup"
+                                            , Toggles.onClick (SetIcon EmptySpaceIcon pieceType)
+                                            ]
+                                            [ text "Empty space" ]
+                                        ]
+                                    , Html.p []
+                                        [ Toggles.radio Mdl
+                                            ([ -11 ] ++ indexList)
+                                            mdl
+                                            [ Toggles.value (icon == PieceAppearances.triangleIcon)
+                                            , Toggles.group "pieceAppearancesGroup"
+                                            , Toggles.onClick (SetIcon PieceAppearances.triangleIcon pieceType)
+                                            ]
+                                            [ text "Triangle on space" ]
+                                        ]
+                                    , Html.p []
+                                        [ Toggles.radio Mdl
+                                            ([ -12 ] ++ indexList)
+                                            mdl
+                                            [ Toggles.value (icon == NoIcon)
+                                            , Toggles.group "pieceAppearancesGroup"
+                                            , Toggles.onClick (SetIcon NoIcon pieceType)
+                                            ]
+                                            [ text "No icon" ]
+                                        ]
+                                    ]
                                 ]
-                            , Table.td []
-                                [ Html.p []
-                                    [ Toggles.radio Mdl
-                                        ([ -10 ] ++ [ index ])
-                                        mdl
-                                        [ Toggles.value (icon == EmptySpaceIcon)
-                                        , Toggles.group "pieceAppearancesGroup"
-                                        , Toggles.onClick (SetIcon EmptySpaceIcon pieceType)
-                                        ]
-                                        [ text "Empty space" ]
-                                    ]
-                                , Html.p []
-                                    [ Toggles.radio Mdl
-                                        ([ -11 ] ++ [ index ])
-                                        mdl
-                                        [ Toggles.value (icon == PieceAppearances.triangleIcon)
-                                        , Toggles.group "pieceAppearancesGroup"
-                                        , Toggles.onClick (SetIcon PieceAppearances.triangleIcon pieceType)
-                                        ]
-                                        [ text "Triangle on space" ]
-                                    ]
-                                , Html.p []
-                                    [ Toggles.radio Mdl
-                                        ([ -12 ] ++ [ index ])
-                                        mdl
-                                        [ Toggles.value (icon == NoIcon)
-                                        , Toggles.group "pieceAppearancesGroup"
-                                        , Toggles.onClick (SetIcon NoIcon pieceType)
-                                        ]
-                                        [ text "No icon" ]
-                                    ]
-                                ]
-                            ]
                     )
             )
         ]
 
 
-editAblePointsList : (List Vec2 -> Msg) -> List Vec2 -> List (Html Msg)
-editAblePointsList msgMaker list =
-    List.indexedMap (editAblePoints msgMaker list) list
+editAblePointsList : List Int -> Material.Model -> (List Vec2 -> Msg) -> List Vec2 -> List (Html Msg)
+editAblePointsList index mdl msgMaker list =
+    [ Button.render Msg.Mdl
+        (index ++ [ 0 ])
+        mdl
+        [ Button.onClick (msgMaker <| Maybe.withDefault [] <| List.tail list)
+        ]
+        [ Icon.i "remove"
+        ]
+    , Button.render Msg.Mdl
+        (index ++ [ 1 ])
+        mdl
+        [ Button.onClick (msgMaker <| vec2 0 0 :: list)
+        ]
+        [ Icon.i "add"
+        ]
+    ]
+        ++ List.indexedMap (editAblePoints msgMaker list) list
 
 
 type V2Component
