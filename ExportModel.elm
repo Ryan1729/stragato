@@ -4,6 +4,7 @@ import GameEndCons exposing (GameEndCons(..), GamePredicate(..))
 import PieceAppearances exposing (PieceAppearances, Appearance)
 import Spaces exposing (Spaces, Space, SpaceType(..))
 import Pieces exposing (Pieces, Piece, PieceType, Controller(..), MoveType(..), ProtoPiece(..))
+import Json.Encode as Encode
 
 
 type alias ExportModel =
@@ -40,7 +41,38 @@ defaultExportModel =
 
 toString : ExportModel -> String
 toString exportModel =
-    "exportModelToString"
+    exportModel
+        |> encode
+        |> Encode.encode 4
+
+
+encode : ExportModel -> Encode.Value
+encode exportModel =
+    Encode.object
+        [ ( "gridWidth", Encode.int exportModel.gridWidth )
+        , ( "gridHeight", Encode.int exportModel.gridHeight )
+        , ( "spaceDeck", encodeMap (always <| Encode.string "TODO") exportModel.spaceDeck )
+        , ( "pieceDeck", encodeMap (always <| Encode.string "TODO") exportModel.pieceDeck )
+        , ( "moveTypeDeck", encodeMap (always <| Encode.string "TODO") exportModel.moveTypeDeck )
+        , ( "pieceAppearances", Encode.string "TODO" )
+          --exportModel.pieceAppearances)
+        , ( "gameEndCons", Encode.string "TODO" )
+          --exportModel.gameEndCons)
+        , ( "viewScale", Encode.float exportModel.viewScale )
+        ]
+
+
+encodeMap : (a -> Encode.Value) -> List a -> Encode.Value
+encodeMap f list =
+    list
+        |> List.map f
+        |> Encode.list
+
+
+
+-- exportModel
+--     |> Basics.toString
+--     |> Encode.string
 
 
 defaultWidth =
