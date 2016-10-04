@@ -153,6 +153,13 @@ update message model =
             else
                 model ! []
 
+        SaveAs ->
+            let
+                contents =
+                    "test"
+            in
+                model ! [ Ports.saveAs ( contents, "editorState.txt" ) ]
+
         --TODO animate something or remove this!
         Animate _ ->
             model ! []

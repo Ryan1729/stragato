@@ -28,20 +28,6 @@ render : Model -> Html Msg
 render model =
     div []
         [ grid []
-            [ cell [ size All 4 ]
-                [ Button.render Msg.Mdl
-                    [ 1 ]
-                    model.mdl
-                    [ Button.onClick Msg.GenerateBoard
-                    , css "margin" "0 24px"
-                    ]
-                    [ Icon.i "cached"
-                    , Options.span [ css "width" "4px" ] []
-                    , text "Generate Board"
-                    ]
-                ]
-            ]
-        , grid []
             [ toggleSwitchCell [ 8 ]
                 model.mdl
                 Msg.ToggleSpaceOutlines

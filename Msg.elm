@@ -41,4 +41,5 @@ type Msg
     | IncrementLossCon
     | EditPoints PieceType (List Vec2)
     | SetIcon Icon PieceType
+    | SaveAs
     | NoOp
