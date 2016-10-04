@@ -17,7 +17,7 @@ import Spaces
 import PieceAppearances exposing (PieceAppearances, Icon(..))
 import Extras
 import String
-import DevControlsCommon
+import DevControlsCommon as DDC
 import Regex
 
 
@@ -54,11 +54,11 @@ pieceAppearancesTable index mdl pieceAppearances =
                     (\index ( pieceType, ( shape, colourString, icon ) ) ->
                         Table.tr []
                             [ Table.td []
-                                [ DevControlsCommon.positionedSvgMakerToHtmlMaker (DevControlsCommon.pieceTypeToSVG pieceAppearances)
-                                    pieceType
+                                [ pieceType
+                                    |> DDC.positionedSvgMakerToHtmlMaker (DDC.pieceTypeToSVG pieceAppearances)
                                 ]
                             , Table.td []
-                                <| DevControlsCommon.displayPiecetype pieceType
+                                <| DDC.displayPiecetype pieceType
                             , Table.td []
                                 <| (case shape of
                                         Eye ->
