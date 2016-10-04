@@ -22,6 +22,7 @@ import Spaces
 import PieceAppearances exposing (PieceAppearances)
 import String
 import DevControlsCommon as DCC
+import GameEndCons
 
 
 render : Model -> Html Msg
@@ -51,14 +52,14 @@ render model =
                     "win condition"
                     DecrementWinCon
                     IncrementWinCon
-                    (Model.getWinConString model)
+                    (GameEndCons.getWinConString model.exportModel.gameEndCons)
             , cell [ size All 4 ]
                 <| makeStepper [ 13 ]
                     model.mdl
                     "loss condition"
                     DecrementLossCon
                     IncrementLossCon
-                    (Model.getLossConString model)
+                    (GameEndCons.getLossConString model.exportModel.gameEndCons)
             , cell [ size All 4 ]
                 <| makeStepper [ 5 ]
                     model.mdl

@@ -1,6 +1,6 @@
 module Update exposing (update)
 
-import Model exposing (Model, GamePredicate(..), GameEndCons(..), GameResult, ExportModel)
+import Model exposing (Model, GameResult, ExportModel)
 import Msg exposing (Msg(..), ExportMsg(..))
 import Ports
 import Mouse
@@ -15,6 +15,7 @@ import PieceAppearances
 import Dict exposing (Dict)
 import Deck
 import Movement
+import GameEndCons exposing (GameEndCons(..), GamePredicate(..))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -158,16 +159,16 @@ updateExportModel msg model =
             { model | viewScale = lowerScale model.viewScale }
 
         DecrementWinCon ->
-            { model | gameEndCons = Model.decrementWinCon model.gameEndCons }
+            { model | gameEndCons = GameEndCons.decrementWinCon model.gameEndCons }
 
         IncrementWinCon ->
-            { model | gameEndCons = Model.incrementWinCon model.gameEndCons }
+            { model | gameEndCons = GameEndCons.incrementWinCon model.gameEndCons }
 
         DecrementLossCon ->
-            { model | gameEndCons = Model.decrementLossCon model.gameEndCons }
+            { model | gameEndCons = GameEndCons.decrementLossCon model.gameEndCons }
 
         IncrementLossCon ->
-            { model | gameEndCons = Model.incrementLossCon model.gameEndCons }
+            { model | gameEndCons = GameEndCons.incrementLossCon model.gameEndCons }
 
         EditPoints pieceType newPoints ->
             { model
