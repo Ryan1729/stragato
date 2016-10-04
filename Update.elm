@@ -1,6 +1,6 @@
 module Update exposing (update)
 
-import Model exposing (Model, GameResult, ExportModel)
+import Model exposing (Model, GameResult)
 import Msg exposing (Msg(..), ExportMsg(..))
 import Ports
 import Mouse
@@ -16,6 +16,7 @@ import Dict exposing (Dict)
 import Deck
 import Movement
 import GameEndCons exposing (GameEndCons(..), GamePredicate(..))
+import ExportModel exposing (ExportModel)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -86,11 +87,12 @@ update message model =
                 model ! []
 
         SaveAs ->
-            let
-                contents =
-                    "test"
-            in
-                model ! [ Ports.saveAs ( contents, "editorState.txt" ) ]
+            model
+                ! [ Ports.saveAs
+                        ( ExportModel.toString model.exportModel
+                        , "editorState.txt"
+                        )
+                  ]
 
         --TODO animate something or remove this!
         Animate _ ->

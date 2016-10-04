@@ -12,6 +12,7 @@ import Pieces exposing (Pieces, Piece, PieceType, Controller(..), MoveType(..), 
 import Deck
 import PieceAppearances exposing (PieceAppearances, Appearance)
 import GameEndCons exposing (GameEndCons(..), GamePredicate(..))
+import ExportModel exposing (ExportModel)
 
 
 type alias Model =
@@ -37,7 +38,7 @@ defaultState =
     , spaces = defaultSpaces
     , seed = (Random.initialSeed 42)
     , tabIndex = 0
-    , exportModel = defaultExportModel
+    , exportModel = ExportModel.defaultExportModel
     , gameResult = TBD
     , ignoreGameResult = False
     , debug = True
@@ -46,46 +47,6 @@ defaultState =
     , windowSize = { width = 600, height = 600 }
     , mdl = Material.model
     }
-
-
-type alias ExportModel =
-    { gridWidth : Int
-    , gridHeight : Int
-    , spaceDeck : List SpaceType
-    , pieceDeck : List ProtoPiece
-    , moveTypeDeck : List MoveType
-    , pieceAppearances : PieceAppearances
-    , gameEndCons : GameEndCons
-    , viewScale : Float
-    }
-
-
-defaultExportModel =
-    { gridWidth = defaultWidth
-    , gridHeight = defaultHeight
-    , spaceDeck = defaultSpaceDeck
-    , pieceDeck = defaultPieceTypeDeck
-    , moveTypeDeck = defaultMoveTypeDeck
-    , pieceAppearances = defaultpieceAppearances
-    , gameEndCons =
-        GameEndCons
-            (NoPiecesOfGivenTypeCanMove
-                (PieceType Pieces.NoEffect
-                    Pieces.Both
-                    Pieces.Unoccupied
-                )
-            )
-            (NoPiecesControlledBy Player)
-    , viewScale = 1.0
-    }
-
-
-defaultWidth =
-    5
-
-
-defaultHeight =
-    5
 
 
 
@@ -98,58 +59,21 @@ type GameResult
     | TBD
 
 
-defaultSpaceDeck =
-    [ Green
-    , Green
-    , Red
-    , Red
-    , EmptySpace
-    ]
-
-
 defaultSpaces =
     fst
-        <| makeSpaces defaultWidth
-            defaultHeight
-            defaultSpaceDeck
+        <| makeSpaces ExportModel.defaultWidth
+            ExportModel.defaultHeight
+            ExportModel.defaultSpaceDeck
             (Random.initialSeed -42)
-
-
-defaultPieceTypeDeck =
-    Pieces.actualPieceTypePossibilities
-        |> List.filter (\p -> p.moveType == Pieces.AnySpace)
-        |> List.map Pieces.ActualPiece
-        |> (++)
-            [ NoPiece
-            , NoPiece
-            ]
-
-
-
--- Pieces.protoPiecePossibilities
---     ++ [ NoPiece
---         , NoPiece
---        ]
-
-
-defaultMoveTypeDeck =
-    Pieces.moveTypePossibilities
 
 
 defaultPieces : Pieces
 defaultPieces =
     makePieces defaultSpaces
-        defaultPieceTypeDeck
-        defaultMoveTypeDeck
+        ExportModel.defaultPieceTypeDeck
+        ExportModel.defaultMoveTypeDeck
         (Random.initialSeed -421)
         |> fst
-
-
-defaultpieceAppearances : PieceAppearances
-defaultpieceAppearances =
-    Pieces.actualPieceTypePossibilities
-        |> List.map PieceAppearances.pairWithAppearance
-        |> PieceAppearances.fromList
 
 
 makeSpaces : Int -> Int -> List SpaceType -> Seed -> ( Spaces, Seed )
