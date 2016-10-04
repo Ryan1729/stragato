@@ -33,11 +33,6 @@ render model =
                 Msg.ToggleSpaceOutlines
                 "Show outlines of empty spaces"
                 model.showSpaceOutlines
-            , toggleSwitchCell [ 9 ]
-                model.mdl
-                Msg.ToggleSelfMoves
-                "Allow \"moving\" to same space"
-                model.allowSelfMoves
             , toggleSwitchCell [ 10 ]
                 model.mdl
                 Msg.ToggleAllowMovingAllPieces

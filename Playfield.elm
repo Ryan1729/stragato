@@ -55,8 +55,7 @@ getPieceSelectedInfo model spaceIndex =
     Maybe.map
         (\index ->
             ( index
-            , Movement.canPieceMoveToSpace model.allowSelfMoves
-                model.pieces
+            , Movement.canPieceMoveToSpace model.pieces
                 model.spaces
                 index
                 spaceIndex

@@ -15,8 +15,7 @@ import PosInt
 getNewPieces : Model -> Int -> SpaceIndex -> Pieces
 getNewPieces model pieceID spaceID =
     if
-        canPieceMoveToSpace model.allowSelfMoves
-            model.pieces
+        canPieceMoveToSpace model.pieces
             model.spaces
             pieceID
             spaceID
@@ -95,8 +94,7 @@ getPossibleMoveList model =
     in
         List.filter
             (\( index, spaceIndex ) ->
-                canPieceMoveToSpace model.allowSelfMoves
-                    model.pieces
+                canPieceMoveToSpace model.pieces
                     model.spaces
                     index
                     spaceIndex
@@ -104,9 +102,9 @@ getPossibleMoveList model =
             allConcievableMoves
 
 
-canPieceMoveToSpace : Bool -> Pieces -> Spaces -> Int -> SpaceIndex -> Bool
-canPieceMoveToSpace allowSelfMoves pieces spaces index spaceIndex =
-    if allowSelfMoves || PiecesAndSpaces.pieceIsNotAtSpace pieces spaces index spaceIndex then
+canPieceMoveToSpace : Pieces -> Spaces -> Int -> SpaceIndex -> Bool
+canPieceMoveToSpace pieces spaces index spaceIndex =
+    if PiecesAndSpaces.pieceIsNotAtSpace pieces spaces index spaceIndex then
         let
             maybePiece =
                 Dict.get index pieces

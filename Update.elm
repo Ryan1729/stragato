@@ -102,9 +102,6 @@ update message model =
         ToggleSpaceOutlines ->
             { model | showSpaceOutlines = not model.showSpaceOutlines } ! []
 
-        ToggleSelfMoves ->
-            { model | allowSelfMoves = not model.allowSelfMoves } ! []
-
         ToggleAllowMovingAllPieces ->
             { model | allowMovingAllPieces = not model.allowMovingAllPieces } ! []
 
@@ -254,8 +251,7 @@ checkPredicate model predicate pieces =
                 not
                     <| List.any
                         (\( index, spaceIndex ) ->
-                            Movement.canPieceMoveToSpace model.allowSelfMoves
-                                pieces
+                            Movement.canPieceMoveToSpace pieces
                                 model.spaces
                                 index
                                 spaceIndex

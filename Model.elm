@@ -14,8 +14,7 @@ import PieceAppearances exposing (PieceAppearances, Appearance)
 
 
 type alias Model =
-    { allowSelfMoves : Bool
-    , pieceSelected : Maybe Int
+    { pieceSelected : Maybe Int
     , pieces : Pieces
     , spaces : Spaces
     , gridWidth : Int
@@ -39,8 +38,7 @@ type alias Model =
 
 
 defaultState =
-    { allowSelfMoves = False
-    , pieceSelected = Nothing
+    { pieceSelected = Nothing
     , pieces = defaultPieces
     , spaces = defaultSpaces
     , gridWidth = defaultWidth

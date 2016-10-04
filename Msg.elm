@@ -32,7 +32,6 @@ type Msg
     | DecrementViewScale
     | UpdateColour PieceType String
     | ToggleSpaceOutlines
-    | ToggleSelfMoves
     | ToggleAllowMovingAllPieces
     | ToggleIgnoreGameResult
     | DecrementWinCon
