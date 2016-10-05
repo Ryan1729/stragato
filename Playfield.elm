@@ -372,15 +372,15 @@ space showOutlines extras center spaceType =
         appearance =
             case spaceType of
                 Green ->
-                    [ fill "lime"
+                    [ fill "#7FFF7f"
                     ]
 
                 Red ->
-                    [ fill "red"
+                    [ fill "#FF9f7f"
                     ]
 
                 Yellow ->
-                    [ fill "#FFDC00"
+                    [ fill "#FFDC7f"
                     ]
 
                 EmptySpace ->

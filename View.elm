@@ -18,7 +18,7 @@ background =
         , y "0"
         , width "100%"
         , height "100%"
-        , fill "#08f"
+        , fill "#7F9Fff"
         , onClick HitTable
         , cursor "pointer"
         ]
