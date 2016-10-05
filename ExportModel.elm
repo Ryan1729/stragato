@@ -27,13 +27,7 @@ defaultExportModel =
     , moveTypeDeck = defaultMoveTypeDeck
     , pieceAppearances = defaultpieceAppearances
     , gameEndCons =
-        GameEndCons
-            (NoPiecesOfGivenTypeCanMove
-                (PieceType Pieces.NoEffect
-                    Pieces.Both
-                    Pieces.Unoccupied
-                )
-            )
+        GameEndCons (NoPiecesControlledBy Computer)
             (NoPiecesControlledBy Player)
     , viewScale = 1.0
     }
