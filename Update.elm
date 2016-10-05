@@ -5,7 +5,7 @@ import Msg exposing (Msg(..), ExportMsg(..))
 import Ports
 import Mouse
 import Math.Vector2 as V2 exposing (Vec2, vec2)
-import Random
+import Random exposing (Seed)
 import Extras
 import Material
 import Spaces exposing (Spaces, SpaceType(..), SpaceIndex)
@@ -45,25 +45,22 @@ update message model =
 
         GenerateBoard ->
             let
-                ( spaces, postSpacesSeed ) =
-                    Model.makeSpaces model.exportModel.gridWidth
-                        model.exportModel.gridHeight
-                        model.exportModel.spaceDeck
-                        model.seed
+                ( spaces, pieces, gameResult, newSeed ) =
+                    generateBoardInfo model
 
-                ( pieces, newSeed ) =
-                    Model.makePieces spaces
-                        model.exportModel.pieceDeck
-                        model.exportModel.moveTypeDeck
-                        postSpacesSeed
+                cmdList =
+                    if gameResult == Model.TBD then
+                        []
+                    else
+                        [ Ports.alert "This game has ended before it began! You might want to adjust some parameters to make this less likely to happen again." ]
             in
                 { model
                     | seed = newSeed
                     , spaces = spaces
                     , pieces = pieces
-                    , gameResult = getGameResult model pieces
+                    , gameResult = gameResult
                 }
-                    ! []
+                    ! cmdList
 
         SelectTab tabIndex ->
             { model | tabIndex = tabIndex } ! []
@@ -187,6 +184,35 @@ updateExportModel msg model =
                         icon
                         model.pieceAppearances
             }
+
+
+generateBoardInfo : Model -> ( Spaces, Pieces, GameResult, Seed )
+generateBoardInfo model =
+    generateBoardInfoHelper 4 model
+
+
+generateBoardInfoHelper : Int -> Model -> ( Spaces, Pieces, GameResult, Seed )
+generateBoardInfoHelper attempts model =
+    let
+        ( spaces, postSpacesSeed ) =
+            Model.makeSpaces model.exportModel.gridWidth
+                model.exportModel.gridHeight
+                model.exportModel.spaceDeck
+                model.seed
+
+        ( pieces, newSeed ) =
+            Model.makePieces spaces
+                model.exportModel.pieceDeck
+                model.exportModel.moveTypeDeck
+                postSpacesSeed
+
+        gameResult =
+            getGameResult model pieces
+    in
+        if gameResult == Model.TBD || attempts <= 0 then
+            ( spaces, pieces, gameResult, newSeed )
+        else
+            generateBoardInfoHelper (attempts - 1) { model | seed = newSeed }
 
 
 randomAIMove : Model -> Model

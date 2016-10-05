@@ -66,6 +66,13 @@
                 }
             });
 
+            app.ports.alert.subscribe(function (alertString) {
+              //this doesn't seem to work if I just pass alert
+              //to subscribe
+              alert(alertString)
+
+            });
+
         }())
     </script>
 
