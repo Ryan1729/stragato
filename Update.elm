@@ -179,6 +179,18 @@ updateExportModel msg model =
         IncrementLossCon ->
             { model | gameEndCons = GameEndCons.incrementLossCon model.gameEndCons }
 
+        DecrementSubWinCon ->
+            { model | gameEndCons = Debug.log "" <| GameEndCons.decrementSubWinCon model.gameEndCons }
+
+        IncrementSubWinCon ->
+            { model | gameEndCons = GameEndCons.incrementSubWinCon model.gameEndCons }
+
+        DecrementSubLossCon ->
+            { model | gameEndCons = GameEndCons.decrementSubLossCon model.gameEndCons }
+
+        IncrementSubLossCon ->
+            { model | gameEndCons = GameEndCons.incrementSubLossCon model.gameEndCons }
+
         EditPoints pieceType newPoints ->
             { model
                 | pieceAppearances =

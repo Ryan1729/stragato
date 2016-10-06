@@ -39,8 +39,12 @@ type ExportMsg
     | UpdateViewScale String
     | DecrementWinCon
     | IncrementWinCon
+    | DecrementSubWinCon
+    | IncrementSubWinCon
     | DecrementLossCon
     | IncrementLossCon
+    | DecrementSubLossCon
+    | IncrementSubLossCon
     | UpdateColour PieceType String
     | EditPoints PieceType (List Vec2)
     | SetIcon Icon PieceType

@@ -24,6 +24,7 @@ import PieceAppearances exposing (PieceAppearances)
 import String
 import DevControlsCommon as DCC
 import GameEndCons
+import Regex
 
 
 render : Model -> Html Msg
@@ -47,19 +48,23 @@ render model =
                 model.ignoreGameResult
             ]
         , grid []
-            [ cell [ size All 4 ]
-                <| makeStepper [ 12 ]
+            [ cell [ size All 8 ]
+                <| makeGamePredicateSelector [ 12 ]
                     model.mdl
                     "win condition"
                     DecrementWinCon
                     IncrementWinCon
+                    DecrementSubWinCon
+                    IncrementSubWinCon
                     (GameEndCons.getWinConString model.exportModel.gameEndCons)
-            , cell [ size All 4 ]
-                <| makeStepper [ 13 ]
+            , cell [ size All 8 ]
+                <| makeGamePredicateSelector [ 13 ]
                     model.mdl
                     "loss condition"
                     DecrementLossCon
                     IncrementLossCon
+                    DecrementSubLossCon
+                    IncrementSubLossCon
                     (GameEndCons.getLossConString model.exportModel.gameEndCons)
             , cell [ size All 4 ]
                 <| makeLabeledInput [ 5 ]
@@ -193,33 +198,72 @@ toggleSwitchCell index mdl toggleMessage labelText bool =
         ]
 
 
-makeStepper : List Int -> Material.Model -> String -> ExportMsg -> ExportMsg -> String -> List (Html Msg)
-makeStepper index mdl label decrementMsg incrementMsg value =
-    [ text label
-    , div [ style [ ( "border", "1px solid" ) ] ]
-        [ Html.ul [ style [ ( "list-style", "none" ), ( "padding", "0" ), ( "margin", "0" ) ] ]
-            [ Html.li []
-                [ Button.render Msg.Mdl
-                    (index ++ [ 1 ])
-                    mdl
-                    [ Button.onClick (UpdateExportModel incrementMsg)
+makeGamePredicateSelector : List Int -> Material.Model -> String -> ExportMsg -> ExportMsg -> ExportMsg -> ExportMsg -> String -> List (Html Msg)
+makeGamePredicateSelector index mdl label decrementMsg incrementMsg decrementSubPredicateMsg incrementSubPredicateMsg value =
+    let
+        ( leftSubValue, rightSubValue ) =
+            value
+                |> Regex.split (Regex.AtMost 1) (Regex.regex " ")
+                |> (\list ->
+                        case list of
+                            first :: (second :: tail) ->
+                                ( first, second )
+
+                            _ ->
+                                ( "😯", "wat" )
+                   )
+    in
+        [ text label
+        , div
+            [ style
+                [ ( "border", "1px solid" )
+                , ( "display", "flex" )
+                ]
+            ]
+            [ Html.ul [ style [ ( "list-style", "none" ), ( "padding", "0" ), ( "margin", "0" ) ] ]
+                [ Html.li []
+                    [ Button.render Msg.Mdl
+                        (index ++ [ 1 ])
+                        mdl
+                        [ Button.onClick (UpdateExportModel incrementMsg)
+                        ]
+                        [ Icon.i "add"
+                        ]
                     ]
-                    [ Icon.i "add"
+                , Html.li [ style [ ( "margin-left", "2em" ) ] ] [ text leftSubValue ]
+                , Html.li []
+                    [ Button.render Msg.Mdl
+                        (index ++ [ 0 ])
+                        mdl
+                        [ Button.onClick (UpdateExportModel decrementMsg)
+                        ]
+                        [ Icon.i "remove"
+                        ]
                     ]
                 ]
-            , Html.li [ style [ ( "margin-left", "2em" ) ] ] [ text value ]
-            , Html.li []
-                [ Button.render Msg.Mdl
-                    (index ++ [ 0 ])
-                    mdl
-                    [ Button.onClick (UpdateExportModel decrementMsg)
+            , Html.ul [ style [ ( "list-style", "none" ), ( "padding", "0" ), ( "margin", "0" ) ] ]
+                [ Html.li []
+                    [ Button.render Msg.Mdl
+                        (index ++ [ 2 ])
+                        mdl
+                        [ Button.onClick (UpdateExportModel incrementSubPredicateMsg)
+                        ]
+                        [ Icon.i "add"
+                        ]
                     ]
-                    [ Icon.i "remove"
+                , Html.li [ style [ ( "margin-left", "2em" ) ] ] [ text rightSubValue ]
+                , Html.li []
+                    [ Button.render Msg.Mdl
+                        (index ++ [ -1 ])
+                        mdl
+                        [ Button.onClick (UpdateExportModel decrementSubPredicateMsg)
+                        ]
+                        [ Icon.i "remove"
+                        ]
                     ]
                 ]
             ]
         ]
-    ]
 
 
 makeLabeledInput : List Int -> Material.Model -> String -> List (Attribute Msg) -> (String -> Msg) -> String -> List (Html Msg)

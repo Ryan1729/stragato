@@ -25,10 +25,9 @@ pieceTypeToSVG pieceAppearances center pieceType =
 
 displayPiecetype : PieceType -> List (Html Msg)
 displayPiecetype pieceType =
-    [ pOf pieceType.moveEffect
-    , pOf pieceType.controller
-    , pOf pieceType.moveType
-    ]
+    pieceType
+        |> Pieces.pieceTypeToStringList
+        |> List.map pOfString
 
 
 displaySpaceType : SpaceType -> List (Html Msg)
@@ -38,8 +37,12 @@ displaySpaceType spaceType =
 
 
 pOf : a -> Html Msg
-pOf thing =
-    Html.p [] [ toString thing |> text ]
+pOf =
+    toString >> pOfString
+
+
+pOfString s =
+    Html.p [] [ s |> text ]
 
 
 background =

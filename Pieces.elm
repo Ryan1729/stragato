@@ -86,6 +86,14 @@ type alias PieceType =
     }
 
 
+pieceTypeToStringList : PieceType -> List String
+pieceTypeToStringList pieceType =
+    [ toString pieceType.moveEffect
+    , toString pieceType.controller
+    , toString pieceType.moveType
+    ]
+
+
 actualPieceTypePossibilities =
     List.concatMap
         (\moveEffect ->
