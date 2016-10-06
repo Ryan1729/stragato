@@ -358,18 +358,14 @@ defaultTab =
 
 
 pieceDeckContolTabLabels =
-    [ Tabs.label [ Options.center ]
-        [ text "Player"
-        ]
-    , Tabs.label [ Options.center ]
-        [ text "Computer"
-        ]
-    , Tabs.label [ Options.center ]
-        [ text "Both"
-        ]
-    , Tabs.label [ Options.center ]
-        [ text "None"
-        ]
+    [ Tabs.textLabel []
+        "Player"
+    , Tabs.textLabel []
+        "Computer"
+    , Tabs.textLabel []
+        "Both"
+    , Tabs.textLabel []
+        "None"
     ]
 
 
