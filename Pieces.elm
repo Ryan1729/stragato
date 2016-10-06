@@ -141,7 +141,12 @@ isComputerControllable piece =
         controllability =
             piece.pieceType.controller
     in
-        controllability == Computer || controllability == Both
+        isComputerController controllability
+
+
+isComputerController : Controller -> Bool
+isComputerController controller =
+    controller == Computer || controller == Both
 
 
 isPlayerControllable : Piece -> Bool
@@ -150,7 +155,12 @@ isPlayerControllable piece =
         controllability =
             piece.pieceType.controller
     in
-        controllability == Player || controllability == Both
+        isPlayerController controllability
+
+
+isPlayerController : Controller -> Bool
+isPlayerController controller =
+    controller == Player || controller == Both
 
 
 isStrictlyComputerControllable : Piece -> Bool
@@ -177,7 +187,12 @@ isBothControllable piece =
         controllability =
             piece.pieceType.controller
     in
-        controllability == Both
+        isBothController controllability
+
+
+isBothController : Controller -> Bool
+isBothController controller =
+    controller == Both
 
 
 isNoneControllable : Piece -> Bool
@@ -186,7 +201,12 @@ isNoneControllable piece =
         controllability =
             piece.pieceType.controller
     in
-        controllability == None
+        isNoneController controllability
+
+
+isNoneController : Controller -> Bool
+isNoneController controller =
+    controller == None
 
 
 cpuControlledCount : Pieces -> Int

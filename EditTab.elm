@@ -86,8 +86,8 @@ render model =
             [ cell [ size All 6 ]
                 [ exportDeckControl [ 2 ]
                     model.mdl
-                    Spaces.spaceTypePossibilities
                     model.exportModel.spaceDeck
+                    Spaces.spaceTypePossibilities
                     "space type"
                     DCC.displaySpaceType
                     Msg.SpaceDeckDecrement
@@ -97,20 +97,46 @@ render model =
                     )
                 ]
             , cell [ size All 6 ]
-                [ exportDeckControl [ 3 ]
-                    model.mdl
-                    Pieces.protoPiecePossibilities
-                    model.exportModel.pieceDeck
-                    "piece type"
-                    displayProtoPieceType
-                    Msg.PieceDeckDecrement
-                    Msg.PieceDeckIncrement
-                    (DCC.positionedSvgMakerToHtmlMaker
-                        <| protoPieceToSVG model.exportModel.pieceAppearances
-                    )
+                [ let
+                    deckAndPossibilities : List ( List ProtoPiece, List ProtoPiece )
+                    deckAndPossibilities =
+                        List.map2 (,)
+                            (splitOnController model.exportModel.pieceDeck)
+                            (splitOnController Pieces.protoPiecePossibilities)
+                  in
+                    tabbedDeckControl [ 3 ]
+                        model.mdl
+                        deckAndPossibilities
+                        "piece type"
+                        displayProtoPieceType
+                        Msg.PieceDeckDecrement
+                        Msg.PieceDeckIncrement
+                        (DCC.positionedSvgMakerToHtmlMaker
+                            <| protoPieceToSVG model.exportModel.pieceAppearances
+                        )
                 ]
             ]
         ]
+
+
+splitOnController : List ProtoPiece -> List (List ProtoPiece)
+splitOnController list =
+    [ List.filter (protoControllerSplitter Pieces.isPlayerController) list
+        ++ List.filter ((==) NoPiece) list
+    , List.filter (protoControllerSplitter Pieces.isComputerController) list
+    , List.filter (protoControllerSplitter Pieces.isBothController) list
+    , List.filter (protoControllerSplitter Pieces.isNoneController) list
+    ]
+
+
+protoControllerSplitter : (Controller -> Bool) -> ProtoPiece -> Bool
+protoControllerSplitter f protoPiece =
+    case protoPiece of
+        ActualPiece pieceType ->
+            f pieceType.controller
+
+        NoPiece ->
+            False
 
 
 displayProtoPieceType : ProtoPiece -> List (Html Msg)
@@ -191,7 +217,7 @@ deckControl :
     -> (a -> Int -> Msg)
     -> (a -> Html Msg)
     -> Html Msg
-deckControl index mdl possibilities currentDeck typeHeading typeDisplay removeMessage addMessage elementView =
+deckControl index mdl currentDeck possibilities typeHeading typeDisplay removeMessage addMessage elementView =
     Table.table [ css "background-color" DCC.background ]
         [ Table.thead []
             [ Table.tr []
@@ -222,12 +248,11 @@ deckControl index mdl possibilities currentDeck typeHeading typeDisplay removeMe
                                         , Html.Attributes.step "any"
                                         , String.toInt
                                             >> Result.withDefault currentAmount
-                                            >> Debug.log ""
                                             >> (\newAmount ->
                                                     if newAmount > currentAmount then
-                                                        addMessage item <| Debug.log "diff add" (newAmount - currentAmount)
+                                                        addMessage item (newAmount - currentAmount)
                                                     else if newAmount < currentAmount then
-                                                        removeMessage item <| Debug.log "diff remove" (currentAmount - newAmount)
+                                                        removeMessage item (currentAmount - newAmount)
                                                     else
                                                         NoOp
                                                )
@@ -254,11 +279,11 @@ exportDeckControl :
     -> (a -> Int -> ExportMsg)
     -> (a -> Html Msg)
     -> Html Msg
-exportDeckControl index mdl possibilities currentDeck typeHeading typeDisplay removeMessage addMessage elementView =
+exportDeckControl index mdl currentDeck possibilities typeHeading typeDisplay removeMessage addMessage elementView =
     deckControl index
         mdl
-        possibilities
         currentDeck
+        possibilities
         typeHeading
         typeDisplay
         (UpdateExportModel ... removeMessage)
@@ -274,6 +299,52 @@ exportDeckControl index mdl possibilities currentDeck typeHeading typeDisplay re
 (...) : (a -> b) -> (c -> d -> a) -> c -> d -> b
 (...) =
     (<<) << (<<)
+
+
+tabbedDeckControl :
+    List Int
+    -> Material.Model
+    -> List ( List a, List a )
+    -> String
+    -> (a -> List (Html Msg))
+    -> (a -> Int -> ExportMsg)
+    -> (a -> Int -> ExportMsg)
+    -> (a -> Html Msg)
+    -> Html Msg
+tabbedDeckControl index mdl deckAndPossibilitiesList typeHeading typeDisplay removeMessage addMessage elementView =
+    div []
+        <| List.map
+            (deckControlTab index
+                mdl
+                typeHeading
+                typeDisplay
+                removeMessage
+                addMessage
+                elementView
+            )
+            deckAndPossibilitiesList
+
+
+deckControlTab :
+    List Int
+    -> Material.Model
+    -> String
+    -> (a -> List (Html Msg))
+    -> (a -> Int -> ExportMsg)
+    -> (a -> Int -> ExportMsg)
+    -> (a -> Html Msg)
+    -> ( List a, List a )
+    -> Html Msg
+deckControlTab index mdl typeHeading typeDisplay removeMessage addMessage elementView ( currentDeck, possibilities ) =
+    exportDeckControl index
+        mdl
+        currentDeck
+        possibilities
+        typeHeading
+        typeDisplay
+        removeMessage
+        addMessage
+        elementView
 
 
 amountOfItemInDeck : a -> List a -> Int
