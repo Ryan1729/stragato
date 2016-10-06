@@ -34,12 +34,9 @@ type ExportMsg
     | SpaceDeckDecrement SpaceType Int
     | PieceDeckIncrement ProtoPiece Int
     | PieceDeckDecrement ProtoPiece Int
-    | IncrementGridWidth
-    | DecrementGridWidth
-    | IncrementGridHeight
-    | DecrementGridHeight
-    | IncrementViewScale
-    | DecrementViewScale
+    | UpdateGridWidth String
+    | UpdateGridHeight String
+    | UpdateViewScale String
     | DecrementWinCon
     | IncrementWinCon
     | DecrementLossCon

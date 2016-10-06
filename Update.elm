@@ -17,6 +17,7 @@ import Deck
 import Movement
 import GameEndCons exposing (GameEndCons(..), GamePredicate(..))
 import ExportModel exposing (ExportModel)
+import String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -134,17 +135,21 @@ updateExportModel msg model =
         PieceDeckDecrement item amount ->
             { model | pieceDeck = List.foldl (Extras.ignoreFirstArg <| Extras.remove item) model.pieceDeck [1..amount] }
 
-        IncrementGridWidth ->
-            { model | gridWidth = model.gridWidth + 1 }
+        UpdateGridWidth newDimString ->
+            case String.toInt newDimString of
+                Ok dimension ->
+                    { model | gridWidth = dimension }
 
-        DecrementGridWidth ->
-            { model | gridWidth = max 0 (model.gridWidth - 1) }
+                Err _ ->
+                    model
 
-        IncrementGridHeight ->
-            { model | gridHeight = model.gridHeight + 1 }
+        UpdateGridHeight newDimString ->
+            case String.toInt newDimString of
+                Ok dimension ->
+                    { model | gridHeight = dimension }
 
-        DecrementGridHeight ->
-            { model | gridHeight = max 0 (model.gridHeight - 1) }
+                Err _ ->
+                    model
 
         UpdateColour pieceType colourString ->
             { model
@@ -154,11 +159,13 @@ updateExportModel msg model =
                         model.pieceAppearances
             }
 
-        IncrementViewScale ->
-            { model | viewScale = higherScale model.viewScale }
+        UpdateViewScale newScaleString ->
+            case String.toFloat newScaleString of
+                Ok newScale ->
+                    { model | viewScale = newScale }
 
-        DecrementViewScale ->
-            { model | viewScale = lowerScale model.viewScale }
+                Err _ ->
+                    model
 
         DecrementWinCon ->
             { model | gameEndCons = GameEndCons.decrementWinCon model.gameEndCons }
@@ -293,16 +300,3 @@ checkPredicate model predicate pieces =
                                 spaceIndex
                         )
                         indexPairs
-
-
-higherScale : Float -> Float
-higherScale oldScale =
-    oldScale + 0.5
-
-
-lowerScale : Float -> Float
-lowerScale oldScale =
-    if oldScale > 1 then
-        oldScale - 0.5
-    else
-        oldScale

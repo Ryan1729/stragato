@@ -1,6 +1,6 @@
 module EditTab exposing (..)
 
-import Html exposing (Html, div, text)
+import Html exposing (Html, Attribute, div, text)
 import Html.Attributes exposing (style)
 import Html.Events exposing (onInput)
 import Model exposing (Model)
@@ -62,25 +62,37 @@ render model =
                     IncrementLossCon
                     (GameEndCons.getLossConString model.exportModel.gameEndCons)
             , cell [ size All 4 ]
-                <| makeStepper [ 5 ]
+                <| makeLabeledInput [ 5 ]
                     model.mdl
                     "gridWidth"
-                    DecrementGridWidth
-                    IncrementGridWidth
+                    [ Html.Attributes.type' "number"
+                    , Html.Attributes.min "1"
+                    , Html.Attributes.step "1"
+                    , style [ ( "flex", "1" ), ( "background-color", DCC.background ) ]
+                    ]
+                    (UpdateExportModel << UpdateGridWidth)
                     (toString model.exportModel.gridWidth)
             , cell [ size All 4 ]
-                <| makeStepper [ 6 ]
+                <| makeLabeledInput [ 6 ]
                     model.mdl
                     "gridHeight"
-                    DecrementGridHeight
-                    IncrementGridHeight
+                    [ Html.Attributes.type' "number"
+                    , Html.Attributes.min "1"
+                    , Html.Attributes.step "1"
+                    , style [ ( "flex", "1" ), ( "background-color", DCC.background ) ]
+                    ]
+                    (UpdateExportModel << UpdateGridHeight)
                     (toString model.exportModel.gridHeight)
             , cell [ size All 4 ]
-                <| makeStepper [ 7 ]
+                <| makeLabeledInput [ 7 ]
                     model.mdl
                     "scale"
-                    DecrementViewScale
-                    IncrementViewScale
+                    [ Html.Attributes.type' "number"
+                    , Html.Attributes.min "1"
+                    , Html.Attributes.step "0.5"
+                    , style [ ( "flex", "1" ), ( "background-color", DCC.background ) ]
+                    ]
+                    (UpdateExportModel << UpdateViewScale)
                     (toString model.exportModel.viewScale)
             ]
         , grid []
@@ -210,8 +222,19 @@ makeStepper index mdl label decrementMsg incrementMsg value =
     ]
 
 
-tup =
-    (,)
+makeLabeledInput : List Int -> Material.Model -> String -> List (Attribute Msg) -> (String -> Msg) -> String -> List (Html Msg)
+makeLabeledInput index mdl label extraAttributes updateMsg value =
+    [ text label
+    , div [ style [ ( "display", "flex" ), ( "border", "1px solid" ) ] ]
+        [ Html.input
+            ([ onInput updateMsg
+             , Html.Attributes.value value
+             ]
+                ++ extraAttributes
+            )
+            []
+        ]
+    ]
 
 
 deckControl :
