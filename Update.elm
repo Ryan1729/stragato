@@ -65,6 +65,9 @@ update message model =
         SelectTab tabIndex ->
             { model | tabIndex = tabIndex } ! []
 
+        SelectPieceDeckTab tabIndex ->
+            { model | pieceDeckTabIndex = tabIndex } ! []
+
         UpdateExportModel exportMsg ->
             { model | exportModel = updateExportModel exportMsg model.exportModel } ! []
 

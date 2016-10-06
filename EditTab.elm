@@ -11,6 +11,7 @@ import Material.Button as Button
 import Material.Icon as Icon
 import Material.List as Lists
 import Material.Table as Table
+import Material.Tabs as Tabs
 import Material.Toggles as Toggles
 import Material.Grid exposing (grid, cell, size, offset, Device(All, Tablet))
 import Math.Vector2 as V2 exposing (Vec2, vec2)
@@ -98,15 +99,20 @@ render model =
                 ]
             , cell [ size All 6 ]
                 [ let
-                    deckAndPossibilities : List ( List ProtoPiece, List ProtoPiece )
-                    deckAndPossibilities =
+                    deckAndPossibilitiesList : List ( List ProtoPiece, List ProtoPiece )
+                    deckAndPossibilitiesList =
                         List.map2 (,)
                             (splitOnController model.exportModel.pieceDeck)
                             (splitOnController Pieces.protoPiecePossibilities)
+
+                    tabbedDeckBundle =
+                        List.map2 (,)
+                            deckAndPossibilitiesList
+                            pieceDeckContolTabLabels
                   in
                     tabbedDeckControl [ 3 ]
                         model.mdl
-                        deckAndPossibilities
+                        tabbedDeckBundle
                         "piece type"
                         displayProtoPieceType
                         Msg.PieceDeckDecrement
@@ -114,6 +120,8 @@ render model =
                         (DCC.positionedSvgMakerToHtmlMaker
                             <| protoPieceToSVG model.exportModel.pieceAppearances
                         )
+                        Msg.SelectPieceDeckTab
+                        model.pieceDeckTabIndex
                 ]
             ]
         ]
@@ -304,25 +312,65 @@ exportDeckControl index mdl currentDeck possibilities typeHeading typeDisplay re
 tabbedDeckControl :
     List Int
     -> Material.Model
-    -> List ( List a, List a )
+    -> List ( ( List a, List a ), Tabs.Label Msg )
     -> String
     -> (a -> List (Html Msg))
     -> (a -> Int -> ExportMsg)
     -> (a -> Int -> ExportMsg)
     -> (a -> Html Msg)
+    -> (Int -> Msg)
+    -> Int
     -> Html Msg
-tabbedDeckControl index mdl deckAndPossibilitiesList typeHeading typeDisplay removeMessage addMessage elementView =
-    div []
-        <| List.map
-            (deckControlTab index
-                mdl
-                typeHeading
-                typeDisplay
-                removeMessage
-                addMessage
-                elementView
-            )
-            deckAndPossibilitiesList
+tabbedDeckControl index mdl bundleList typeHeading typeDisplay removeMessage addMessage elementView selectTabMsg tabIndex =
+    let
+        deckAndPossibilitiesList =
+            List.map fst bundleList
+
+        tabLabels =
+            List.map snd bundleList
+    in
+        Tabs.render Msg.Mdl
+            (index ++ [ 20 ])
+            mdl
+            [ Tabs.ripple
+            , Tabs.onSelectTab selectTabMsg
+            , Tabs.activeTab tabIndex
+            ]
+            tabLabels
+            [ List.drop tabIndex bundleList
+                |> List.head
+                |> Maybe.map
+                    (fst
+                        >> deckControlTab index
+                            mdl
+                            typeHeading
+                            typeDisplay
+                            removeMessage
+                            addMessage
+                            elementView
+                    )
+                |> Maybe.withDefault defaultTab
+            ]
+
+
+defaultTab =
+    div [] [ text "Tab not found" ]
+
+
+pieceDeckContolTabLabels =
+    [ Tabs.label [ Options.center ]
+        [ text "Player"
+        ]
+    , Tabs.label [ Options.center ]
+        [ text "Computer"
+        ]
+    , Tabs.label [ Options.center ]
+        [ text "Both"
+        ]
+    , Tabs.label [ Options.center ]
+        [ text "None"
+        ]
+    ]
 
 
 deckControlTab :

@@ -21,6 +21,7 @@ type alias Model =
     , spaces : Spaces
     , seed : Seed
     , tabIndex : Int
+    , pieceDeckTabIndex : Int
     , exportModel : ExportModel
     , gameResult : GameResult
     , ignoreGameResult : Bool
@@ -38,6 +39,7 @@ defaultState =
     , spaces = defaultSpaces
     , seed = (Random.initialSeed 42)
     , tabIndex = 0
+    , pieceDeckTabIndex = 0
     , exportModel = ExportModel.defaultExportModel
     , gameResult = TBD
     , ignoreGameResult = False

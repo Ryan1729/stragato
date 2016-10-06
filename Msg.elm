@@ -19,6 +19,7 @@ type Msg
     | Resize { width : Int, height : Int }
     | MakeAIMove
     | SelectTab Int
+    | SelectPieceDeckTab Int
     | Mdl (Material.Msg Msg)
     | ToggleSpaceOutlines
     | ToggleAllowMovingAllPieces

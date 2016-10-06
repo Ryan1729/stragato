@@ -25,7 +25,7 @@ andThen =
 
 
 
-{- modified from the  version
+{- modified from the https://github.com/elm-community/list-extra version
    instead of returning a maybe,
     it returns the input list
 -}
