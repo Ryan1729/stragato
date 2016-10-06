@@ -3,8 +3,9 @@ module ExportModel exposing (..)
 import GameEndCons exposing (GameEndCons(..), GamePredicate(..))
 import PieceAppearances exposing (PieceAppearances, Appearance)
 import Spaces exposing (Spaces, Space, SpaceType(..))
-import Pieces exposing (Pieces, Piece, PieceType, Controller(..), MoveType(..), ProtoPiece(..))
+import Pieces exposing (Pieces, Piece, PieceType, Controller(..), MoveType(..), ProtoPiece(..), MoveEffect(..))
 import Json.Encode as Encode
+import PosInt
 
 
 type alias ExportModel =
@@ -45,9 +46,9 @@ encode exportModel =
     Encode.object
         [ ( "gridWidth", Encode.int exportModel.gridWidth )
         , ( "gridHeight", Encode.int exportModel.gridHeight )
-        , ( "spaceDeck", encodeMap (always <| Encode.string "TODO") exportModel.spaceDeck )
-        , ( "pieceDeck", encodeMap (always <| Encode.string "TODO") exportModel.pieceDeck )
-        , ( "moveTypeDeck", encodeMap (always <| Encode.string "TODO") exportModel.moveTypeDeck )
+        , ( "spaceDeck", encodeMap encodeSpaceType exportModel.spaceDeck )
+        , ( "pieceDeck", encodeMap encodeProtoPiece exportModel.pieceDeck )
+        , ( "moveTypeDeck", encodeMap encodeMoveType exportModel.moveTypeDeck )
         , ( "pieceAppearances", Encode.string "TODO" )
           --exportModel.pieceAppearances)
         , ( "gameEndCons", Encode.string "TODO" )
@@ -63,10 +64,45 @@ encodeMap f list =
         |> Encode.list
 
 
+stringIt =
+    Basics.toString >> Encode.string
 
--- exportModel
---     |> Basics.toString
---     |> Encode.string
+
+encodeSpaceType : SpaceType -> Encode.Value
+encodeSpaceType spaceType =
+    spaceType |> stringIt
+
+
+encodeMoveType : MoveType -> Encode.Value
+encodeMoveType moveType =
+    moveType |> stringIt
+
+
+encodeMoveEffect : MoveEffect -> Encode.Value
+encodeMoveEffect moveEffect =
+    case moveEffect of
+        Bump posInt ->
+            "Bump "
+                ++ (posInt |> PosInt.toInt |> Basics.toString)
+                |> Encode.string
+
+        simple ->
+            simple
+                |> stringIt
+
+
+encodeProtoPiece : ProtoPiece -> Encode.Value
+encodeProtoPiece protoPiece =
+    case protoPiece of
+        ActualPiece pieceType ->
+            Encode.object
+                [ ( "moveEffect", pieceType.moveEffect |> encodeMoveEffect )
+                , ( "controller", pieceType.controller |> stringIt )
+                , ( "moveType", pieceType.moveType |> encodeMoveType )
+                ]
+
+        NoPiece ->
+            Encode.string "NoPiece"
 
 
 defaultWidth =
