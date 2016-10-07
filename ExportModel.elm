@@ -51,8 +51,7 @@ encode exportModel =
         , ( "moveTypeDeck", encodeMap encodeMoveType exportModel.moveTypeDeck )
         , ( "pieceAppearances", Encode.string "TODO" )
           --exportModel.pieceAppearances)
-        , ( "gameEndCons", Encode.string "TODO" )
-          --exportModel.gameEndCons)
+        , ( "gameEndCons", encodeGameEndCons exportModel.gameEndCons )
         , ( "viewScale", Encode.float exportModel.viewScale )
         ]
 
@@ -95,14 +94,45 @@ encodeProtoPiece : ProtoPiece -> Encode.Value
 encodeProtoPiece protoPiece =
     case protoPiece of
         ActualPiece pieceType ->
-            Encode.object
-                [ ( "moveEffect", pieceType.moveEffect |> encodeMoveEffect )
-                , ( "controller", pieceType.controller |> stringIt )
-                , ( "moveType", pieceType.moveType |> encodeMoveType )
-                ]
+            encodePieceType pieceType
 
         NoPiece ->
             Encode.string "NoPiece"
+
+
+encodePieceType : PieceType -> Encode.Value
+encodePieceType pieceType =
+    Encode.object
+        [ ( "moveEffect", pieceType.moveEffect |> encodeMoveEffect )
+        , ( "controller", pieceType.controller |> encodeController )
+        , ( "moveType", pieceType.moveType |> encodeMoveType )
+        ]
+
+
+encodeController =
+    stringIt
+
+
+encodeGameEndCons : GameEndCons -> Encode.Value
+encodeGameEndCons cons =
+    case cons of
+        GameEndCons winCon lossCon ->
+            [ winCon, lossCon ]
+                |> encodeMap encodeGamePredicate
+
+
+encodeGamePredicate : GamePredicate -> Encode.Value
+encodeGamePredicate con =
+    Encode.list
+        <| case con of
+            NoPiecesControlledBy controller ->
+                [ Encode.string "NoPiecesControlledBy", encodeController controller ]
+
+            NoPiecesStrictlyControlledBy controller ->
+                [ Encode.string "NoPiecesStrictlyControlledBy", encodeController controller ]
+
+            NoPiecesOfGivenTypeCanMove pieceType ->
+                [ Encode.string "NoPiecesStrictlyControlledBy", encodePieceType pieceType ]
 
 
 defaultWidth =
