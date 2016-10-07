@@ -1,10 +1,11 @@
 module ExportModel exposing (..)
 
 import GameEndCons exposing (GameEndCons(..), GamePredicate(..))
-import PieceAppearances exposing (PieceAppearances, Appearance)
+import PieceAppearances exposing (PieceAppearances, Appearance, Icon(..))
 import Spaces exposing (Spaces, Space, SpaceType(..))
-import Pieces exposing (Pieces, Piece, PieceType, Controller(..), MoveType(..), ProtoPiece(..), MoveEffect(..))
+import Pieces exposing (Pieces, Piece, Shape(..), PieceType, Controller(..), MoveType(..), ProtoPiece(..), MoveEffect(..))
 import Json.Encode as Encode
+import Math.Vector2 as V2 exposing (Vec2, vec2)
 import PosInt
 
 
@@ -34,6 +35,62 @@ defaultExportModel =
     }
 
 
+defaultWidth =
+    5
+
+
+defaultHeight =
+    5
+
+
+defaultpieceAppearances : PieceAppearances
+defaultpieceAppearances =
+    Pieces.actualPieceTypePossibilities
+        |> List.map PieceAppearances.pairWithAppearance
+        |> PieceAppearances.fromList
+
+
+defaultPieceTypeDeck =
+    Pieces.actualPieceTypePossibilities
+        |> List.filter (\p -> p.moveType == Pieces.AnySpace)
+        |> List.map Pieces.ActualPiece
+        |> (++)
+            [ NoPiece
+            , NoPiece
+            ]
+
+
+
+-- Pieces.protoPiecePossibilities
+--     ++ [ NoPiece
+--         , NoPiece
+--        ]
+
+
+defaultMoveTypeDeck =
+    Pieces.moveTypePossibilities
+
+
+defaultSpaceDeck =
+    [ Green
+    , Green
+    , Red
+    , Red
+    , EmptySpace
+    ]
+
+
+
+--  88888888b                                       dP   oo
+--  88                                              88
+-- a88aaaa    dP.  .dP 88d888b. .d8888b. 88d888b. d8888P dP 88d888b. .d8888b.
+--  88         `8bd8'  88'  `88 88'  `88 88'  `88   88   88 88'  `88 88'  `88
+--  88         .d88b.  88.  .88 88.  .88 88         88   88 88    88 88.  .88
+--  88888888P dP'  `dP 88Y888P' `88888P' dP         dP   dP dP    dP `8888P88
+--                     88                                                 .88
+--                     dP                                             d8888P
+
+
 toString : ExportModel -> String
 toString exportModel =
     exportModel
@@ -49,10 +106,14 @@ encode exportModel =
         , ( "spaceDeck", encodeMap encodeSpaceType exportModel.spaceDeck )
         , ( "pieceDeck", encodeMap encodeProtoPiece exportModel.pieceDeck )
         , ( "moveTypeDeck", encodeMap encodeMoveType exportModel.moveTypeDeck )
-        , ( "pieceAppearances", Encode.string "TODO" )
-          --exportModel.pieceAppearances)
         , ( "gameEndCons", encodeGameEndCons exportModel.gameEndCons )
         , ( "viewScale", Encode.float exportModel.viewScale )
+        , ( "pieceAppearances"
+          , exportModel
+                |> .pieceAppearances
+                |> PieceAppearances.toList
+                |> encodeMap encodeAppearancePair
+          )
         ]
 
 
@@ -126,55 +187,72 @@ encodeGamePredicate con =
     Encode.list
         <| case con of
             NoPiecesControlledBy controller ->
-                [ Encode.string "NoPiecesControlledBy", encodeController controller ]
+                encodeTag "NoPiecesControlledBy" [ encodeController controller ]
 
             NoPiecesStrictlyControlledBy controller ->
-                [ Encode.string "NoPiecesStrictlyControlledBy", encodeController controller ]
+                encodeTag "NoPiecesStrictlyControlledBy" [ encodeController controller ]
 
             NoPiecesOfGivenTypeCanMove pieceType ->
-                [ Encode.string "NoPiecesStrictlyControlledBy", encodePieceType pieceType ]
+                encodeTag "NoPiecesStrictlyControlledBy" [ encodePieceType pieceType ]
 
 
-defaultWidth =
-    5
+encodeTag : String -> List Encode.Value -> List Encode.Value
+encodeTag s list =
+    Encode.string s :: list
 
 
-defaultHeight =
-    5
+encodeAppearancePair : ( PieceType, Appearance ) -> Encode.Value
+encodeAppearancePair ( pieceType, apearance ) =
+    Encode.list [ encodePieceType pieceType, encodeAppearance apearance ]
 
 
-defaultpieceAppearances : PieceAppearances
-defaultpieceAppearances =
-    Pieces.actualPieceTypePossibilities
-        |> List.map PieceAppearances.pairWithAppearance
-        |> PieceAppearances.fromList
+encodeAppearance : Appearance -> Encode.Value
+encodeAppearance ( shape, string, icon ) =
+    Encode.list
+        [ encodeShape shape
+        , Encode.string string
+        , encodeIcon icon
+        ]
 
 
-defaultPieceTypeDeck =
-    Pieces.actualPieceTypePossibilities
-        |> List.filter (\p -> p.moveType == Pieces.AnySpace)
-        |> List.map Pieces.ActualPiece
-        |> (++)
-            [ NoPiece
-            , NoPiece
-            ]
+encodeVec2 : Vec2 -> Encode.Value
+encodeVec2 vector =
+    Encode.list
+        [ vector
+            |> V2.getX
+            |> Encode.float
+        , vector
+            |> V2.getY
+            |> Encode.float
+        ]
 
 
+encodeShape shape =
+    case shape of
+        PointsList list ->
+            [ encodeMap encodeVec2 list ]
+                |> encodeTag "PointsList"
+                |> Encode.list
 
--- Pieces.protoPiecePossibilities
---     ++ [ NoPiece
---         , NoPiece
---        ]
+        Eye ->
+            Encode.string "Eye"
 
 
-defaultMoveTypeDeck =
-    Pieces.moveTypePossibilities
+encodeIcon : Icon -> Encode.Value
+encodeIcon icon =
+    case icon of
+        EmptySpaceIcon ->
+            Encode.string "EmptySpaceIcon"
 
+        ShapeSpaceIcon shape ->
+            [ encodeShape shape ]
+                |> encodeTag "ShapeSpaceIcon"
+                |> Encode.list
 
-defaultSpaceDeck =
-    [ Green
-    , Green
-    , Red
-    , Red
-    , EmptySpace
-    ]
+        ShapeIcon shape ->
+            [ encodeShape shape ]
+                |> encodeTag "ShapeIcon"
+                |> Encode.list
+
+        NoIcon ->
+            Encode.string "NoIcon"
