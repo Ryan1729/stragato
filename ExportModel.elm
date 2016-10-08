@@ -48,8 +48,16 @@ defaultViewScale =
 
 
 defaultGameEndCons =
-    GameEndCons (NoPiecesControlledBy Computer)
-        (NoPiecesControlledBy Player)
+    GameEndCons defaultWinCon
+        defaultLossCon
+
+
+defaultWinCon =
+    (NoPiecesControlledBy Computer)
+
+
+defaultLossCon =
+    (NoPiecesControlledBy Player)
 
 
 defaultPieceAppearances : PieceAppearances
@@ -301,7 +309,7 @@ decoder =
         `apply` ("spaceDeck" := Decode.list spaceTypeDecoder)
         `apply` ("pieceDeck" := Decode.list protoPieceDecoder)
         `apply` ("moveTypeDeck" := Decode.list moveTypeDecoder)
-        `apply` (Decode.oneOf [ "gameEndCons" := gameEndConsDecoder, Decode.succeed defaultGameEndCons ])
+        `apply` ("gameEndCons" := gameEndConsDecoder)
         `apply` ("viewScale" := Decode.float)
         `apply` (Decode.oneOf
                     [ "pieceAppearances" := pieceAppearancesDecoder
@@ -443,7 +451,73 @@ stringToMoveType s =
 
 gameEndConsDecoder : Decoder GameEndCons
 gameEndConsDecoder =
+    gamePredicateDecoder
+        |> Decode.list
+        |> Decode.map
+            (\list ->
+                case list of
+                    first :: second :: _ ->
+                        GameEndCons first second
+
+                    _ ->
+                        defaultGameEndCons
+            )
+
+
+gamePredicateDecoder : Decoder GamePredicate
+gamePredicateDecoder =
     Decode.fail "Todo"
+
+
+
+--     Decode.oneOf
+--         [ gamePredicateControllerDecoder
+--         , gamePredicatePieceTypeDecoder
+--         ]
+--
+--
+-- gamePredicatePieceTypeDecoder : Decoder GamePredicate
+-- gamePredicatePieceTypeDecoder =
+--     Decode.value
+--         |> Decode.tuple2
+--         |> Decode.map
+--             (\( tag, value ) ->
+--                 case ( String.toLower tag, value ) of
+--                     ( "nopiecesofgiventypecanmove", potentialPiece ) ->
+--                         case Decode.decodeValue pieceTypeDecoder potentialPiece of
+--                             Ok pieceType ->
+--                                 NoPiecesOfGivenTypeCanMove pieceType
+--
+--                             Err error ->
+--                                 "bad pieceType: "
+--                                     ++ error
+--                                     |> Decode.fail
+--
+--                     _ ->
+--                         Decode.fail "Unknown Controller predicate type"
+--             )
+--
+--
+-- gamePredicateControllerDecoder : Decoder GamePredicate
+-- gamePredicateControllerDecoder =
+--     Decode.string
+--         |> Decode.list
+--         |> Decode.map
+--             (\list ->
+--                 case List.map String.toLower list of
+--                     "nopiecescontrolledby" :: controllerString :: _ ->
+--                         controllerString
+--                             |> stringToController
+--                             |> NoPiecesControlledBy
+--
+--                     "nopiecesstrictlycontrolledby" :: controllerString :: _ ->
+--                         controllerString
+--                             |> stringToController
+--                             |> NoPiecesStrictlyControlledBy
+--
+--                     _ ->
+--                         Decode.fail "Unknown Controller predicate type"
+--             )
 
 
 pieceAppearancesDecoder : Decoder PieceAppearances
