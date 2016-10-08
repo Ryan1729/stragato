@@ -299,8 +299,8 @@ decoder =
         `Decode.map` ("gridWidth" := Decode.int)
         `apply` ("gridHeight" := Decode.int)
         `apply` ("spaceDeck" := Decode.list spaceTypeDecoder)
-        `apply` (Decode.oneOf [ "pieceDeck" := Decode.list protoPieceDecoder, Decode.succeed defaultPieceTypeDeck ])
-        `apply` (Decode.oneOf [ "moveTypeDeck" := Decode.list moveTypeDecoder, Decode.succeed defaultMoveTypeDeck ])
+        `apply` ("pieceDeck" := Decode.list protoPieceDecoder)
+        `apply` ("moveTypeDeck" := Decode.list moveTypeDecoder)
         `apply` (Decode.oneOf [ "gameEndCons" := gameEndConsDecoder, Decode.succeed defaultGameEndCons ])
         `apply` ("viewScale" := Decode.float)
         `apply` (Decode.oneOf
@@ -334,12 +334,111 @@ stringToSpaceType s =
 
 protoPieceDecoder : Decoder ProtoPiece
 protoPieceDecoder =
-    Decode.fail "Todo"
+    Decode.oneOf
+        [ Decode.map ActualPiece pieceTypeDecoder
+        , Decode.succeed NoPiece
+        ]
+
+
+pieceTypeDecoder : Decoder PieceType
+pieceTypeDecoder =
+    Decode.object3 PieceType
+        ("moveEffect" := moveEffectDecoder)
+        ("controller" := controllerDecoder)
+        ("moveType" := moveTypeDecoder)
+
+
+moveEffectDecoder : Decoder MoveEffect
+moveEffectDecoder =
+    Decode.map stringToMoveEffect
+        Decode.string
+
+
+stringToMoveEffect : String -> MoveEffect
+stringToMoveEffect s =
+    let
+        list =
+            s
+                |> String.toLower
+                |> String.split " "
+                |> Debug.log "list"
+
+        prefix =
+            List.head list
+                |> Maybe.withDefault "NoEffect"
+    in
+        case prefix of
+            "capture" ->
+                Capture
+
+            "bump" ->
+                List.tail list
+                    `Maybe.andThen` List.head
+                    `Maybe.andThen` parseBump
+                    |> Maybe.withDefault (Bump (PosInt.fromInt 1))
+
+            "swap" ->
+                Swap
+
+            "copy" ->
+                Copy
+
+            _ ->
+                NoEffect
+
+
+parseBump : String -> Maybe MoveEffect
+parseBump string =
+    case String.toInt string of
+        Ok integer ->
+            integer
+                |> PosInt.fromInt
+                |> Bump
+                |> Just
+
+        Err _ ->
+            Nothing
+
+
+controllerDecoder : Decoder Controller
+controllerDecoder =
+    Decode.map stringToController
+        Decode.string
+
+
+stringToController : String -> Controller
+stringToController s =
+    case String.toLower s of
+        "player" ->
+            Player
+
+        "computer" ->
+            Computer
+
+        "both" ->
+            Both
+
+        _ ->
+            None
 
 
 moveTypeDecoder : Decoder MoveType
 moveTypeDecoder =
-    Decode.fail "Todo"
+    Decode.map stringToMoveType
+        Decode.string
+
+
+stringToMoveType : String -> MoveType
+stringToMoveType s =
+    case String.toLower s of
+        "occupied" ->
+            Occupied
+
+        "unoccupied" ->
+            Unoccupied
+
+        _ ->
+            AnySpace
 
 
 gameEndConsDecoder : Decoder GameEndCons
