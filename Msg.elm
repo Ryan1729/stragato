@@ -26,6 +26,8 @@ type Msg
     | ToggleIgnoreGameResult
     | UpdateExportModel ExportMsg
     | SaveAs
+    | Load
+    | RecieveLoadedFile String
     | NoOp
 
 

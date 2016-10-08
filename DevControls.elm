@@ -19,7 +19,38 @@ make : Model -> List (Html Msg)
 make model =
     [ Html.hr [] []
     , grid []
-        [ cell [ size All 4 ]
+        [ cell [ size All 3 ]
+            [ Button.render Msg.Mdl
+                [ -7 ]
+                model.mdl
+                [ Button.onClick Msg.SaveAs
+                , css "margin" "0 24px"
+                ]
+                [ Icon.i "file_download"
+                , Options.span [ css "width" "4px" ] []
+                , text "save"
+                ]
+            ]
+        , cell [ size All 3 ]
+            [ if model.showFileInput then
+                Html.input
+                    [ Html.Attributes.type' "file"
+                    , Html.Attributes.id "fileInput"
+                    ]
+                    []
+              else
+                Button.render Msg.Mdl
+                    [ -8 ]
+                    model.mdl
+                    [ Button.onClick Msg.Load
+                    , css "margin" "0 24px"
+                    ]
+                    [ Icon.i "file_upload"
+                    , Options.span [ css "width" "4px" ] []
+                    , text "load"
+                    ]
+            ]
+        , cell [ size All 3 ]
             [ Button.render Msg.Mdl
                 [ 1 ]
                 model.mdl
@@ -29,18 +60,6 @@ make model =
                 [ Icon.i "cached"
                 , Options.span [ css "width" "4px" ] []
                 , text "Generate Board"
-                ]
-            ]
-        , cell [ size All 4 ]
-            [ Button.render Msg.Mdl
-                [ -7 ]
-                model.mdl
-                [ Button.onClick Msg.SaveAs
-                , css "margin" "0 24px"
-                ]
-                [ Icon.i "save"
-                , Options.span [ css "width" "4px" ] []
-                , text "save"
                 ]
             ]
         ]

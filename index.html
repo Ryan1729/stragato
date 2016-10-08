@@ -66,6 +66,37 @@
                 }
             });
 
+
+            app.ports.load.subscribe(function(_) {
+
+            setTimeout(function () {
+                var fileInput = document.getElementById('fileInput');
+
+                if (fileInput == null) {
+                  app.ports.errorMessage.send("😞 Uploading is broke for some reason.")
+                } else {
+                  var fileReader = new FileReader();
+
+                  fileReader.onload = function (event) {
+                    console.log(event)
+                    app.ports.recieveFile.send(event.target.result)
+                  }
+
+                  fileInput.addEventListener('change', function(e) {
+                   var file = fileInput.files[0];
+
+                   fileReader.readAsText(file);
+                  })
+
+                }
+              }
+            , 16)
+
+          });
+
+
+
+
             app.ports.alert.subscribe(function (alertString) {
               //this doesn't seem to work if I just pass alert
               //to subscribe

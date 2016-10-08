@@ -4,12 +4,13 @@ import Html.App exposing (program)
 import View exposing (view)
 import Model exposing (defaultState)
 import Update exposing (update)
-import Msg exposing (Msg(Animate, GetSeed, Resize))
+import Msg exposing (Msg(Animate, GetSeed, Resize, RecieveLoadedFile))
 import Window
 import Mouse
 import AnimationFrame
 import Time
 import Task
+import Ports
 
 
 main : Program Never
@@ -32,14 +33,11 @@ init =
 
 
 alwaysList =
-    [ --AnimationFrame.diffs Animate,
-      Window.resizes Resize
+    [ Window.resizes Resize
+    , Ports.recieveFile RecieveLoadedFile
+      -- , AnimationFrame.diffs Animate
     ]
 
 
 subscriptions model =
-    let
-        sometimesList =
-            []
-    in
-        Sub.batch <| alwaysList ++ sometimesList
+    Sub.batch <| alwaysList

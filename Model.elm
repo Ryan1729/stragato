@@ -25,6 +25,7 @@ type alias Model =
     , exportModel : ExportModel
     , gameResult : GameResult
     , ignoreGameResult : Bool
+    , showFileInput : Bool
     , debug : Bool
     , showSpaceOutlines : Bool
     , allowMovingAllPieces : Bool
@@ -43,6 +44,7 @@ defaultState =
     , exportModel = ExportModel.defaultExportModel
     , gameResult = TBD
     , ignoreGameResult = False
+    , showFileInput = False
     , debug = True
     , showSpaceOutlines = True
     , allowMovingAllPieces = False

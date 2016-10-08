@@ -45,23 +45,7 @@ update message model =
                     ! [ Ports.sound "clack" ]
 
         GenerateBoard ->
-            let
-                ( spaces, pieces, gameResult, newSeed ) =
-                    generateBoardInfo model
-
-                cmdList =
-                    if gameResult == Model.TBD then
-                        []
-                    else
-                        [ Ports.alert "This game has ended before it began! You might want to adjust some parameters to make this less likely to happen again." ]
-            in
-                { model
-                    | seed = newSeed
-                    , spaces = spaces
-                    , pieces = pieces
-                    , gameResult = gameResult
-                }
-                    ! cmdList
+            generateBoard model
 
         SelectTab tabIndex ->
             { model | tabIndex = tabIndex } ! []
@@ -94,6 +78,21 @@ update message model =
                         , "editorState.txt"
                         )
                   ]
+
+        Load ->
+            { model | showFileInput = True } ! [ Ports.load () ]
+
+        RecieveLoadedFile fileString ->
+            case ExportModel.parse fileString of
+                Ok newExportModel ->
+                    generateBoard
+                        { model
+                            | exportModel = newExportModel
+                            , showFileInput = False
+                        }
+
+                Err message ->
+                    model ! [ Ports.alert message ]
 
         --TODO animate something or remove this!
         Animate _ ->
@@ -206,6 +205,27 @@ updateExportModel msg model =
                         icon
                         model.pieceAppearances
             }
+
+
+generateBoard : Model -> ( Model, Cmd Msg )
+generateBoard model =
+    let
+        ( spaces, pieces, gameResult, newSeed ) =
+            generateBoardInfo model
+
+        cmdList =
+            if gameResult == Model.TBD then
+                []
+            else
+                [ Ports.alert "This game has ended before it began! You might want to adjust some parameters to make this less likely to happen again." ]
+    in
+        { model
+            | seed = newSeed
+            , spaces = spaces
+            , pieces = pieces
+            , gameResult = gameResult
+        }
+            ! cmdList
 
 
 generateBoardInfo : Model -> ( Spaces, Pieces, GameResult, Seed )

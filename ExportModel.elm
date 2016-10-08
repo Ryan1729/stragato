@@ -5,8 +5,10 @@ import PieceAppearances exposing (PieceAppearances, Appearance, Icon(..))
 import Spaces exposing (Spaces, Space, SpaceType(..))
 import Pieces exposing (Pieces, Piece, Shape(..), PieceType, Controller(..), MoveType(..), ProtoPiece(..), MoveEffect(..))
 import Json.Encode as Encode
+import Json.Decode as Decode exposing (Decoder, (:=))
 import Math.Vector2 as V2 exposing (Vec2, vec2)
 import PosInt
+import String
 
 
 type alias ExportModel =
@@ -15,9 +17,9 @@ type alias ExportModel =
     , spaceDeck : List SpaceType
     , pieceDeck : List ProtoPiece
     , moveTypeDeck : List MoveType
-    , pieceAppearances : PieceAppearances
     , gameEndCons : GameEndCons
     , viewScale : Float
+    , pieceAppearances : PieceAppearances
     }
 
 
@@ -27,11 +29,9 @@ defaultExportModel =
     , spaceDeck = defaultSpaceDeck
     , pieceDeck = defaultPieceTypeDeck
     , moveTypeDeck = defaultMoveTypeDeck
-    , pieceAppearances = defaultpieceAppearances
-    , gameEndCons =
-        GameEndCons (NoPiecesControlledBy Computer)
-            (NoPiecesControlledBy Player)
-    , viewScale = 1.0
+    , gameEndCons = defaultGameEndCons
+    , viewScale = defaultViewScale
+    , pieceAppearances = defaultPieceAppearances
     }
 
 
@@ -43,8 +43,17 @@ defaultHeight =
     5
 
 
-defaultpieceAppearances : PieceAppearances
-defaultpieceAppearances =
+defaultViewScale =
+    1.0
+
+
+defaultGameEndCons =
+    GameEndCons (NoPiecesControlledBy Computer)
+        (NoPiecesControlledBy Player)
+
+
+defaultPieceAppearances : PieceAppearances
+defaultPieceAppearances =
     Pieces.actualPieceTypePossibilities
         |> List.map PieceAppearances.pairWithAppearance
         |> PieceAppearances.fromList
@@ -256,3 +265,88 @@ encodeIcon icon =
 
         NoIcon ->
             Encode.string "NoIcon"
+
+
+
+-- dP                                         dP   oo
+-- 88                                         88
+-- 88 88d8b.d8b. 88d888b. .d8888b. 88d888b. d8888P dP 88d888b. .d8888b.
+-- 88 88'`88'`88 88'  `88 88'  `88 88'  `88   88   88 88'  `88 88'  `88
+-- 88 88  88  88 88.  .88 88.  .88 88         88   88 88    88 88.  .88
+-- dP dP  dP  dP 88Y888P' `88888P' dP         dP   dP dP    dP `8888P88
+--               88                                                 .88
+--               dP                                             d8888P
+
+
+parse : String -> Result String ExportModel
+parse =
+    Decode.decodeString decoder
+
+
+
+--derived from
+-- http://package.elm-lang.org/packages/circuithub/elm-json-extra/latest/Json-Decode-Extra
+
+
+apply : Decoder (a -> b) -> Decoder a -> Decoder b
+apply f aDecoder =
+    f `Decode.andThen` (\f' -> f' `Decode.map` aDecoder)
+
+
+decoder : Decoder ExportModel
+decoder =
+    ExportModel
+        `Decode.map` ("gridWidth" := Decode.int)
+        `apply` ("gridHeight" := Decode.int)
+        `apply` ("spaceDeck" := Decode.list spaceTypeDecoder)
+        `apply` (Decode.oneOf [ "pieceDeck" := Decode.list protoPieceDecoder, Decode.succeed defaultPieceTypeDeck ])
+        `apply` (Decode.oneOf [ "moveTypeDeck" := Decode.list moveTypeDecoder, Decode.succeed defaultMoveTypeDeck ])
+        `apply` (Decode.oneOf [ "gameEndCons" := gameEndConsDecoder, Decode.succeed defaultGameEndCons ])
+        `apply` ("viewScale" := Decode.float)
+        `apply` (Decode.oneOf
+                    [ "pieceAppearances" := pieceAppearancesDecoder
+                    , Decode.succeed defaultPieceAppearances
+                    ]
+                )
+
+
+spaceTypeDecoder : Decoder SpaceType
+spaceTypeDecoder =
+    Decode.map stringToSpaceType
+        Decode.string
+
+
+stringToSpaceType : String -> SpaceType
+stringToSpaceType s =
+    case String.toLower s of
+        "green" ->
+            Green
+
+        "red" ->
+            Red
+
+        "yellow" ->
+            Yellow
+
+        _ ->
+            EmptySpace
+
+
+protoPieceDecoder : Decoder ProtoPiece
+protoPieceDecoder =
+    Decode.fail "Todo"
+
+
+moveTypeDecoder : Decoder MoveType
+moveTypeDecoder =
+    Decode.fail "Todo"
+
+
+gameEndConsDecoder : Decoder GameEndCons
+gameEndConsDecoder =
+    Decode.fail "Todo"
+
+
+pieceAppearancesDecoder : Decoder PieceAppearances
+pieceAppearancesDecoder =
+    Decode.fail "Todo"
