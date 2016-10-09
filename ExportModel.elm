@@ -1,7 +1,7 @@
 module ExportModel exposing (..)
 
 import GameEndCons exposing (GameEndCons(..), GamePredicate(..))
-import PieceAppearances exposing (PieceAppearances, Appearance, Icon(..))
+import PieceAppearances exposing (PieceAppearances, Appearance, Icon(..), AppearancePair)
 import Spaces exposing (Spaces, Space, SpaceType(..))
 import Pieces exposing (Pieces, Piece, Shape(..), PieceType, Controller(..), MoveType(..), ProtoPiece(..), MoveEffect(..))
 import Json.Encode as Encode
@@ -201,21 +201,32 @@ encodeGameEndCons cons =
 
 encodeGamePredicate : GamePredicate -> Encode.Value
 encodeGamePredicate con =
-    Encode.list
-        <| case con of
-            NoPiecesControlledBy controller ->
-                encodeTag "NoPiecesControlledBy" [ encodeController controller ]
+    case con of
+        NoPiecesControlledBy controller ->
+            encodeTag "NoPiecesControlledBy" [ encodeController controller ]
 
-            NoPiecesStrictlyControlledBy controller ->
-                encodeTag "NoPiecesStrictlyControlledBy" [ encodeController controller ]
+        NoPiecesStrictlyControlledBy controller ->
+            encodeTag "NoPiecesStrictlyControlledBy" [ encodeController controller ]
 
-            NoPiecesOfGivenTypeCanMove pieceType ->
-                encodeTag "NoPiecesStrictlyControlledBy" [ encodePieceType pieceType ]
+        NoPiecesOfGivenTypeCanMove pieceType ->
+            encodeTag "NoPiecesStrictlyControlledBy" [ encodePieceType pieceType ]
 
 
-encodeTag : String -> List Encode.Value -> List Encode.Value
+encodeTag : String -> List Encode.Value -> Encode.Value
 encodeTag s list =
-    Encode.string s :: list
+    (Encode.string s :: list)
+        |> List.indexedMap assignTag
+        |> Encode.object
+
+
+assignTag : Int -> Encode.Value -> ( String, Encode.Value )
+assignTag index value =
+    case index of
+        0 ->
+            ( "tag", value )
+
+        x ->
+            ( x |> Basics.toString, value )
 
 
 encodeAppearancePair : ( PieceType, Appearance ) -> Encode.Value
@@ -249,7 +260,6 @@ encodeShape shape =
         PointsList list ->
             [ encodeMap encodeVec2 list ]
                 |> encodeTag "PointsList"
-                |> Encode.list
 
         Eye ->
             Encode.string "Eye"
@@ -264,12 +274,10 @@ encodeIcon icon =
         ShapeSpaceIcon shape ->
             [ encodeShape shape ]
                 |> encodeTag "ShapeSpaceIcon"
-                |> Encode.list
 
         ShapeIcon shape ->
             [ encodeShape shape ]
                 |> encodeTag "ShapeIcon"
-                |> Encode.list
 
         NoIcon ->
             Encode.string "NoIcon"
@@ -304,18 +312,83 @@ apply f aDecoder =
 decoder : Decoder ExportModel
 decoder =
     ExportModel
-        `Decode.map` ("gridWidth" := Decode.int)
-        `apply` ("gridHeight" := Decode.int)
-        `apply` ("spaceDeck" := Decode.list spaceTypeDecoder)
-        `apply` ("pieceDeck" := Decode.list protoPieceDecoder)
-        `apply` ("moveTypeDeck" := Decode.list moveTypeDecoder)
-        `apply` ("gameEndCons" := gameEndConsDecoder)
-        `apply` ("viewScale" := Decode.float)
-        `apply` (Decode.oneOf
-                    [ "pieceAppearances" := pieceAppearancesDecoder
+        `Decode.map` strictGridWidth
+        `apply` strictGridHeight
+        `apply` strictSpaceDeck
+        `apply` strictPieceDeck
+        `apply` strictMoveTypeDeck
+        `apply` strictGameEndCons
+        `apply` strictViewScale
+        `apply` strictPieceAppearances
+
+
+strictGridWidth =
+    "gridWidth" := Decode.int
+
+
+strictGridHeight =
+    "gridHeight" := Decode.int
+
+
+strictSpaceDeck =
+    "spaceDeck" := Decode.list spaceTypeDecoder
+
+
+strictPieceDeck =
+    "pieceDeck" := Decode.list protoPieceDecoder
+
+
+strictMoveTypeDeck =
+    "moveTypeDeck" := Decode.list moveTypeDecoder
+
+
+strictGameEndCons =
+    "gameEndCons" := gameEndConsDecoder
+
+
+strictViewScale =
+    "viewScale" := Decode.float
+
+
+strictPieceAppearances =
+    "pieceAppearances" := pieceAppearancesDecoder
+
+
+lenientDecoder : Decoder ExportModel
+lenientDecoder =
+    ExportModel
+        `Decode.map` Decode.oneOf
+                        [ strictGridWidth
+                        , Decode.succeed defaultWidth
+                        ]
+        `apply` Decode.oneOf
+                    [ strictGridHeight
+                    , Decode.succeed defaultHeight
+                    ]
+        `apply` Decode.oneOf
+                    [ strictSpaceDeck
+                    , Decode.succeed defaultSpaceDeck
+                    ]
+        `apply` Decode.oneOf
+                    [ strictPieceDeck
+                    , Decode.succeed defaultPieceTypeDeck
+                    ]
+        `apply` Decode.oneOf
+                    [ strictMoveTypeDeck
+                    , Decode.succeed defaultMoveTypeDeck
+                    ]
+        `apply` Decode.oneOf
+                    [ strictGameEndCons
+                    , Decode.succeed defaultGameEndCons
+                    ]
+        `apply` Decode.oneOf
+                    [ strictViewScale
+                    , Decode.succeed defaultViewScale
+                    ]
+        `apply` Decode.oneOf
+                    [ strictPieceAppearances
                     , Decode.succeed defaultPieceAppearances
                     ]
-                )
 
 
 spaceTypeDecoder : Decoder SpaceType
@@ -369,7 +442,6 @@ stringToMoveEffect s =
             s
                 |> String.toLower
                 |> String.split " "
-                |> Debug.log "list"
 
         prefix =
             List.head list
@@ -466,60 +538,129 @@ gameEndConsDecoder =
 
 gamePredicateDecoder : Decoder GamePredicate
 gamePredicateDecoder =
-    Decode.fail "Todo"
+    tagDecode gamePredicateInfo
 
 
+tagDecode : (String -> Decoder a) -> Decoder a
+tagDecode =
+    Decode.andThen ("tag" := Decode.string)
 
---     Decode.oneOf
---         [ gamePredicateControllerDecoder
---         , gamePredicatePieceTypeDecoder
---         ]
---
---
--- gamePredicatePieceTypeDecoder : Decoder GamePredicate
--- gamePredicatePieceTypeDecoder =
---     Decode.value
---         |> Decode.tuple2
---         |> Decode.map
---             (\( tag, value ) ->
---                 case ( String.toLower tag, value ) of
---                     ( "nopiecesofgiventypecanmove", potentialPiece ) ->
---                         case Decode.decodeValue pieceTypeDecoder potentialPiece of
---                             Ok pieceType ->
---                                 NoPiecesOfGivenTypeCanMove pieceType
---
---                             Err error ->
---                                 "bad pieceType: "
---                                     ++ error
---                                     |> Decode.fail
---
---                     _ ->
---                         Decode.fail "Unknown Controller predicate type"
---             )
---
---
--- gamePredicateControllerDecoder : Decoder GamePredicate
--- gamePredicateControllerDecoder =
---     Decode.string
---         |> Decode.list
---         |> Decode.map
---             (\list ->
---                 case List.map String.toLower list of
---                     "nopiecescontrolledby" :: controllerString :: _ ->
---                         controllerString
---                             |> stringToController
---                             |> NoPiecesControlledBy
---
---                     "nopiecesstrictlycontrolledby" :: controllerString :: _ ->
---                         controllerString
---                             |> stringToController
---                             |> NoPiecesStrictlyControlledBy
---
---                     _ ->
---                         Decode.fail "Unknown Controller predicate type"
---             )
+
+gamePredicateInfo : String -> Decoder GamePredicate
+gamePredicateInfo tag =
+    case String.toLower tag of
+        "nopiecescontrolledby" ->
+            Decode.object1 NoPiecesControlledBy ("1" := controllerDecoder)
+
+        "nopiecesstrictlycontrolledby" ->
+            Decode.object1 NoPiecesStrictlyControlledBy ("1" := controllerDecoder)
+
+        "nopiecesofgiventypecanmove" ->
+            Decode.object1 NoPiecesOfGivenTypeCanMove ("1" := pieceTypeDecoder)
+
+        _ ->
+            Decode.fail "Unknown game predicate type"
 
 
 pieceAppearancesDecoder : Decoder PieceAppearances
 pieceAppearancesDecoder =
-    Decode.fail "Todo"
+    appearancePairDecoder |> Decode.list |> Decode.map PieceAppearances.fromList
+
+
+appearancePairDecoder : Decoder AppearancePair
+appearancePairDecoder =
+    Decode.tuple2 (,) pieceTypeDecoder appearanceDecoder
+
+
+appearanceDecoder : Decoder Appearance
+appearanceDecoder =
+    Decode.tuple3 (,,) shapeDecoder Decode.string iconDecoder
+
+
+iconDecoder : Decoder Icon
+iconDecoder =
+    Decode.oneOf
+        [ simpleIconDecoder
+        , taggedIconDecoder
+        ]
+
+
+simpleIconDecoder : Decoder Icon
+simpleIconDecoder =
+    Decode.string
+        `Decode.andThen` (\string ->
+                            case String.toLower string of
+                                "emptyspaceicon" ->
+                                    Decode.succeed EmptySpaceIcon
+
+                                "noicon" ->
+                                    Decode.succeed NoIcon
+
+                                _ ->
+                                    Decode.fail "Unknown simple shape type"
+                         )
+
+
+taggedIconDecoder : Decoder Icon
+taggedIconDecoder =
+    tagDecode iconInfo
+
+
+iconInfo : String -> Decoder Icon
+iconInfo tag =
+    case String.toLower tag of
+        "shapespaceicon" ->
+            Decode.object1 ShapeSpaceIcon ("1" := shapeDecoder)
+
+        "shapeicon" ->
+            Decode.object1 ShapeIcon ("1" := shapeDecoder)
+
+        _ ->
+            Decode.fail "Unknown shape type"
+
+
+shapeDecoder : Decoder Shape
+shapeDecoder =
+    Decode.oneOf [ simpleShapeDecoder, taggedShapeDecoder ]
+
+
+taggedShapeDecoder : Decoder Shape
+taggedShapeDecoder =
+    tagDecode shapeInfo
+
+
+shapeInfo : String -> Decoder Shape
+shapeInfo tag =
+    case String.toLower tag of
+        "pointslist" ->
+            Decode.object1 PointsList ("1" := pointsListDecoder)
+
+        _ ->
+            "Unknown tagged shape type: "
+                ++ tag
+                |> Decode.fail
+
+
+pointsListDecoder : Decoder (List Vec2)
+pointsListDecoder =
+    vec2Decoder
+        |> Decode.list
+
+
+simpleShapeDecoder : Decoder Shape
+simpleShapeDecoder =
+    Decode.string
+        `Decode.andThen` (\string ->
+                            case String.toLower string of
+                                "eye" ->
+                                    Decode.succeed Eye
+
+                                _ ->
+                                    Decode.fail "Unknown simple shape type"
+                         )
+
+
+vec2Decoder : Decoder Vec2
+vec2Decoder =
+    Decode.tuple2 (,) Decode.float Decode.float
+        |> Decode.map V2.fromTuple

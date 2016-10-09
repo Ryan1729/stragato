@@ -16,6 +16,10 @@ type alias PieceAppearances =
     GenericDict PieceType Appearance
 
 
+type alias AppearancePair =
+    ( PieceType, Appearance )
+
+
 get : PieceType -> PieceAppearances -> Appearance
 get pieceType pieceAppearances =
     GenericDict.get pieceType pieceAppearances
@@ -88,7 +92,7 @@ moveTypeCompare moveType moveType' =
         compare moveTypeInt moveTypeInt'
 
 
-fromList : List ( PieceType, Appearance ) -> PieceAppearances
+fromList : List AppearancePair -> PieceAppearances
 fromList =
     GenericDict.fromList comparer
 
