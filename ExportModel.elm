@@ -299,6 +299,11 @@ parse =
     Decode.decodeString decoder
 
 
+parseDefaultingOnError : String -> Result String ExportModel
+parseDefaultingOnError =
+    Decode.decodeString lenientDecoder
+
+
 
 --derived from
 -- http://package.elm-lang.org/packages/circuithub/elm-json-extra/latest/Json-Decode-Extra

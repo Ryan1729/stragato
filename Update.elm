@@ -92,7 +92,25 @@ update message model =
                         }
 
                 Err message ->
-                    model ! [ Ports.alert message ]
+                    case ExportModel.parseDefaultingOnError fileString of
+                        Ok newExportModelUsingDefaults ->
+                            let
+                                ( newModel, cmd ) =
+                                    generateBoard
+                                        { model
+                                            | exportModel = newExportModelUsingDefaults
+                                            , showFileInput = False
+                                        }
+                            in
+                                newModel
+                                    ! [ cmd
+                                      , Ports.alert
+                                            <| "Falling back to some defaults since parsing the file failed with this message: "
+                                            ++ message
+                                      ]
+
+                        Err message2 ->
+                            model ! [ Ports.alert message2 ]
 
         --TODO animate something or remove this!
         Animate _ ->
