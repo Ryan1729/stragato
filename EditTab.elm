@@ -48,7 +48,7 @@ render model =
                 model.ignoreGameResult
             ]
         , grid []
-            [ cell [ size All 8 ]
+            [ cell [ size All 6 ]
                 <| makeGamePredicateSelector [ 12 ]
                     model.mdl
                     "win condition"
@@ -57,7 +57,7 @@ render model =
                     DecrementSubWinCon
                     IncrementSubWinCon
                     (GameEndCons.getWinConString model.exportModel.gameEndCons)
-            , cell [ size All 8 ]
+            , cell [ size All 6 ]
                 <| makeGamePredicateSelector [ 13 ]
                     model.mdl
                     "loss condition"
@@ -447,15 +447,23 @@ deckControlTab :
     -> ( List a, List a )
     -> Html Msg
 deckControlTab index mdl typeHeading typeDisplay removeMessage addMessage elementView ( currentDeck, possibilities ) =
-    exportDeckControl index
-        mdl
-        currentDeck
-        possibilities
-        typeHeading
-        typeDisplay
-        removeMessage
-        addMessage
-        elementView
+    div
+        [ style
+            [ ( "display", "flex" )
+            , ( "flex-direction", "column" )
+            , ( "align-items", "center" )
+            ]
+        ]
+        [ exportDeckControl index
+            mdl
+            currentDeck
+            possibilities
+            typeHeading
+            typeDisplay
+            removeMessage
+            addMessage
+            elementView
+        ]
 
 
 amountOfItemInDeck : a -> List a -> Int

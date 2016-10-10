@@ -19,7 +19,7 @@ make : Model -> List (Html Msg)
 make model =
     [ Html.hr [] []
     , grid []
-        [ cell [ size All 3 ]
+        [ cell [ size All 2 ]
             [ Button.render Msg.Mdl
                 [ -7 ]
                 model.mdl
@@ -31,7 +31,7 @@ make model =
                 , text "save"
                 ]
             ]
-        , cell [ size All 3 ]
+        , cell [ size All 2 ]
             [ if model.showFileInput then
                 Html.input
                     [ Html.Attributes.type' "file"

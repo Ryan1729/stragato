@@ -74,31 +74,39 @@ view model =
                     [ makeBottomCenterText viewWidth viewHeight "You Lost" ]
 
         playfield =
-            [ svg
-                [ width playfieldWidthString
-                , height playfieldHeightString
-                , viewBox
-                    <| "0 0 "
-                    ++ toString viewWidth
-                    ++ " "
-                    ++ toString viewHeight
+            [ div
+                [ HA.style
+                    [ ( "display", "flex" )
+                    , ( "flex-direction", "column" )
+                    , ( "align-items", "center" )
+                    ]
                 ]
-                <| background
-                ++ Playfield.getSpaces model
-                ++ Playfield.getPieces model
-                ++ gameResultText
-            , Html.button
-                [ onClick MakeAIMove
-                , HA.style
-                    <| [ ( "font-size", "xx-large" )
-                       , ( "padding", "0px" )
-                       , ( "margin", "0px" )
-                       , ( "width", px playfieldWidth )
-                       , ( "height", px (playfieldHeight // 8) )
-                       , ( "pointer-events", "auto" )
-                       ]
+                [ svg
+                    [ width playfieldWidthString
+                    , height playfieldHeightString
+                    , viewBox
+                        <| "0 0 "
+                        ++ toString viewWidth
+                        ++ " "
+                        ++ toString viewHeight
+                    ]
+                    <| background
+                    ++ Playfield.getSpaces model
+                    ++ Playfield.getPieces model
+                    ++ gameResultText
+                , Html.button
+                    [ onClick MakeAIMove
+                    , HA.style
+                        <| [ ( "font-size", "xx-large" )
+                           , ( "padding", "0px" )
+                           , ( "margin", "0px" )
+                           , ( "width", px playfieldWidth )
+                           , ( "height", px (playfieldHeight // 8) )
+                           , ( "pointer-events", "auto" )
+                           ]
+                    ]
+                    [ text "End turn" ]
                 ]
-                [ text "End turn" ]
             ]
 
         elements =
