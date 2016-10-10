@@ -16491,6 +16491,14 @@ var _user$project$Pieces$countPiecesThatFufillPredicate = F2(
 			0,
 			pieces);
 	});
+var _user$project$Pieces$pieceTypeToStringList = function (pieceType) {
+	return _elm_lang$core$Native_List.fromArray(
+		[
+			_elm_lang$core$Basics$toString(pieceType.moveEffect),
+			_elm_lang$core$Basics$toString(pieceType.controller),
+			_elm_lang$core$Basics$toString(pieceType.moveType)
+		]);
+};
 var _user$project$Pieces$Piece = F2(
 	function (a, b) {
 		return {pieceType: a, position: b};
@@ -16505,21 +16513,30 @@ var _user$project$Pieces$Occupied = {ctor: 'Occupied'};
 var _user$project$Pieces$moveTypePossibilities = _elm_lang$core$Native_List.fromArray(
 	[_user$project$Pieces$Occupied, _user$project$Pieces$Unoccupied, _user$project$Pieces$AnySpace]);
 var _user$project$Pieces$None = {ctor: 'None'};
+var _user$project$Pieces$isNoneController = function (controller) {
+	return _elm_lang$core$Native_Utils.eq(controller, _user$project$Pieces$None);
+};
 var _user$project$Pieces$isNoneControllable = function (piece) {
 	var controllability = piece.pieceType.controller;
-	return _elm_lang$core$Native_Utils.eq(controllability, _user$project$Pieces$None);
+	return _user$project$Pieces$isNoneController(controllability);
 };
 var _user$project$Pieces$noneControlledCount = _user$project$Pieces$countPiecesThatFufillPredicate(_user$project$Pieces$isNoneControllable);
 var _user$project$Pieces$Both = {ctor: 'Both'};
+var _user$project$Pieces$isBothController = function (controller) {
+	return _elm_lang$core$Native_Utils.eq(controller, _user$project$Pieces$Both);
+};
 var _user$project$Pieces$isBothControllable = function (piece) {
 	var controllability = piece.pieceType.controller;
-	return _elm_lang$core$Native_Utils.eq(controllability, _user$project$Pieces$Both);
+	return _user$project$Pieces$isBothController(controllability);
 };
 var _user$project$Pieces$bothControlledCount = _user$project$Pieces$countPiecesThatFufillPredicate(_user$project$Pieces$isBothControllable);
 var _user$project$Pieces$Computer = {ctor: 'Computer'};
+var _user$project$Pieces$isComputerController = function (controller) {
+	return _elm_lang$core$Native_Utils.eq(controller, _user$project$Pieces$Computer) || _elm_lang$core$Native_Utils.eq(controller, _user$project$Pieces$Both);
+};
 var _user$project$Pieces$isComputerControllable = function (piece) {
 	var controllability = piece.pieceType.controller;
-	return _elm_lang$core$Native_Utils.eq(controllability, _user$project$Pieces$Computer) || _elm_lang$core$Native_Utils.eq(controllability, _user$project$Pieces$Both);
+	return _user$project$Pieces$isComputerController(controllability);
 };
 var _user$project$Pieces$cpuControlledCount = _user$project$Pieces$countPiecesThatFufillPredicate(_user$project$Pieces$isComputerControllable);
 var _user$project$Pieces$getCPUMovablePieces = function (pieces) {
@@ -16537,9 +16554,12 @@ var _user$project$Pieces$strictCpuControlledCount = _user$project$Pieces$countPi
 var _user$project$Pieces$Player = {ctor: 'Player'};
 var _user$project$Pieces$controllerPossibilities = _elm_lang$core$Native_List.fromArray(
 	[_user$project$Pieces$Player, _user$project$Pieces$Computer, _user$project$Pieces$Both, _user$project$Pieces$None]);
+var _user$project$Pieces$isPlayerController = function (controller) {
+	return _elm_lang$core$Native_Utils.eq(controller, _user$project$Pieces$Player) || _elm_lang$core$Native_Utils.eq(controller, _user$project$Pieces$Both);
+};
 var _user$project$Pieces$isPlayerControllable = function (piece) {
 	var controllability = piece.pieceType.controller;
-	return _elm_lang$core$Native_Utils.eq(controllability, _user$project$Pieces$Player) || _elm_lang$core$Native_Utils.eq(controllability, _user$project$Pieces$Both);
+	return _user$project$Pieces$isPlayerController(controllability);
 };
 var _user$project$Pieces$playerControlledCount = _user$project$Pieces$countPiecesThatFufillPredicate(_user$project$Pieces$isPlayerControllable);
 var _user$project$Pieces$controllabiltyCount = function (controlability) {
@@ -16907,20 +16927,834 @@ var _user$project$PieceAppearances$pairWithAppearance = function (_p12) {
 	};
 };
 
-var _user$project$Model$getLossConString = function (model) {
-	var _p0 = model.gameEndCons;
-	return _elm_lang$core$Basics$toString(_p0._1);
+var _user$project$GameEndCons$gamePredicateToString = function (con) {
+	var _p0 = con;
+	switch (_p0.ctor) {
+		case 'NoPiecesControlledBy':
+			return _elm_lang$core$Basics$toString(con);
+		case 'NoPiecesStrictlyControlledBy':
+			return _elm_lang$core$Basics$toString(con);
+		default:
+			return A2(
+				_elm_lang$core$String$join,
+				' ',
+				A2(
+					_elm_lang$core$List_ops['::'],
+					'NoPiecesOfGivenTypeCanMove',
+					_user$project$Pieces$pieceTypeToStringList(_p0._0)));
+	}
 };
-var _user$project$Model$getWinConString = function (model) {
-	var _p1 = model.gameEndCons;
-	return _elm_lang$core$Basics$toString(_p1._0);
+var _user$project$GameEndCons$getLossConString = function (gameEndCons) {
+	var _p1 = gameEndCons;
+	return _user$project$GameEndCons$gamePredicateToString(_p1._1);
 };
+var _user$project$GameEndCons$getWinConString = function (gameEndCons) {
+	var _p2 = gameEndCons;
+	return _user$project$GameEndCons$gamePredicateToString(_p2._0);
+};
+var _user$project$GameEndCons$incrementInList = F2(
+	function (list, thing) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			thing,
+			A2(
+				_elm_lang$core$Maybe$andThen,
+				A2(
+					_elm_lang$core$Maybe$map,
+					function (index) {
+						return A2(
+							_elm_lang$core$Basics_ops['%'],
+							index + 1,
+							_elm_lang$core$List$length(list));
+					},
+					A2(_user$project$Extras$indexOf, list, thing)),
+				function (index) {
+					return _elm_lang$core$List$head(
+						A2(_elm_lang$core$List$drop, index, list));
+				}));
+	});
+var _user$project$GameEndCons$decrementInList = F2(
+	function (list, thing) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			thing,
+			A2(
+				_elm_lang$core$Maybe$andThen,
+				A2(
+					_elm_lang$core$Maybe$map,
+					function (index) {
+						return A2(
+							_elm_lang$core$Basics_ops['%'],
+							index - 1,
+							_elm_lang$core$List$length(list));
+					},
+					A2(_user$project$Extras$indexOf, list, thing)),
+				function (index) {
+					return _elm_lang$core$List$head(
+						A2(_elm_lang$core$List$drop, index, list));
+				}));
+	});
+var _user$project$GameEndCons$GameEndCons = F2(
+	function (a, b) {
+		return {ctor: 'GameEndCons', _0: a, _1: b};
+	});
+var _user$project$GameEndCons$NoPiecesOfGivenTypeCanMove = function (a) {
+	return {ctor: 'NoPiecesOfGivenTypeCanMove', _0: a};
+};
+var _user$project$GameEndCons$noPiecesOfGivenTypeCanMovePossibilities = A2(_elm_lang$core$List$map, _user$project$GameEndCons$NoPiecesOfGivenTypeCanMove, _user$project$Pieces$actualPieceTypePossibilities);
+var _user$project$GameEndCons$NoPiecesStrictlyControlledBy = function (a) {
+	return {ctor: 'NoPiecesStrictlyControlledBy', _0: a};
+};
+var _user$project$GameEndCons$noPiecesStrictlyControlledByPossibilities = _elm_lang$core$Native_List.fromArray(
+	[
+		_user$project$GameEndCons$NoPiecesStrictlyControlledBy(_user$project$Pieces$Player),
+		_user$project$GameEndCons$NoPiecesStrictlyControlledBy(_user$project$Pieces$Computer),
+		_user$project$GameEndCons$NoPiecesStrictlyControlledBy(_user$project$Pieces$Both),
+		_user$project$GameEndCons$NoPiecesStrictlyControlledBy(_user$project$Pieces$None)
+	]);
+var _user$project$GameEndCons$NoPiecesControlledBy = function (a) {
+	return {ctor: 'NoPiecesControlledBy', _0: a};
+};
+var _user$project$GameEndCons$noPiecesControlledByPossibilities = _elm_lang$core$Native_List.fromArray(
+	[
+		_user$project$GameEndCons$NoPiecesControlledBy(_user$project$Pieces$Player),
+		_user$project$GameEndCons$NoPiecesControlledBy(_user$project$Pieces$Computer),
+		_user$project$GameEndCons$NoPiecesControlledBy(_user$project$Pieces$Both),
+		_user$project$GameEndCons$NoPiecesControlledBy(_user$project$Pieces$None)
+	]);
+var _user$project$GameEndCons$gamePredicatePossibilitesPossibilites = _elm_lang$core$Native_List.fromArray(
+	[_user$project$GameEndCons$noPiecesControlledByPossibilities, _user$project$GameEndCons$noPiecesStrictlyControlledByPossibilities, _user$project$GameEndCons$noPiecesOfGivenTypeCanMovePossibilities]);
+var _user$project$GameEndCons$decrementSubGamePredicate = function (predicate) {
+	var _p3 = predicate;
+	switch (_p3.ctor) {
+		case 'NoPiecesControlledBy':
+			return A2(_user$project$GameEndCons$decrementInList, _user$project$GameEndCons$noPiecesControlledByPossibilities, predicate);
+		case 'NoPiecesStrictlyControlledBy':
+			return A2(_user$project$GameEndCons$decrementInList, _user$project$GameEndCons$noPiecesStrictlyControlledByPossibilities, predicate);
+		default:
+			return A2(_user$project$GameEndCons$decrementInList, _user$project$GameEndCons$noPiecesOfGivenTypeCanMovePossibilities, predicate);
+	}
+};
+var _user$project$GameEndCons$decrementSubWinCon = function (gameEndCons) {
+	var _p4 = gameEndCons;
+	return A2(
+		_user$project$GameEndCons$GameEndCons,
+		_user$project$GameEndCons$decrementSubGamePredicate(_p4._0),
+		_p4._1);
+};
+var _user$project$GameEndCons$decrementSubLossCon = function (gameEndCons) {
+	var _p5 = gameEndCons;
+	return A2(
+		_user$project$GameEndCons$GameEndCons,
+		_p5._0,
+		_user$project$GameEndCons$decrementSubGamePredicate(_p5._1));
+};
+var _user$project$GameEndCons$incrementSubGamePredicate = function (predicate) {
+	var _p6 = predicate;
+	switch (_p6.ctor) {
+		case 'NoPiecesControlledBy':
+			return A2(_user$project$GameEndCons$incrementInList, _user$project$GameEndCons$noPiecesControlledByPossibilities, predicate);
+		case 'NoPiecesStrictlyControlledBy':
+			return A2(_user$project$GameEndCons$incrementInList, _user$project$GameEndCons$noPiecesStrictlyControlledByPossibilities, predicate);
+		default:
+			return A2(_user$project$GameEndCons$incrementInList, _user$project$GameEndCons$noPiecesOfGivenTypeCanMovePossibilities, predicate);
+	}
+};
+var _user$project$GameEndCons$incrementSubWinCon = function (gameEndCons) {
+	var _p7 = gameEndCons;
+	return A2(
+		_user$project$GameEndCons$GameEndCons,
+		_user$project$GameEndCons$incrementSubGamePredicate(_p7._0),
+		_p7._1);
+};
+var _user$project$GameEndCons$incrementSubLossCon = function (gameEndCons) {
+	var _p8 = gameEndCons;
+	return A2(
+		_user$project$GameEndCons$GameEndCons,
+		_p8._0,
+		_user$project$GameEndCons$incrementSubGamePredicate(_p8._1));
+};
+var _user$project$GameEndCons$crementGamePredicateMaker = F2(
+	function (crementer, predicate) {
+		var _p9 = predicate;
+		switch (_p9.ctor) {
+			case 'NoPiecesControlledBy':
+				return A2(
+					_elm_lang$core$Maybe$withDefault,
+					predicate,
+					_elm_lang$core$List$head(
+						A2(crementer, _user$project$GameEndCons$gamePredicatePossibilitesPossibilites, _user$project$GameEndCons$noPiecesControlledByPossibilities)));
+			case 'NoPiecesStrictlyControlledBy':
+				return A2(
+					_elm_lang$core$Maybe$withDefault,
+					predicate,
+					_elm_lang$core$List$head(
+						A2(crementer, _user$project$GameEndCons$gamePredicatePossibilitesPossibilites, _user$project$GameEndCons$noPiecesStrictlyControlledByPossibilities)));
+			default:
+				return A2(
+					_elm_lang$core$Maybe$withDefault,
+					predicate,
+					_elm_lang$core$List$head(
+						A2(crementer, _user$project$GameEndCons$gamePredicatePossibilitesPossibilites, _user$project$GameEndCons$noPiecesOfGivenTypeCanMovePossibilities)));
+		}
+	});
+var _user$project$GameEndCons$incrementGamePredicate = _user$project$GameEndCons$crementGamePredicateMaker(_user$project$GameEndCons$incrementInList);
+var _user$project$GameEndCons$incrementWinCon = function (gameEndCons) {
+	var _p10 = gameEndCons;
+	return A2(
+		_user$project$GameEndCons$GameEndCons,
+		_user$project$GameEndCons$incrementGamePredicate(_p10._0),
+		_p10._1);
+};
+var _user$project$GameEndCons$incrementLossCon = function (gameEndCons) {
+	var _p11 = gameEndCons;
+	return A2(
+		_user$project$GameEndCons$GameEndCons,
+		_p11._0,
+		_user$project$GameEndCons$incrementGamePredicate(_p11._1));
+};
+var _user$project$GameEndCons$decrementGamePredicate = _user$project$GameEndCons$crementGamePredicateMaker(_user$project$GameEndCons$decrementInList);
+var _user$project$GameEndCons$decrementWinCon = function (gameEndCons) {
+	var _p12 = gameEndCons;
+	return A2(
+		_user$project$GameEndCons$GameEndCons,
+		_user$project$GameEndCons$decrementGamePredicate(_p12._0),
+		_p12._1);
+};
+var _user$project$GameEndCons$decrementLossCon = function (gameEndCons) {
+	var _p13 = gameEndCons;
+	return A2(
+		_user$project$GameEndCons$GameEndCons,
+		_p13._0,
+		_user$project$GameEndCons$decrementGamePredicate(_p13._1));
+};
+
+var _user$project$ExportModel$vec2Decoder = A2(
+	_elm_lang$core$Json_Decode$map,
+	_elm_community$elm_linear_algebra$Math_Vector2$fromTuple,
+	A3(
+		_elm_lang$core$Json_Decode$tuple2,
+		F2(
+			function (v0, v1) {
+				return {ctor: '_Tuple2', _0: v0, _1: v1};
+			}),
+		_elm_lang$core$Json_Decode$float,
+		_elm_lang$core$Json_Decode$float));
+var _user$project$ExportModel$simpleShapeDecoder = A2(
+	_elm_lang$core$Json_Decode$andThen,
+	_elm_lang$core$Json_Decode$string,
+	function (string) {
+		var _p0 = _elm_lang$core$String$toLower(string);
+		if (_p0 === 'eye') {
+			return _elm_lang$core$Json_Decode$succeed(_user$project$Pieces$Eye);
+		} else {
+			return _elm_lang$core$Json_Decode$fail('Unknown simple shape type');
+		}
+	});
+var _user$project$ExportModel$pointsListDecoder = _elm_lang$core$Json_Decode$list(_user$project$ExportModel$vec2Decoder);
+var _user$project$ExportModel$shapeInfo = function (tag) {
+	var _p1 = _elm_lang$core$String$toLower(tag);
+	if (_p1 === 'pointslist') {
+		return A2(
+			_elm_lang$core$Json_Decode$object1,
+			_user$project$Pieces$PointsList,
+			A2(_elm_lang$core$Json_Decode_ops[':='], '1', _user$project$ExportModel$pointsListDecoder));
+	} else {
+		return _elm_lang$core$Json_Decode$fail(
+			A2(_elm_lang$core$Basics_ops['++'], 'Unknown tagged shape type: ', tag));
+	}
+};
+var _user$project$ExportModel$simpleIconDecoder = A2(
+	_elm_lang$core$Json_Decode$andThen,
+	_elm_lang$core$Json_Decode$string,
+	function (string) {
+		var _p2 = _elm_lang$core$String$toLower(string);
+		switch (_p2) {
+			case 'emptyspaceicon':
+				return _elm_lang$core$Json_Decode$succeed(_user$project$PieceAppearances$EmptySpaceIcon);
+			case 'noicon':
+				return _elm_lang$core$Json_Decode$succeed(_user$project$PieceAppearances$NoIcon);
+			default:
+				return _elm_lang$core$Json_Decode$fail('Unknown simple shape type');
+		}
+	});
+var _user$project$ExportModel$tagDecode = _elm_lang$core$Json_Decode$andThen(
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'tag', _elm_lang$core$Json_Decode$string));
+var _user$project$ExportModel$taggedShapeDecoder = _user$project$ExportModel$tagDecode(_user$project$ExportModel$shapeInfo);
+var _user$project$ExportModel$shapeDecoder = _elm_lang$core$Json_Decode$oneOf(
+	_elm_lang$core$Native_List.fromArray(
+		[_user$project$ExportModel$simpleShapeDecoder, _user$project$ExportModel$taggedShapeDecoder]));
+var _user$project$ExportModel$iconInfo = function (tag) {
+	var _p3 = _elm_lang$core$String$toLower(tag);
+	switch (_p3) {
+		case 'shapespaceicon':
+			return A2(
+				_elm_lang$core$Json_Decode$object1,
+				_user$project$PieceAppearances$ShapeSpaceIcon,
+				A2(_elm_lang$core$Json_Decode_ops[':='], '1', _user$project$ExportModel$shapeDecoder));
+		case 'shapeicon':
+			return A2(
+				_elm_lang$core$Json_Decode$object1,
+				_user$project$PieceAppearances$ShapeIcon,
+				A2(_elm_lang$core$Json_Decode_ops[':='], '1', _user$project$ExportModel$shapeDecoder));
+		default:
+			return _elm_lang$core$Json_Decode$fail('Unknown shape type');
+	}
+};
+var _user$project$ExportModel$taggedIconDecoder = _user$project$ExportModel$tagDecode(_user$project$ExportModel$iconInfo);
+var _user$project$ExportModel$iconDecoder = _elm_lang$core$Json_Decode$oneOf(
+	_elm_lang$core$Native_List.fromArray(
+		[_user$project$ExportModel$simpleIconDecoder, _user$project$ExportModel$taggedIconDecoder]));
+var _user$project$ExportModel$appearanceDecoder = A4(
+	_elm_lang$core$Json_Decode$tuple3,
+	F3(
+		function (v0, v1, v2) {
+			return {ctor: '_Tuple3', _0: v0, _1: v1, _2: v2};
+		}),
+	_user$project$ExportModel$shapeDecoder,
+	_elm_lang$core$Json_Decode$string,
+	_user$project$ExportModel$iconDecoder);
+var _user$project$ExportModel$stringToMoveType = function (s) {
+	var _p4 = _elm_lang$core$String$toLower(s);
+	switch (_p4) {
+		case 'occupied':
+			return _user$project$Pieces$Occupied;
+		case 'unoccupied':
+			return _user$project$Pieces$Unoccupied;
+		default:
+			return _user$project$Pieces$AnySpace;
+	}
+};
+var _user$project$ExportModel$moveTypeDecoder = A2(_elm_lang$core$Json_Decode$map, _user$project$ExportModel$stringToMoveType, _elm_lang$core$Json_Decode$string);
+var _user$project$ExportModel$stringToController = function (s) {
+	var _p5 = _elm_lang$core$String$toLower(s);
+	switch (_p5) {
+		case 'player':
+			return _user$project$Pieces$Player;
+		case 'computer':
+			return _user$project$Pieces$Computer;
+		case 'both':
+			return _user$project$Pieces$Both;
+		default:
+			return _user$project$Pieces$None;
+	}
+};
+var _user$project$ExportModel$controllerDecoder = A2(_elm_lang$core$Json_Decode$map, _user$project$ExportModel$stringToController, _elm_lang$core$Json_Decode$string);
+var _user$project$ExportModel$parseBump = function (string) {
+	var _p6 = _elm_lang$core$String$toInt(string);
+	if (_p6.ctor === 'Ok') {
+		return _elm_lang$core$Maybe$Just(
+			_user$project$Pieces$Bump(
+				_user$project$PosInt$fromInt(_p6._0)));
+	} else {
+		return _elm_lang$core$Maybe$Nothing;
+	}
+};
+var _user$project$ExportModel$stringToMoveEffect = function (s) {
+	var list = A2(
+		_elm_lang$core$String$split,
+		' ',
+		_elm_lang$core$String$toLower(s));
+	var prefix = A2(
+		_elm_lang$core$Maybe$withDefault,
+		'NoEffect',
+		_elm_lang$core$List$head(list));
+	var _p7 = prefix;
+	switch (_p7) {
+		case 'capture':
+			return _user$project$Pieces$Capture;
+		case 'bump':
+			return A2(
+				_elm_lang$core$Maybe$withDefault,
+				_user$project$Pieces$Bump(
+					_user$project$PosInt$fromInt(1)),
+				A2(
+					_elm_lang$core$Maybe$andThen,
+					A2(
+						_elm_lang$core$Maybe$andThen,
+						_elm_lang$core$List$tail(list),
+						_elm_lang$core$List$head),
+					_user$project$ExportModel$parseBump));
+		case 'swap':
+			return _user$project$Pieces$Swap;
+		case 'copy':
+			return _user$project$Pieces$Copy;
+		default:
+			return _user$project$Pieces$NoEffect;
+	}
+};
+var _user$project$ExportModel$moveEffectDecoder = A2(_elm_lang$core$Json_Decode$map, _user$project$ExportModel$stringToMoveEffect, _elm_lang$core$Json_Decode$string);
+var _user$project$ExportModel$pieceTypeDecoder = A4(
+	_elm_lang$core$Json_Decode$object3,
+	_user$project$Pieces$PieceType,
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'moveEffect', _user$project$ExportModel$moveEffectDecoder),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'controller', _user$project$ExportModel$controllerDecoder),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'moveType', _user$project$ExportModel$moveTypeDecoder));
+var _user$project$ExportModel$gamePredicateInfo = function (tag) {
+	var _p8 = _elm_lang$core$String$toLower(tag);
+	switch (_p8) {
+		case 'nopiecescontrolledby':
+			return A2(
+				_elm_lang$core$Json_Decode$object1,
+				_user$project$GameEndCons$NoPiecesControlledBy,
+				A2(_elm_lang$core$Json_Decode_ops[':='], '1', _user$project$ExportModel$controllerDecoder));
+		case 'nopiecesstrictlycontrolledby':
+			return A2(
+				_elm_lang$core$Json_Decode$object1,
+				_user$project$GameEndCons$NoPiecesStrictlyControlledBy,
+				A2(_elm_lang$core$Json_Decode_ops[':='], '1', _user$project$ExportModel$controllerDecoder));
+		case 'nopiecesofgiventypecanmove':
+			return A2(
+				_elm_lang$core$Json_Decode$object1,
+				_user$project$GameEndCons$NoPiecesOfGivenTypeCanMove,
+				A2(_elm_lang$core$Json_Decode_ops[':='], '1', _user$project$ExportModel$pieceTypeDecoder));
+		default:
+			return _elm_lang$core$Json_Decode$fail('Unknown game predicate type');
+	}
+};
+var _user$project$ExportModel$gamePredicateDecoder = _user$project$ExportModel$tagDecode(_user$project$ExportModel$gamePredicateInfo);
+var _user$project$ExportModel$appearancePairDecoder = A3(
+	_elm_lang$core$Json_Decode$tuple2,
+	F2(
+		function (v0, v1) {
+			return {ctor: '_Tuple2', _0: v0, _1: v1};
+		}),
+	_user$project$ExportModel$pieceTypeDecoder,
+	_user$project$ExportModel$appearanceDecoder);
+var _user$project$ExportModel$pieceAppearancesDecoder = A2(
+	_elm_lang$core$Json_Decode$map,
+	_user$project$PieceAppearances$fromList,
+	_elm_lang$core$Json_Decode$list(_user$project$ExportModel$appearancePairDecoder));
+var _user$project$ExportModel$protoPieceDecoder = _elm_lang$core$Json_Decode$oneOf(
+	_elm_lang$core$Native_List.fromArray(
+		[
+			A2(_elm_lang$core$Json_Decode$map, _user$project$Pieces$ActualPiece, _user$project$ExportModel$pieceTypeDecoder),
+			_elm_lang$core$Json_Decode$succeed(_user$project$Pieces$NoPiece)
+		]));
+var _user$project$ExportModel$stringToSpaceType = function (s) {
+	var _p9 = _elm_lang$core$String$toLower(s);
+	switch (_p9) {
+		case 'green':
+			return _user$project$Spaces$Green;
+		case 'red':
+			return _user$project$Spaces$Red;
+		case 'yellow':
+			return _user$project$Spaces$Yellow;
+		default:
+			return _user$project$Spaces$EmptySpace;
+	}
+};
+var _user$project$ExportModel$spaceTypeDecoder = A2(_elm_lang$core$Json_Decode$map, _user$project$ExportModel$stringToSpaceType, _elm_lang$core$Json_Decode$string);
+var _user$project$ExportModel$strictPieceAppearances = A2(_elm_lang$core$Json_Decode_ops[':='], 'pieceAppearances', _user$project$ExportModel$pieceAppearancesDecoder);
+var _user$project$ExportModel$strictViewScale = A2(_elm_lang$core$Json_Decode_ops[':='], 'viewScale', _elm_lang$core$Json_Decode$float);
+var _user$project$ExportModel$strictMoveTypeDeck = A2(
+	_elm_lang$core$Json_Decode_ops[':='],
+	'moveTypeDeck',
+	_elm_lang$core$Json_Decode$list(_user$project$ExportModel$moveTypeDecoder));
+var _user$project$ExportModel$strictPieceDeck = A2(
+	_elm_lang$core$Json_Decode_ops[':='],
+	'pieceDeck',
+	_elm_lang$core$Json_Decode$list(_user$project$ExportModel$protoPieceDecoder));
+var _user$project$ExportModel$strictSpaceDeck = A2(
+	_elm_lang$core$Json_Decode_ops[':='],
+	'spaceDeck',
+	_elm_lang$core$Json_Decode$list(_user$project$ExportModel$spaceTypeDecoder));
+var _user$project$ExportModel$strictGridHeight = A2(_elm_lang$core$Json_Decode_ops[':='], 'gridHeight', _elm_lang$core$Json_Decode$int);
+var _user$project$ExportModel$strictGridWidth = A2(_elm_lang$core$Json_Decode_ops[':='], 'gridWidth', _elm_lang$core$Json_Decode$int);
+var _user$project$ExportModel$apply = F2(
+	function (f, aDecoder) {
+		return A2(
+			_elm_lang$core$Json_Decode$andThen,
+			f,
+			function (f$) {
+				return A2(_elm_lang$core$Json_Decode$map, f$, aDecoder);
+			});
+	});
+var _user$project$ExportModel$encodeVec2 = function (vector) {
+	return _elm_lang$core$Json_Encode$list(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$core$Json_Encode$float(
+				_elm_community$elm_linear_algebra$Math_Vector2$getX(vector)),
+				_elm_lang$core$Json_Encode$float(
+				_elm_community$elm_linear_algebra$Math_Vector2$getY(vector))
+			]));
+};
+var _user$project$ExportModel$assignTag = F2(
+	function (index, value) {
+		var _p10 = index;
+		if (_p10 === 0) {
+			return {ctor: '_Tuple2', _0: 'tag', _1: value};
+		} else {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Basics$toString(_p10),
+				_1: value
+			};
+		}
+	});
+var _user$project$ExportModel$encodeTag = F2(
+	function (s, list) {
+		return _elm_lang$core$Json_Encode$object(
+			A2(
+				_elm_lang$core$List$indexedMap,
+				_user$project$ExportModel$assignTag,
+				A2(
+					_elm_lang$core$List_ops['::'],
+					_elm_lang$core$Json_Encode$string(s),
+					list)));
+	});
+var _user$project$ExportModel$stringIt = function (_p11) {
+	return _elm_lang$core$Json_Encode$string(
+		_elm_lang$core$Basics$toString(_p11));
+};
+var _user$project$ExportModel$encodeSpaceType = function (spaceType) {
+	return _user$project$ExportModel$stringIt(spaceType);
+};
+var _user$project$ExportModel$encodeMoveType = function (moveType) {
+	return _user$project$ExportModel$stringIt(moveType);
+};
+var _user$project$ExportModel$encodeMoveEffect = function (moveEffect) {
+	var _p12 = moveEffect;
+	if (_p12.ctor === 'Bump') {
+		return _elm_lang$core$Json_Encode$string(
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'Bump ',
+				_elm_lang$core$Basics$toString(
+					_user$project$PosInt$toInt(_p12._0))));
+	} else {
+		return _user$project$ExportModel$stringIt(_p12);
+	}
+};
+var _user$project$ExportModel$encodeController = _user$project$ExportModel$stringIt;
+var _user$project$ExportModel$encodePieceType = function (pieceType) {
+	return _elm_lang$core$Json_Encode$object(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				{
+				ctor: '_Tuple2',
+				_0: 'moveEffect',
+				_1: _user$project$ExportModel$encodeMoveEffect(pieceType.moveEffect)
+			},
+				{
+				ctor: '_Tuple2',
+				_0: 'controller',
+				_1: _user$project$ExportModel$encodeController(pieceType.controller)
+			},
+				{
+				ctor: '_Tuple2',
+				_0: 'moveType',
+				_1: _user$project$ExportModel$encodeMoveType(pieceType.moveType)
+			}
+			]));
+};
+var _user$project$ExportModel$encodeProtoPiece = function (protoPiece) {
+	var _p13 = protoPiece;
+	if (_p13.ctor === 'ActualPiece') {
+		return _user$project$ExportModel$encodePieceType(_p13._0);
+	} else {
+		return _elm_lang$core$Json_Encode$string('NoPiece');
+	}
+};
+var _user$project$ExportModel$encodeGamePredicate = function (con) {
+	var _p14 = con;
+	switch (_p14.ctor) {
+		case 'NoPiecesControlledBy':
+			return A2(
+				_user$project$ExportModel$encodeTag,
+				'NoPiecesControlledBy',
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_user$project$ExportModel$encodeController(_p14._0)
+					]));
+		case 'NoPiecesStrictlyControlledBy':
+			return A2(
+				_user$project$ExportModel$encodeTag,
+				'NoPiecesStrictlyControlledBy',
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_user$project$ExportModel$encodeController(_p14._0)
+					]));
+		default:
+			return A2(
+				_user$project$ExportModel$encodeTag,
+				'NoPiecesStrictlyControlledBy',
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_user$project$ExportModel$encodePieceType(_p14._0)
+					]));
+	}
+};
+var _user$project$ExportModel$encodeMap = F2(
+	function (f, list) {
+		return _elm_lang$core$Json_Encode$list(
+			A2(_elm_lang$core$List$map, f, list));
+	});
+var _user$project$ExportModel$encodeGameEndCons = function (cons) {
+	var _p15 = cons;
+	return A2(
+		_user$project$ExportModel$encodeMap,
+		_user$project$ExportModel$encodeGamePredicate,
+		_elm_lang$core$Native_List.fromArray(
+			[_p15._0, _p15._1]));
+};
+var _user$project$ExportModel$encodeShape = function (shape) {
+	var _p16 = shape;
+	if (_p16.ctor === 'PointsList') {
+		return A2(
+			_user$project$ExportModel$encodeTag,
+			'PointsList',
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(_user$project$ExportModel$encodeMap, _user$project$ExportModel$encodeVec2, _p16._0)
+				]));
+	} else {
+		return _elm_lang$core$Json_Encode$string('Eye');
+	}
+};
+var _user$project$ExportModel$encodeIcon = function (icon) {
+	var _p17 = icon;
+	switch (_p17.ctor) {
+		case 'EmptySpaceIcon':
+			return _elm_lang$core$Json_Encode$string('EmptySpaceIcon');
+		case 'ShapeSpaceIcon':
+			return A2(
+				_user$project$ExportModel$encodeTag,
+				'ShapeSpaceIcon',
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_user$project$ExportModel$encodeShape(_p17._0)
+					]));
+		case 'ShapeIcon':
+			return A2(
+				_user$project$ExportModel$encodeTag,
+				'ShapeIcon',
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_user$project$ExportModel$encodeShape(_p17._0)
+					]));
+		default:
+			return _elm_lang$core$Json_Encode$string('NoIcon');
+	}
+};
+var _user$project$ExportModel$encodeAppearance = function (_p18) {
+	var _p19 = _p18;
+	return _elm_lang$core$Json_Encode$list(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$ExportModel$encodeShape(_p19._0),
+				_elm_lang$core$Json_Encode$string(_p19._1),
+				_user$project$ExportModel$encodeIcon(_p19._2)
+			]));
+};
+var _user$project$ExportModel$encodeAppearancePair = function (_p20) {
+	var _p21 = _p20;
+	return _elm_lang$core$Json_Encode$list(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$ExportModel$encodePieceType(_p21._0),
+				_user$project$ExportModel$encodeAppearance(_p21._1)
+			]));
+};
+var _user$project$ExportModel$encode = function (exportModel) {
+	return _elm_lang$core$Json_Encode$object(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				{
+				ctor: '_Tuple2',
+				_0: 'gridWidth',
+				_1: _elm_lang$core$Json_Encode$int(exportModel.gridWidth)
+			},
+				{
+				ctor: '_Tuple2',
+				_0: 'gridHeight',
+				_1: _elm_lang$core$Json_Encode$int(exportModel.gridHeight)
+			},
+				{
+				ctor: '_Tuple2',
+				_0: 'spaceDeck',
+				_1: A2(_user$project$ExportModel$encodeMap, _user$project$ExportModel$encodeSpaceType, exportModel.spaceDeck)
+			},
+				{
+				ctor: '_Tuple2',
+				_0: 'pieceDeck',
+				_1: A2(_user$project$ExportModel$encodeMap, _user$project$ExportModel$encodeProtoPiece, exportModel.pieceDeck)
+			},
+				{
+				ctor: '_Tuple2',
+				_0: 'moveTypeDeck',
+				_1: A2(_user$project$ExportModel$encodeMap, _user$project$ExportModel$encodeMoveType, exportModel.moveTypeDeck)
+			},
+				{
+				ctor: '_Tuple2',
+				_0: 'gameEndCons',
+				_1: _user$project$ExportModel$encodeGameEndCons(exportModel.gameEndCons)
+			},
+				{
+				ctor: '_Tuple2',
+				_0: 'viewScale',
+				_1: _elm_lang$core$Json_Encode$float(exportModel.viewScale)
+			},
+				{
+				ctor: '_Tuple2',
+				_0: 'pieceAppearances',
+				_1: A2(
+					_user$project$ExportModel$encodeMap,
+					_user$project$ExportModel$encodeAppearancePair,
+					_user$project$PieceAppearances$toList(
+						function (_) {
+							return _.pieceAppearances;
+						}(exportModel)))
+			}
+			]));
+};
+var _user$project$ExportModel$toString = function (exportModel) {
+	return A2(
+		_elm_lang$core$Json_Encode$encode,
+		4,
+		_user$project$ExportModel$encode(exportModel));
+};
+var _user$project$ExportModel$defaultSpaceDeck = _elm_lang$core$Native_List.fromArray(
+	[_user$project$Spaces$Green, _user$project$Spaces$Green, _user$project$Spaces$Red, _user$project$Spaces$Red, _user$project$Spaces$EmptySpace]);
+var _user$project$ExportModel$defaultMoveTypeDeck = _user$project$Pieces$moveTypePossibilities;
+var _user$project$ExportModel$defaultPieceTypeDeck = A2(
+	F2(
+		function (x, y) {
+			return A2(_elm_lang$core$Basics_ops['++'], x, y);
+		}),
+	_elm_lang$core$Native_List.fromArray(
+		[_user$project$Pieces$NoPiece, _user$project$Pieces$NoPiece]),
+	A2(
+		_elm_lang$core$List$map,
+		_user$project$Pieces$ActualPiece,
+		A2(
+			_elm_lang$core$List$filter,
+			function (p) {
+				return _elm_lang$core$Native_Utils.eq(p.moveType, _user$project$Pieces$AnySpace);
+			},
+			_user$project$Pieces$actualPieceTypePossibilities)));
+var _user$project$ExportModel$defaultPieceAppearances = _user$project$PieceAppearances$fromList(
+	A2(_elm_lang$core$List$map, _user$project$PieceAppearances$pairWithAppearance, _user$project$Pieces$actualPieceTypePossibilities));
+var _user$project$ExportModel$defaultLossCon = _user$project$GameEndCons$NoPiecesControlledBy(_user$project$Pieces$Player);
+var _user$project$ExportModel$defaultWinCon = _user$project$GameEndCons$NoPiecesControlledBy(_user$project$Pieces$Computer);
+var _user$project$ExportModel$defaultGameEndCons = A2(_user$project$GameEndCons$GameEndCons, _user$project$ExportModel$defaultWinCon, _user$project$ExportModel$defaultLossCon);
+var _user$project$ExportModel$gameEndConsDecoder = A2(
+	_elm_lang$core$Json_Decode$map,
+	function (list) {
+		var _p22 = list;
+		if ((_p22.ctor === '::') && (_p22._1.ctor === '::')) {
+			return A2(_user$project$GameEndCons$GameEndCons, _p22._0, _p22._1._0);
+		} else {
+			return _user$project$ExportModel$defaultGameEndCons;
+		}
+	},
+	_elm_lang$core$Json_Decode$list(_user$project$ExportModel$gamePredicateDecoder));
+var _user$project$ExportModel$strictGameEndCons = A2(_elm_lang$core$Json_Decode_ops[':='], 'gameEndCons', _user$project$ExportModel$gameEndConsDecoder);
+var _user$project$ExportModel$defaultViewScale = 1.0;
+var _user$project$ExportModel$defaultHeight = 5;
+var _user$project$ExportModel$defaultWidth = 5;
+var _user$project$ExportModel$defaultExportModel = {gridWidth: _user$project$ExportModel$defaultWidth, gridHeight: _user$project$ExportModel$defaultHeight, spaceDeck: _user$project$ExportModel$defaultSpaceDeck, pieceDeck: _user$project$ExportModel$defaultPieceTypeDeck, moveTypeDeck: _user$project$ExportModel$defaultMoveTypeDeck, gameEndCons: _user$project$ExportModel$defaultGameEndCons, viewScale: _user$project$ExportModel$defaultViewScale, pieceAppearances: _user$project$ExportModel$defaultPieceAppearances};
+var _user$project$ExportModel$ExportModel = F8(
+	function (a, b, c, d, e, f, g, h) {
+		return {gridWidth: a, gridHeight: b, spaceDeck: c, pieceDeck: d, moveTypeDeck: e, gameEndCons: f, viewScale: g, pieceAppearances: h};
+	});
+var _user$project$ExportModel$decoder = A2(
+	_user$project$ExportModel$apply,
+	A2(
+		_user$project$ExportModel$apply,
+		A2(
+			_user$project$ExportModel$apply,
+			A2(
+				_user$project$ExportModel$apply,
+				A2(
+					_user$project$ExportModel$apply,
+					A2(
+						_user$project$ExportModel$apply,
+						A2(
+							_user$project$ExportModel$apply,
+							A2(_elm_lang$core$Json_Decode$map, _user$project$ExportModel$ExportModel, _user$project$ExportModel$strictGridWidth),
+							_user$project$ExportModel$strictGridHeight),
+						_user$project$ExportModel$strictSpaceDeck),
+					_user$project$ExportModel$strictPieceDeck),
+				_user$project$ExportModel$strictMoveTypeDeck),
+			_user$project$ExportModel$strictGameEndCons),
+		_user$project$ExportModel$strictViewScale),
+	_user$project$ExportModel$strictPieceAppearances);
+var _user$project$ExportModel$parse = _elm_lang$core$Json_Decode$decodeString(_user$project$ExportModel$decoder);
+var _user$project$ExportModel$lenientDecoder = A2(
+	_user$project$ExportModel$apply,
+	A2(
+		_user$project$ExportModel$apply,
+		A2(
+			_user$project$ExportModel$apply,
+			A2(
+				_user$project$ExportModel$apply,
+				A2(
+					_user$project$ExportModel$apply,
+					A2(
+						_user$project$ExportModel$apply,
+						A2(
+							_user$project$ExportModel$apply,
+							A2(
+								_elm_lang$core$Json_Decode$map,
+								_user$project$ExportModel$ExportModel,
+								_elm_lang$core$Json_Decode$oneOf(
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_user$project$ExportModel$strictGridWidth,
+											_elm_lang$core$Json_Decode$succeed(_user$project$ExportModel$defaultWidth)
+										]))),
+							_elm_lang$core$Json_Decode$oneOf(
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_user$project$ExportModel$strictGridHeight,
+										_elm_lang$core$Json_Decode$succeed(_user$project$ExportModel$defaultHeight)
+									]))),
+						_elm_lang$core$Json_Decode$oneOf(
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_user$project$ExportModel$strictSpaceDeck,
+									_elm_lang$core$Json_Decode$succeed(_user$project$ExportModel$defaultSpaceDeck)
+								]))),
+					_elm_lang$core$Json_Decode$oneOf(
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_user$project$ExportModel$strictPieceDeck,
+								_elm_lang$core$Json_Decode$succeed(_user$project$ExportModel$defaultPieceTypeDeck)
+							]))),
+				_elm_lang$core$Json_Decode$oneOf(
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_user$project$ExportModel$strictMoveTypeDeck,
+							_elm_lang$core$Json_Decode$succeed(_user$project$ExportModel$defaultMoveTypeDeck)
+						]))),
+			_elm_lang$core$Json_Decode$oneOf(
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_user$project$ExportModel$strictGameEndCons,
+						_elm_lang$core$Json_Decode$succeed(_user$project$ExportModel$defaultGameEndCons)
+					]))),
+		_elm_lang$core$Json_Decode$oneOf(
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_user$project$ExportModel$strictViewScale,
+					_elm_lang$core$Json_Decode$succeed(_user$project$ExportModel$defaultViewScale)
+				]))),
+	_elm_lang$core$Json_Decode$oneOf(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$ExportModel$strictPieceAppearances,
+				_elm_lang$core$Json_Decode$succeed(_user$project$ExportModel$defaultPieceAppearances)
+			])));
+var _user$project$ExportModel$parseDefaultingOnError = _elm_lang$core$Json_Decode$decodeString(_user$project$ExportModel$lenientDecoder);
+
 var _user$project$Model$attemptPiece = F2(
 	function (protoPiece, position) {
-		var _p2 = protoPiece;
-		if (_p2.ctor === 'ActualPiece') {
+		var _p0 = protoPiece;
+		if (_p0.ctor === 'ActualPiece') {
 			return _elm_lang$core$Maybe$Just(
-				A2(_user$project$Pieces$Piece, _p2._0, position));
+				A2(_user$project$Pieces$Piece, _p0._0, position));
 		} else {
 			return _elm_lang$core$Maybe$Nothing;
 		}
@@ -16929,12 +17763,12 @@ var _user$project$Model$makePieces = F4(
 	function (spaces, protoPieceDeck, moveTypeDeck, seed) {
 		var filteredPositions = _user$project$Spaces$getActualSpacePositions(spaces);
 		var pieceAmount = _elm_lang$core$List$length(filteredPositions);
-		var _p3 = A4(_user$project$Deck$fillListFromDeck, _user$project$Pieces$NoPiece, protoPieceDeck, pieceAmount, seed);
-		var pieceTypes = _p3._0;
-		var postPieceTypesSeed = _p3._1;
-		var _p4 = A4(_user$project$Deck$fillListFromDeck, _user$project$Pieces$AnySpace, moveTypeDeck, pieceAmount, postPieceTypesSeed);
-		var moveTypes = _p4._0;
-		var newSeed = _p4._1;
+		var _p1 = A4(_user$project$Deck$fillListFromDeck, _user$project$Pieces$NoPiece, protoPieceDeck, pieceAmount, seed);
+		var pieceTypes = _p1._0;
+		var postPieceTypesSeed = _p1._1;
+		var _p2 = A4(_user$project$Deck$fillListFromDeck, _user$project$Pieces$AnySpace, moveTypeDeck, pieceAmount, postPieceTypesSeed);
+		var moveTypes = _p2._0;
+		var newSeed = _p2._1;
 		var pieces = _elm_lang$core$Dict$fromList(
 			A2(
 				_elm_lang$core$List$indexedMap,
@@ -16952,79 +17786,56 @@ var _user$project$Model$makeGridPoints = F2(
 	function (width, height) {
 		return A2(
 			_elm_lang$core$List$map,
-			function (_p5) {
-				var _p6 = _p5;
+			function (_p3) {
+				var _p4 = _p3;
 				return {
 					ctor: '_Tuple2',
-					_0: _p6._0,
+					_0: _p4._0,
 					_1: A2(
 						_elm_community$elm_linear_algebra$Math_Vector2$add,
 						A2(_elm_community$elm_linear_algebra$Math_Vector2$vec2, 100, 100),
-						A2(_elm_community$elm_linear_algebra$Math_Vector2$scale, 60, _p6._1))
+						A2(_elm_community$elm_linear_algebra$Math_Vector2$scale, 60, _p4._1))
 				};
 			},
 			A2(_user$project$Points$hexGrid, width, height));
 	});
 var _user$project$Model$putSpaceTogether = F2(
-	function (_p7, spaceType) {
-		var _p8 = _p7;
+	function (_p5, spaceType) {
+		var _p6 = _p5;
 		return {
 			ctor: '_Tuple2',
-			_0: _p8._0,
-			_1: A2(_user$project$Spaces$Space, _p8._1, spaceType)
+			_0: _p6._0,
+			_1: A2(_user$project$Spaces$Space, _p6._1, spaceType)
 		};
 	});
 var _user$project$Model$makeSpaces = F4(
 	function (width, height, deck, seed) {
 		var gridPoints = A2(_user$project$Model$makeGridPoints, width, height);
-		var _p9 = A4(
+		var _p7 = A4(
 			_user$project$Deck$fillListFromDeck,
 			_user$project$Spaces$EmptySpace,
 			deck,
 			_elm_lang$core$List$length(gridPoints),
 			seed);
-		var spaceTypes = _p9._0;
-		var newSeed = _p9._1;
+		var spaceTypes = _p7._0;
+		var newSeed = _p7._1;
 		var spaces = _elm_lang$core$Dict$fromList(
 			A3(_elm_lang$core$List$map2, _user$project$Model$putSpaceTogether, gridPoints, spaceTypes));
 		return {ctor: '_Tuple2', _0: spaces, _1: newSeed};
 	});
-var _user$project$Model$defaultpieceAppearances = _user$project$PieceAppearances$fromList(
-	A2(_elm_lang$core$List$map, _user$project$PieceAppearances$pairWithAppearance, _user$project$Pieces$actualPieceTypePossibilities));
-var _user$project$Model$defaultMoveTypeDeck = _user$project$Pieces$moveTypePossibilities;
-var _user$project$Model$defaultPieceTypeDeck = A2(
-	F2(
-		function (x, y) {
-			return A2(_elm_lang$core$Basics_ops['++'], x, y);
-		}),
-	_elm_lang$core$Native_List.fromArray(
-		[_user$project$Pieces$NoPiece, _user$project$Pieces$NoPiece]),
-	A2(
-		_elm_lang$core$List$map,
-		_user$project$Pieces$ActualPiece,
-		A2(
-			_elm_lang$core$List$filter,
-			function (p) {
-				return _elm_lang$core$Native_Utils.eq(p.moveType, _user$project$Pieces$AnySpace);
-			},
-			_user$project$Pieces$actualPieceTypePossibilities)));
-var _user$project$Model$defaultSpaceDeck = _elm_lang$core$Native_List.fromArray(
-	[_user$project$Spaces$Green, _user$project$Spaces$Green, _user$project$Spaces$Red, _user$project$Spaces$Red, _user$project$Spaces$EmptySpace]);
-var _user$project$Model$defaultHeight = 5;
-var _user$project$Model$defaultWidth = 5;
 var _user$project$Model$defaultSpaces = _elm_lang$core$Basics$fst(
 	A4(
 		_user$project$Model$makeSpaces,
-		_user$project$Model$defaultWidth,
-		_user$project$Model$defaultHeight,
-		_user$project$Model$defaultSpaceDeck,
+		_user$project$ExportModel$defaultWidth,
+		_user$project$ExportModel$defaultHeight,
+		_user$project$ExportModel$defaultSpaceDeck,
 		_elm_lang$core$Random$initialSeed(-42)));
 var _user$project$Model$defaultPieces = _elm_lang$core$Basics$fst(
 	A4(
 		_user$project$Model$makePieces,
 		_user$project$Model$defaultSpaces,
-		_user$project$Model$defaultPieceTypeDeck,
-		_user$project$Model$defaultMoveTypeDeck,
+		_user$project$ExportModel$defaultPieceTypeDeck,
+		_user$project$ExportModel$defaultMoveTypeDeck,
 		_elm_lang$core$Random$initialSeed(-421)));
 var _user$project$Model$Model = function (a) {
 	return function (b) {
@@ -17041,19 +17852,7 @@ var _user$project$Model$Model = function (a) {
 												return function (m) {
 													return function (n) {
 														return function (o) {
-															return function (p) {
-																return function (q) {
-																	return function (r) {
-																		return function (s) {
-																			return function (t) {
-																				return function (u) {
-																					return {allowSelfMoves: a, pieceSelected: b, pieces: c, spaces: d, gridWidth: e, gridHeight: f, spaceDeck: g, pieceDeck: h, moveTypeDeck: i, pieceAppearances: j, seed: k, tabIndex: l, gameResult: m, ignoreGameResult: n, gameEndCons: o, debug: p, showSpaceOutlines: q, allowMovingAllPieces: r, viewScale: s, windowSize: t, mdl: u};
-																				};
-																			};
-																		};
-																	};
-																};
-															};
+															return {pieceSelected: a, pieces: b, spaces: c, seed: d, tabIndex: e, pieceDeckTabIndex: f, exportModel: g, gameResult: h, ignoreGameResult: i, showFileInput: j, debug: k, showSpaceOutlines: l, allowMovingAllPieces: m, windowSize: n, mdl: o};
 														};
 													};
 												};
@@ -17070,179 +17869,46 @@ var _user$project$Model$Model = function (a) {
 	};
 };
 var _user$project$Model$TBD = {ctor: 'TBD'};
+var _user$project$Model$defaultState = {
+	pieceSelected: _elm_lang$core$Maybe$Nothing,
+	pieces: _user$project$Model$defaultPieces,
+	spaces: _user$project$Model$defaultSpaces,
+	seed: _elm_lang$core$Random$initialSeed(42),
+	tabIndex: 0,
+	pieceDeckTabIndex: 0,
+	exportModel: _user$project$ExportModel$defaultExportModel,
+	gameResult: _user$project$Model$TBD,
+	ignoreGameResult: false,
+	showFileInput: false,
+	debug: true,
+	showSpaceOutlines: true,
+	allowMovingAllPieces: false,
+	windowSize: {width: 600, height: 600},
+	mdl: _debois$elm_mdl$Material$model
+};
 var _user$project$Model$canMove = function (model) {
 	return model.ignoreGameResult || _elm_lang$core$Native_Utils.eq(model.gameResult, _user$project$Model$TBD);
 };
 var _user$project$Model$Loss = {ctor: 'Loss'};
 var _user$project$Model$Win = {ctor: 'Win'};
-var _user$project$Model$GameEndCons = F2(
-	function (a, b) {
-		return {ctor: 'GameEndCons', _0: a, _1: b};
-	});
-var _user$project$Model$NoPiecesOfGivenTypeCanMove = function (a) {
-	return {ctor: 'NoPiecesOfGivenTypeCanMove', _0: a};
-};
-var _user$project$Model$NoPiecesStrictlyControlledBy = function (a) {
-	return {ctor: 'NoPiecesStrictlyControlledBy', _0: a};
-};
-var _user$project$Model$NoPiecesControlledBy = function (a) {
-	return {ctor: 'NoPiecesControlledBy', _0: a};
-};
-var _user$project$Model$defaultState = {
-	allowSelfMoves: false,
-	pieceSelected: _elm_lang$core$Maybe$Nothing,
-	pieces: _user$project$Model$defaultPieces,
-	spaces: _user$project$Model$defaultSpaces,
-	gridWidth: _user$project$Model$defaultWidth,
-	gridHeight: _user$project$Model$defaultHeight,
-	spaceDeck: _user$project$Model$defaultSpaceDeck,
-	pieceDeck: _user$project$Model$defaultPieceTypeDeck,
-	moveTypeDeck: _user$project$Model$defaultMoveTypeDeck,
-	pieceAppearances: _user$project$Model$defaultpieceAppearances,
-	seed: _elm_lang$core$Random$initialSeed(42),
-	tabIndex: 0,
-	gameResult: _user$project$Model$TBD,
-	ignoreGameResult: false,
-	gameEndCons: A2(
-		_user$project$Model$GameEndCons,
-		_user$project$Model$NoPiecesOfGivenTypeCanMove(
-			A3(_user$project$Pieces$PieceType, _user$project$Pieces$NoEffect, _user$project$Pieces$Both, _user$project$Pieces$Unoccupied)),
-		_user$project$Model$NoPiecesControlledBy(_user$project$Pieces$Player)),
-	debug: true,
-	showSpaceOutlines: true,
-	allowMovingAllPieces: false,
-	viewScale: 1.0,
-	windowSize: {width: 600, height: 600},
-	mdl: _debois$elm_mdl$Material$model
-};
-var _user$project$Model$gamePredicatePossibilities = A2(
-	_elm_lang$core$Basics_ops['++'],
-	_elm_lang$core$Native_List.fromArray(
-		[
-			_user$project$Model$NoPiecesControlledBy(_user$project$Pieces$Player),
-			_user$project$Model$NoPiecesControlledBy(_user$project$Pieces$Computer),
-			_user$project$Model$NoPiecesControlledBy(_user$project$Pieces$Both),
-			_user$project$Model$NoPiecesControlledBy(_user$project$Pieces$None),
-			_user$project$Model$NoPiecesStrictlyControlledBy(_user$project$Pieces$Player),
-			_user$project$Model$NoPiecesStrictlyControlledBy(_user$project$Pieces$Computer),
-			_user$project$Model$NoPiecesStrictlyControlledBy(_user$project$Pieces$Both),
-			_user$project$Model$NoPiecesStrictlyControlledBy(_user$project$Pieces$None)
-		]),
-	A2(_elm_lang$core$List$map, _user$project$Model$NoPiecesOfGivenTypeCanMove, _user$project$Pieces$actualPieceTypePossibilities));
-var _user$project$Model$decrementGamePredicate = function (predicate) {
-	return A2(
-		_elm_lang$core$Maybe$withDefault,
-		predicate,
-		A2(
-			_elm_lang$core$Maybe$andThen,
-			A2(
-				_elm_lang$core$Maybe$map,
-				function (index) {
-					return A2(
-						_elm_lang$core$Basics_ops['%'],
-						index - 1,
-						_elm_lang$core$List$length(_user$project$Model$gamePredicatePossibilities));
-				},
-				A2(_user$project$Extras$indexOf, _user$project$Model$gamePredicatePossibilities, predicate)),
-			function (index) {
-				return _elm_lang$core$List$head(
-					A2(_elm_lang$core$List$drop, index, _user$project$Model$gamePredicatePossibilities));
-			}));
-};
-var _user$project$Model$decrementWinCon = function (gameEndCons) {
-	var _p10 = gameEndCons;
-	return A2(
-		_user$project$Model$GameEndCons,
-		_user$project$Model$decrementGamePredicate(_p10._0),
-		_p10._1);
-};
-var _user$project$Model$decrementLossCon = function (gameEndCons) {
-	var _p11 = gameEndCons;
-	return A2(
-		_user$project$Model$GameEndCons,
-		_p11._0,
-		_user$project$Model$decrementGamePredicate(_p11._1));
-};
-var _user$project$Model$incrementGamePredicate = function (predicate) {
-	return A2(
-		_elm_lang$core$Maybe$withDefault,
-		predicate,
-		A2(
-			_elm_lang$core$Maybe$andThen,
-			A2(
-				_elm_lang$core$Maybe$map,
-				function (index) {
-					return A2(
-						_elm_lang$core$Basics_ops['%'],
-						index + 1,
-						_elm_lang$core$List$length(_user$project$Model$gamePredicatePossibilities));
-				},
-				A2(_user$project$Extras$indexOf, _user$project$Model$gamePredicatePossibilities, predicate)),
-			function (index) {
-				return _elm_lang$core$List$head(
-					A2(_elm_lang$core$List$drop, index, _user$project$Model$gamePredicatePossibilities));
-			}));
-};
-var _user$project$Model$incrementWinCon = function (gameEndCons) {
-	var _p12 = gameEndCons;
-	return A2(
-		_user$project$Model$GameEndCons,
-		_user$project$Model$incrementGamePredicate(_p12._0),
-		_p12._1);
-};
-var _user$project$Model$incrementLossCon = function (gameEndCons) {
-	var _p13 = gameEndCons;
-	return A2(
-		_user$project$Model$GameEndCons,
-		_p13._0,
-		_user$project$Model$incrementGamePredicate(_p13._1));
-};
 
 var _user$project$Msg$NoOp = {ctor: 'NoOp'};
-var _user$project$Msg$SetIcon = F2(
-	function (a, b) {
-		return {ctor: 'SetIcon', _0: a, _1: b};
-	});
-var _user$project$Msg$EditPoints = F2(
-	function (a, b) {
-		return {ctor: 'EditPoints', _0: a, _1: b};
-	});
-var _user$project$Msg$IncrementLossCon = {ctor: 'IncrementLossCon'};
-var _user$project$Msg$DecrementLossCon = {ctor: 'DecrementLossCon'};
-var _user$project$Msg$IncrementWinCon = {ctor: 'IncrementWinCon'};
-var _user$project$Msg$DecrementWinCon = {ctor: 'DecrementWinCon'};
+var _user$project$Msg$RecieveLoadedFile = function (a) {
+	return {ctor: 'RecieveLoadedFile', _0: a};
+};
+var _user$project$Msg$Load = {ctor: 'Load'};
+var _user$project$Msg$SaveAs = {ctor: 'SaveAs'};
+var _user$project$Msg$UpdateExportModel = function (a) {
+	return {ctor: 'UpdateExportModel', _0: a};
+};
 var _user$project$Msg$ToggleIgnoreGameResult = {ctor: 'ToggleIgnoreGameResult'};
 var _user$project$Msg$ToggleAllowMovingAllPieces = {ctor: 'ToggleAllowMovingAllPieces'};
-var _user$project$Msg$ToggleSelfMoves = {ctor: 'ToggleSelfMoves'};
 var _user$project$Msg$ToggleSpaceOutlines = {ctor: 'ToggleSpaceOutlines'};
-var _user$project$Msg$UpdateColour = F2(
-	function (a, b) {
-		return {ctor: 'UpdateColour', _0: a, _1: b};
-	});
-var _user$project$Msg$DecrementViewScale = {ctor: 'DecrementViewScale'};
-var _user$project$Msg$IncrementViewScale = {ctor: 'IncrementViewScale'};
-var _user$project$Msg$DecrementGridHeight = {ctor: 'DecrementGridHeight'};
-var _user$project$Msg$IncrementGridHeight = {ctor: 'IncrementGridHeight'};
-var _user$project$Msg$DecrementGridWidth = {ctor: 'DecrementGridWidth'};
-var _user$project$Msg$IncrementGridWidth = {ctor: 'IncrementGridWidth'};
-var _user$project$Msg$PieceDeckDecrement = F2(
-	function (a, b) {
-		return {ctor: 'PieceDeckDecrement', _0: a, _1: b};
-	});
-var _user$project$Msg$PieceDeckIncrement = F2(
-	function (a, b) {
-		return {ctor: 'PieceDeckIncrement', _0: a, _1: b};
-	});
-var _user$project$Msg$SpaceDeckDecrement = F2(
-	function (a, b) {
-		return {ctor: 'SpaceDeckDecrement', _0: a, _1: b};
-	});
-var _user$project$Msg$SpaceDeckIncrement = F2(
-	function (a, b) {
-		return {ctor: 'SpaceDeckIncrement', _0: a, _1: b};
-	});
 var _user$project$Msg$Mdl = function (a) {
 	return {ctor: 'Mdl', _0: a};
+};
+var _user$project$Msg$SelectPieceDeckTab = function (a) {
+	return {ctor: 'SelectPieceDeckTab', _0: a};
 };
 var _user$project$Msg$SelectTab = function (a) {
 	return {ctor: 'SelectTab', _0: a};
@@ -17267,6 +17933,51 @@ var _user$project$Msg$SelectPiece = function (a) {
 	return {ctor: 'SelectPiece', _0: a};
 };
 var _user$project$Msg$HitTable = {ctor: 'HitTable'};
+var _user$project$Msg$SetIcon = F2(
+	function (a, b) {
+		return {ctor: 'SetIcon', _0: a, _1: b};
+	});
+var _user$project$Msg$EditPoints = F2(
+	function (a, b) {
+		return {ctor: 'EditPoints', _0: a, _1: b};
+	});
+var _user$project$Msg$UpdateColour = F2(
+	function (a, b) {
+		return {ctor: 'UpdateColour', _0: a, _1: b};
+	});
+var _user$project$Msg$IncrementSubLossCon = {ctor: 'IncrementSubLossCon'};
+var _user$project$Msg$DecrementSubLossCon = {ctor: 'DecrementSubLossCon'};
+var _user$project$Msg$IncrementLossCon = {ctor: 'IncrementLossCon'};
+var _user$project$Msg$DecrementLossCon = {ctor: 'DecrementLossCon'};
+var _user$project$Msg$IncrementSubWinCon = {ctor: 'IncrementSubWinCon'};
+var _user$project$Msg$DecrementSubWinCon = {ctor: 'DecrementSubWinCon'};
+var _user$project$Msg$IncrementWinCon = {ctor: 'IncrementWinCon'};
+var _user$project$Msg$DecrementWinCon = {ctor: 'DecrementWinCon'};
+var _user$project$Msg$UpdateViewScale = function (a) {
+	return {ctor: 'UpdateViewScale', _0: a};
+};
+var _user$project$Msg$UpdateGridHeight = function (a) {
+	return {ctor: 'UpdateGridHeight', _0: a};
+};
+var _user$project$Msg$UpdateGridWidth = function (a) {
+	return {ctor: 'UpdateGridWidth', _0: a};
+};
+var _user$project$Msg$PieceDeckDecrement = F2(
+	function (a, b) {
+		return {ctor: 'PieceDeckDecrement', _0: a, _1: b};
+	});
+var _user$project$Msg$PieceDeckIncrement = F2(
+	function (a, b) {
+		return {ctor: 'PieceDeckIncrement', _0: a, _1: b};
+	});
+var _user$project$Msg$SpaceDeckDecrement = F2(
+	function (a, b) {
+		return {ctor: 'SpaceDeckDecrement', _0: a, _1: b};
+	});
+var _user$project$Msg$SpaceDeckIncrement = F2(
+	function (a, b) {
+		return {ctor: 'SpaceDeckIncrement', _0: a, _1: b};
+	});
 
 var _user$project$PiecesAndSpaces$pieceIsNotAtSpace = F4(
 	function (pieces, spaces, index, spaceIndex) {
@@ -17401,9 +18112,9 @@ var _user$project$Movement$bumpPiecesNTimes = F5(
 			}
 		}
 	});
-var _user$project$Movement$canPieceMoveToSpace = F5(
-	function (allowSelfMoves, pieces, spaces, index, spaceIndex) {
-		if (allowSelfMoves || A4(_user$project$PiecesAndSpaces$pieceIsNotAtSpace, pieces, spaces, index, spaceIndex)) {
+var _user$project$Movement$canPieceMoveToSpace = F4(
+	function (pieces, spaces, index, spaceIndex) {
+		if (A4(_user$project$PiecesAndSpaces$pieceIsNotAtSpace, pieces, spaces, index, spaceIndex)) {
 			var maybePiece = A2(_elm_lang$core$Dict$get, index, pieces);
 			return A2(
 				_elm_lang$core$Maybe$withDefault,
@@ -17448,7 +18159,7 @@ var _user$project$Movement$getPossibleMoveList = function (model) {
 		_elm_lang$core$List$filter,
 		function (_p10) {
 			var _p11 = _p10;
-			return A5(_user$project$Movement$canPieceMoveToSpace, model.allowSelfMoves, model.pieces, model.spaces, _p11._0, _p11._1);
+			return A4(_user$project$Movement$canPieceMoveToSpace, model.pieces, model.spaces, _p11._0, _p11._1);
 		},
 		allConcievableMoves);
 };
@@ -17508,7 +18219,7 @@ var _user$project$Movement$movePieceToSpace = F5(
 	});
 var _user$project$Movement$getNewPieces = F3(
 	function (model, pieceID, spaceID) {
-		return A5(_user$project$Movement$canPieceMoveToSpace, model.allowSelfMoves, model.pieces, model.spaces, pieceID, spaceID) ? A5(_user$project$Movement$movePieceToSpace, model.pieceAppearances, model.pieces, model.spaces, pieceID, spaceID) : model.pieces;
+		return A4(_user$project$Movement$canPieceMoveToSpace, model.pieces, model.spaces, pieceID, spaceID) ? A5(_user$project$Movement$movePieceToSpace, model.exportModel.pieceAppearances, model.pieces, model.spaces, pieceID, spaceID) : model.pieces;
 	});
 
 var _user$project$Playfield$space = F4(
@@ -17519,17 +18230,17 @@ var _user$project$Playfield$space = F4(
 				case 'Green':
 					return _elm_lang$core$Native_List.fromArray(
 						[
-							_elm_lang$svg$Svg_Attributes$fill('lime')
+							_elm_lang$svg$Svg_Attributes$fill('#7FFF7f')
 						]);
 				case 'Red':
 					return _elm_lang$core$Native_List.fromArray(
 						[
-							_elm_lang$svg$Svg_Attributes$fill('red')
+							_elm_lang$svg$Svg_Attributes$fill('#FF9f7f')
 						]);
 				case 'Yellow':
 					return _elm_lang$core$Native_List.fromArray(
 						[
-							_elm_lang$svg$Svg_Attributes$fill('#FFDC00')
+							_elm_lang$svg$Svg_Attributes$fill('#FFDC7f')
 						]);
 				default:
 					return A2(
@@ -17874,7 +18585,7 @@ var _user$project$Playfield$getPieceAttributes = F3(
 var _user$project$Playfield$getPieceView = F3(
 	function (model, currentID, currentPiece) {
 		var selectedAttributes = A3(_user$project$Playfield$getPieceAttributes, model, currentID, currentPiece);
-		return A4(_user$project$Playfield$piece, model.pieceAppearances, selectedAttributes, currentPiece.position, currentPiece.pieceType);
+		return A4(_user$project$Playfield$piece, model.exportModel.pieceAppearances, selectedAttributes, currentPiece.position, currentPiece.pieceType);
 	});
 var _user$project$Playfield$nullSVG = A2(
 	_elm_lang$svg$Svg$polygon,
@@ -17948,7 +18659,7 @@ var _user$project$Playfield$getPieceSelectedInfo = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: index,
-					_1: A5(_user$project$Movement$canPieceMoveToSpace, model.allowSelfMoves, model.pieces, model.spaces, index, spaceIndex)
+					_1: A4(_user$project$Movement$canPieceMoveToSpace, model.pieces, model.spaces, index, spaceIndex)
 				};
 			},
 			model.pieceSelected);
@@ -17991,16 +18702,20 @@ var _user$project$Playfield$getPieces = function (model) {
 			model.pieces));
 };
 
-var _user$project$DevControlsCommon$pOf = function (thing) {
+var _user$project$DevControlsCommon$background = '#DDDDDD';
+var _user$project$DevControlsCommon$pOfString = function (s) {
 	return A2(
 		_elm_lang$html$Html$p,
 		_elm_lang$core$Native_List.fromArray(
 			[]),
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html$text(
-				_elm_lang$core$Basics$toString(thing))
+				_elm_lang$html$Html$text(s)
 			]));
+};
+var _user$project$DevControlsCommon$pOf = function (_p0) {
+	return _user$project$DevControlsCommon$pOfString(
+		_elm_lang$core$Basics$toString(_p0));
 };
 var _user$project$DevControlsCommon$displaySpaceType = function (spaceType) {
 	return _elm_lang$core$Native_List.fromArray(
@@ -18009,12 +18724,10 @@ var _user$project$DevControlsCommon$displaySpaceType = function (spaceType) {
 		]);
 };
 var _user$project$DevControlsCommon$displayPiecetype = function (pieceType) {
-	return _elm_lang$core$Native_List.fromArray(
-		[
-			_user$project$DevControlsCommon$pOf(pieceType.moveEffect),
-			_user$project$DevControlsCommon$pOf(pieceType.controller),
-			_user$project$DevControlsCommon$pOf(pieceType.moveType)
-		]);
+	return A2(
+		_elm_lang$core$List$map,
+		_user$project$DevControlsCommon$pOfString,
+		_user$project$Pieces$pieceTypeToStringList(pieceType));
 };
 var _user$project$DevControlsCommon$pieceTypeToSVG = F3(
 	function (pieceAppearances, center, pieceType) {
@@ -18080,6 +18793,12 @@ var _user$project$AppearanceTab$updatePoint = F6(
 			return msgMaker(list);
 		}
 	});
+var _user$project$AppearanceTab$pointsStyle = _elm_lang$html$Html_Attributes$style(
+	_elm_lang$core$Native_List.fromArray(
+		[
+			{ctor: '_Tuple2', _0: 'width', _1: '4rem'},
+			{ctor: '_Tuple2', _0: 'background-color', _1: _user$project$DevControlsCommon$background}
+		]));
 var _user$project$AppearanceTab$Y = {ctor: 'Y'};
 var _user$project$AppearanceTab$X = {ctor: 'X'};
 var _user$project$AppearanceTab$editAblePoints = F4(
@@ -18101,11 +18820,7 @@ var _user$project$AppearanceTab$editAblePoints = F4(
 							_elm_lang$html$Html_Attributes$value(
 							_elm_lang$core$Basics$toString(
 								_elm_community$elm_linear_algebra$Math_Vector2$getX(vector))),
-							_elm_lang$html$Html_Attributes$style(
-							_elm_lang$core$Native_List.fromArray(
-								[
-									{ctor: '_Tuple2', _0: 'width', _1: '4rem'}
-								]))
+							_user$project$AppearanceTab$pointsStyle
 						]),
 					_elm_lang$core$Native_List.fromArray(
 						[])),
@@ -18121,22 +18836,76 @@ var _user$project$AppearanceTab$editAblePoints = F4(
 							_elm_lang$html$Html_Attributes$value(
 							_elm_lang$core$Basics$toString(
 								_elm_community$elm_linear_algebra$Math_Vector2$getY(vector))),
-							_elm_lang$html$Html_Attributes$style(
-							_elm_lang$core$Native_List.fromArray(
-								[
-									{ctor: '_Tuple2', _0: 'width', _1: '4rem'}
-								]))
+							_user$project$AppearanceTab$pointsStyle
 						]),
 					_elm_lang$core$Native_List.fromArray(
 						[]))
 				]));
 	});
-var _user$project$AppearanceTab$editAblePointsList = F2(
-	function (msgMaker, list) {
+var _user$project$AppearanceTab$editAblePointsList = F4(
+	function (index, mdl, msgMaker, list) {
 		return A2(
-			_elm_lang$core$List$indexedMap,
-			A2(_user$project$AppearanceTab$editAblePoints, msgMaker, list),
-			list);
+			_elm_lang$core$Basics_ops['++'],
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A5(
+					_debois$elm_mdl$Material_Button$render,
+					_user$project$Msg$Mdl,
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						index,
+						_elm_lang$core$Native_List.fromArray(
+							[0])),
+					mdl,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_debois$elm_mdl$Material_Button$onClick(
+							_user$project$Msg$UpdateExportModel(
+								msgMaker(
+									A2(
+										_elm_lang$core$Maybe$withDefault,
+										_elm_lang$core$Native_List.fromArray(
+											[]),
+										_elm_lang$core$List$tail(list)))))
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_debois$elm_mdl$Material_Icon$i('remove')
+						])),
+					A5(
+					_debois$elm_mdl$Material_Button$render,
+					_user$project$Msg$Mdl,
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						index,
+						_elm_lang$core$Native_List.fromArray(
+							[1])),
+					mdl,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_debois$elm_mdl$Material_Button$onClick(
+							_user$project$Msg$UpdateExportModel(
+								msgMaker(
+									A2(
+										_elm_lang$core$List_ops['::'],
+										A2(_elm_community$elm_linear_algebra$Math_Vector2$vec2, 0, 0),
+										list))))
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_debois$elm_mdl$Material_Icon$i('add')
+						]))
+				]),
+			A2(
+				_elm_lang$core$List$indexedMap,
+				A2(
+					_user$project$AppearanceTab$editAblePoints,
+					function (_p3) {
+						return _user$project$Msg$UpdateExportModel(
+							msgMaker(_p3));
+					},
+					list),
+				list));
 	});
 var _user$project$AppearanceTab$pieceAppearancesTable = F3(
 	function (index, mdl, pieceAppearances) {
@@ -18144,7 +18913,7 @@ var _user$project$AppearanceTab$pieceAppearancesTable = F3(
 			_debois$elm_mdl$Material_Table$table,
 			_elm_lang$core$Native_List.fromArray(
 				[
-					A2(_debois$elm_mdl$Material_Options$css, 'background-color', '#DDDDDD')
+					A2(_debois$elm_mdl$Material_Options$css, 'background-color', _user$project$DevControlsCommon$background)
 				]),
 			_elm_lang$core$Native_List.fromArray(
 				[
@@ -18209,10 +18978,12 @@ var _user$project$AppearanceTab$pieceAppearancesTable = F3(
 					A2(
 						_elm_lang$core$List$indexedMap,
 						F2(
-							function (index, _p3) {
-								var _p4 = _p3;
-								var _p8 = _p4._0;
-								var _p7 = _p4._1._2;
+							function (index, _p4) {
+								var _p5 = _p4;
+								var _p9 = _p5._0;
+								var _p8 = _p5._1._2;
+								var indexList = _elm_lang$core$Native_List.fromArray(
+									[index]);
 								return A2(
 									_debois$elm_mdl$Material_Table$tr,
 									_elm_lang$core$Native_List.fromArray(
@@ -18228,29 +18999,31 @@ var _user$project$AppearanceTab$pieceAppearancesTable = F3(
 													A2(
 													_user$project$DevControlsCommon$positionedSvgMakerToHtmlMaker,
 													_user$project$DevControlsCommon$pieceTypeToSVG(pieceAppearances),
-													_p8)
+													_p9)
 												])),
 											A2(
 											_debois$elm_mdl$Material_Table$td,
 											_elm_lang$core$Native_List.fromArray(
 												[]),
-											_user$project$DevControlsCommon$displayPiecetype(_p8)),
+											_user$project$DevControlsCommon$displayPiecetype(_p9)),
 											A2(
 											_debois$elm_mdl$Material_Table$td,
 											_elm_lang$core$Native_List.fromArray(
 												[]),
 											function () {
-												var _p5 = _p4._1._0;
-												if (_p5.ctor === 'Eye') {
+												var _p6 = _p5._1._0;
+												if (_p6.ctor === 'Eye') {
 													return _elm_lang$core$Native_List.fromArray(
 														[
 															_elm_lang$html$Html$text('hardcoded')
 														]);
 												} else {
-													return A2(
+													return A4(
 														_user$project$AppearanceTab$editAblePointsList,
-														_user$project$Msg$EditPoints(_p8),
-														_p5._0);
+														indexList,
+														mdl,
+														_user$project$Msg$EditPoints(_p9),
+														_p6._0);
 												}
 											}()),
 											A2(
@@ -18264,17 +19037,19 @@ var _user$project$AppearanceTab$pieceAppearancesTable = F3(
 													_elm_lang$core$Native_List.fromArray(
 														[
 															_elm_lang$html$Html_Events$onInput(
-															function (_p6) {
-																return A2(
-																	_user$project$Msg$UpdateColour,
-																	_p8,
-																	_user$project$AppearanceTab$cleanColourString(_p6));
+															function (_p7) {
+																return _user$project$Msg$UpdateExportModel(
+																	A2(
+																		_user$project$Msg$UpdateColour,
+																		_p9,
+																		_user$project$AppearanceTab$cleanColourString(_p7)));
 															}),
-															_elm_lang$html$Html_Attributes$value(_p4._1._1),
+															_elm_lang$html$Html_Attributes$value(_p5._1._1),
 															_elm_lang$html$Html_Attributes$style(
 															_elm_lang$core$Native_List.fromArray(
 																[
-																	{ctor: '_Tuple2', _0: 'width', _1: '6rem'}
+																	{ctor: '_Tuple2', _0: 'width', _1: '6rem'},
+																	{ctor: '_Tuple2', _0: 'background-color', _1: _user$project$DevControlsCommon$background}
 																]))
 														]),
 													_elm_lang$core$Native_List.fromArray(
@@ -18299,16 +19074,16 @@ var _user$project$AppearanceTab$pieceAppearancesTable = F3(
 																_elm_lang$core$Basics_ops['++'],
 																_elm_lang$core$Native_List.fromArray(
 																	[-10]),
-																_elm_lang$core$Native_List.fromArray(
-																	[index])),
+																indexList),
 															mdl,
 															_elm_lang$core$Native_List.fromArray(
 																[
 																	_debois$elm_mdl$Material_Toggles$value(
-																	_elm_lang$core$Native_Utils.eq(_p7, _user$project$PieceAppearances$EmptySpaceIcon)),
+																	_elm_lang$core$Native_Utils.eq(_p8, _user$project$PieceAppearances$EmptySpaceIcon)),
 																	_debois$elm_mdl$Material_Toggles$group('pieceAppearancesGroup'),
 																	_debois$elm_mdl$Material_Toggles$onClick(
-																	A2(_user$project$Msg$SetIcon, _user$project$PieceAppearances$EmptySpaceIcon, _p8))
+																	_user$project$Msg$UpdateExportModel(
+																		A2(_user$project$Msg$SetIcon, _user$project$PieceAppearances$EmptySpaceIcon, _p9)))
 																]),
 															_elm_lang$core$Native_List.fromArray(
 																[
@@ -18328,16 +19103,16 @@ var _user$project$AppearanceTab$pieceAppearancesTable = F3(
 																_elm_lang$core$Basics_ops['++'],
 																_elm_lang$core$Native_List.fromArray(
 																	[-11]),
-																_elm_lang$core$Native_List.fromArray(
-																	[index])),
+																indexList),
 															mdl,
 															_elm_lang$core$Native_List.fromArray(
 																[
 																	_debois$elm_mdl$Material_Toggles$value(
-																	_elm_lang$core$Native_Utils.eq(_p7, _user$project$PieceAppearances$triangleIcon)),
+																	_elm_lang$core$Native_Utils.eq(_p8, _user$project$PieceAppearances$triangleIcon)),
 																	_debois$elm_mdl$Material_Toggles$group('pieceAppearancesGroup'),
 																	_debois$elm_mdl$Material_Toggles$onClick(
-																	A2(_user$project$Msg$SetIcon, _user$project$PieceAppearances$triangleIcon, _p8))
+																	_user$project$Msg$UpdateExportModel(
+																		A2(_user$project$Msg$SetIcon, _user$project$PieceAppearances$triangleIcon, _p9)))
 																]),
 															_elm_lang$core$Native_List.fromArray(
 																[
@@ -18357,16 +19132,16 @@ var _user$project$AppearanceTab$pieceAppearancesTable = F3(
 																_elm_lang$core$Basics_ops['++'],
 																_elm_lang$core$Native_List.fromArray(
 																	[-12]),
-																_elm_lang$core$Native_List.fromArray(
-																	[index])),
+																indexList),
 															mdl,
 															_elm_lang$core$Native_List.fromArray(
 																[
 																	_debois$elm_mdl$Material_Toggles$value(
-																	_elm_lang$core$Native_Utils.eq(_p7, _user$project$PieceAppearances$NoIcon)),
+																	_elm_lang$core$Native_Utils.eq(_p8, _user$project$PieceAppearances$NoIcon)),
 																	_debois$elm_mdl$Material_Toggles$group('pieceAppearancesGroup'),
 																	_debois$elm_mdl$Material_Toggles$onClick(
-																	A2(_user$project$Msg$SetIcon, _user$project$PieceAppearances$NoIcon, _p8))
+																	_user$project$Msg$UpdateExportModel(
+																		A2(_user$project$Msg$SetIcon, _user$project$PieceAppearances$NoIcon, _p9)))
 																]),
 															_elm_lang$core$Native_List.fromArray(
 																[
@@ -18405,7 +19180,7 @@ var _user$project$AppearanceTab$render = function (model) {
 								_elm_lang$core$Native_List.fromArray(
 									[14]),
 								model.mdl,
-								model.pieceAppearances)
+								model.exportModel.pieceAppearances)
 							]))
 					]))
 			]));
@@ -18422,13 +19197,61 @@ var _user$project$EditTab$amountOfItemInDeck = F2(
 					})(item),
 				deck));
 	});
+var _user$project$EditTab$pieceDeckContolTabLabels = _elm_lang$core$Native_List.fromArray(
+	[
+		A2(
+		_debois$elm_mdl$Material_Tabs$textLabel,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		'Player'),
+		A2(
+		_debois$elm_mdl$Material_Tabs$textLabel,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		'Computer'),
+		A2(
+		_debois$elm_mdl$Material_Tabs$textLabel,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		'Both'),
+		A2(
+		_debois$elm_mdl$Material_Tabs$textLabel,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		'None')
+	]);
+var _user$project$EditTab$defaultTab = A2(
+	_elm_lang$html$Html$div,
+	_elm_lang$core$Native_List.fromArray(
+		[]),
+	_elm_lang$core$Native_List.fromArray(
+		[
+			_elm_lang$html$Html$text('Tab not found')
+		]));
+var _user$project$EditTab_ops = _user$project$EditTab_ops || {};
+_user$project$EditTab_ops['...'] = function (_p0) {
+	return F2(
+		function (x, y) {
+			return function (_p1) {
+				return x(
+					y(_p1));
+			};
+		})(
+		F2(
+			function (x, y) {
+				return function (_p2) {
+					return x(
+						y(_p2));
+				};
+			})(_p0));
+};
 var _user$project$EditTab$deckControl = F9(
-	function (index, mdl, possibilities, currentDeck, typeHeading, typeDisplay, removeMessage, addMessage, elementView) {
+	function (index, mdl, currentDeck, possibilities, typeHeading, typeDisplay, removeMessage, addMessage, elementView) {
 		return A2(
 			_debois$elm_mdl$Material_Table$table,
 			_elm_lang$core$Native_List.fromArray(
 				[
-					A2(_debois$elm_mdl$Material_Options$css, 'background-color', '#DDDDDD')
+					A2(_debois$elm_mdl$Material_Options$css, 'background-color', _user$project$DevControlsCommon$background)
 				]),
 			_elm_lang$core$Native_List.fromArray(
 				[
@@ -18512,30 +19335,22 @@ var _user$project$EditTab$deckControl = F9(
 															_elm_lang$html$Html_Attributes$min('0'),
 															_elm_lang$html$Html_Attributes$step('any'),
 															_elm_lang$html$Html_Events$onInput(
-															function (_p0) {
+															function (_p3) {
 																return function (newAmount) {
-																	return (_elm_lang$core$Native_Utils.cmp(newAmount, currentAmount) > 0) ? A2(
-																		addMessage,
-																		item,
-																		A2(_elm_lang$core$Debug$log, 'diff add', newAmount - currentAmount)) : ((_elm_lang$core$Native_Utils.cmp(newAmount, currentAmount) < 0) ? A2(
-																		removeMessage,
-																		item,
-																		A2(_elm_lang$core$Debug$log, 'diff remove', currentAmount - newAmount)) : _user$project$Msg$NoOp);
+																	return (_elm_lang$core$Native_Utils.cmp(newAmount, currentAmount) > 0) ? A2(addMessage, item, newAmount - currentAmount) : ((_elm_lang$core$Native_Utils.cmp(newAmount, currentAmount) < 0) ? A2(removeMessage, item, currentAmount - newAmount) : _user$project$Msg$NoOp);
 																}(
 																	A2(
-																		_elm_lang$core$Debug$log,
-																		'',
-																		A2(
-																			_elm_lang$core$Result$withDefault,
-																			currentAmount,
-																			_elm_lang$core$String$toInt(_p0))));
+																		_elm_lang$core$Result$withDefault,
+																		currentAmount,
+																		_elm_lang$core$String$toInt(_p3)));
 															}),
 															_elm_lang$html$Html_Attributes$value(
 															_elm_lang$core$Basics$toString(currentAmount)),
 															_elm_lang$html$Html_Attributes$style(
 															_elm_lang$core$Native_List.fromArray(
 																[
-																	{ctor: '_Tuple2', _0: 'width', _1: '4rem'}
+																	{ctor: '_Tuple2', _0: 'width', _1: '4rem'},
+																	{ctor: '_Tuple2', _0: 'background-color', _1: _user$project$DevControlsCommon$background}
 																]))
 														]),
 													_elm_lang$core$Native_List.fromArray(
@@ -18547,12 +19362,102 @@ var _user$project$EditTab$deckControl = F9(
 						possibilities))
 				]));
 	});
-var _user$project$EditTab$tup = F2(
-	function (v0, v1) {
-		return {ctor: '_Tuple2', _0: v0, _1: v1};
+var _user$project$EditTab$exportDeckControl = F9(
+	function (index, mdl, currentDeck, possibilities, typeHeading, typeDisplay, removeMessage, addMessage, elementView) {
+		return A9(
+			_user$project$EditTab$deckControl,
+			index,
+			mdl,
+			currentDeck,
+			possibilities,
+			typeHeading,
+			typeDisplay,
+			A2(_user$project$EditTab_ops['...'], _user$project$Msg$UpdateExportModel, removeMessage),
+			A2(_user$project$EditTab_ops['...'], _user$project$Msg$UpdateExportModel, addMessage),
+			elementView);
 	});
-var _user$project$EditTab$makeStepper = F6(
-	function (index, mdl, label, decrementMsg, incrementMsg, value) {
+var _user$project$EditTab$deckControlTab = F8(
+	function (index, mdl, typeHeading, typeDisplay, removeMessage, addMessage, elementView, _p4) {
+		var _p5 = _p4;
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$style(
+					_elm_lang$core$Native_List.fromArray(
+						[
+							{ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+							{ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
+							{ctor: '_Tuple2', _0: 'align-items', _1: 'center'}
+						]))
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A9(_user$project$EditTab$exportDeckControl, index, mdl, _p5._0, _p5._1, typeHeading, typeDisplay, removeMessage, addMessage, elementView)
+				]));
+	});
+var _user$project$EditTab$tabbedDeckControl = function (index) {
+	return function (mdl) {
+		return function (bundleList) {
+			return function (typeHeading) {
+				return function (typeDisplay) {
+					return function (removeMessage) {
+						return function (addMessage) {
+							return function (elementView) {
+								return function (selectTabMsg) {
+									return function (tabIndex) {
+										var tabLabels = A2(_elm_lang$core$List$map, _elm_lang$core$Basics$snd, bundleList);
+										var deckAndPossibilitiesList = A2(_elm_lang$core$List$map, _elm_lang$core$Basics$fst, bundleList);
+										return A6(
+											_debois$elm_mdl$Material_Tabs$render,
+											_user$project$Msg$Mdl,
+											A2(
+												_elm_lang$core$Basics_ops['++'],
+												index,
+												_elm_lang$core$Native_List.fromArray(
+													[20])),
+											mdl,
+											_elm_lang$core$Native_List.fromArray(
+												[
+													_debois$elm_mdl$Material_Tabs$ripple,
+													_debois$elm_mdl$Material_Tabs$onSelectTab(selectTabMsg),
+													_debois$elm_mdl$Material_Tabs$activeTab(tabIndex)
+												]),
+											tabLabels,
+											_elm_lang$core$Native_List.fromArray(
+												[
+													A2(
+													_elm_lang$core$Maybe$withDefault,
+													_user$project$EditTab$defaultTab,
+													A2(
+														_elm_lang$core$Maybe$map,
+														function (_p6) {
+															return A8(
+																_user$project$EditTab$deckControlTab,
+																index,
+																mdl,
+																typeHeading,
+																typeDisplay,
+																removeMessage,
+																addMessage,
+																elementView,
+																_elm_lang$core$Basics$fst(_p6));
+														},
+														_elm_lang$core$List$head(
+															A2(_elm_lang$core$List$drop, tabIndex, bundleList))))
+												]));
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var _user$project$EditTab$makeLabeledInput = F6(
+	function (index, mdl, label, extraAttributes, updateMsg, value) {
 		return _elm_lang$core$Native_List.fromArray(
 			[
 				_elm_lang$html$Html$text(label),
@@ -18563,7 +19468,56 @@ var _user$project$EditTab$makeStepper = F6(
 						_elm_lang$html$Html_Attributes$style(
 						_elm_lang$core$Native_List.fromArray(
 							[
+								{ctor: '_Tuple2', _0: 'display', _1: 'flex'},
 								{ctor: '_Tuple2', _0: 'border', _1: '1px solid'}
+							]))
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$input,
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$html$Html_Events$onInput(updateMsg),
+									_elm_lang$html$Html_Attributes$value(value)
+								]),
+							extraAttributes),
+						_elm_lang$core$Native_List.fromArray(
+							[]))
+					]))
+			]);
+	});
+var _user$project$EditTab$makeGamePredicateSelector = F8(
+	function (index, mdl, label, decrementMsg, incrementMsg, decrementSubPredicateMsg, incrementSubPredicateMsg, value) {
+		var _p7 = function (list) {
+			var _p8 = list;
+			if ((_p8.ctor === '::') && (_p8._1.ctor === '::')) {
+				return {ctor: '_Tuple2', _0: _p8._0, _1: _p8._1._0};
+			} else {
+				return {ctor: '_Tuple2', _0: '😯', _1: 'wat'};
+			}
+		}(
+			A3(
+				_elm_lang$core$Regex$split,
+				_elm_lang$core$Regex$AtMost(1),
+				_elm_lang$core$Regex$regex(' '),
+				value));
+		var leftSubValue = _p7._0;
+		var rightSubValue = _p7._1;
+		return _elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text(label),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$style(
+						_elm_lang$core$Native_List.fromArray(
+							[
+								{ctor: '_Tuple2', _0: 'border', _1: '1px solid'},
+								{ctor: '_Tuple2', _0: 'display', _1: 'flex'}
 							]))
 					]),
 				_elm_lang$core$Native_List.fromArray(
@@ -18599,7 +19553,8 @@ var _user$project$EditTab$makeStepper = F6(
 										mdl,
 										_elm_lang$core$Native_List.fromArray(
 											[
-												_debois$elm_mdl$Material_Button$onClick(incrementMsg)
+												_debois$elm_mdl$Material_Button$onClick(
+												_user$project$Msg$UpdateExportModel(incrementMsg))
 											]),
 										_elm_lang$core$Native_List.fromArray(
 											[
@@ -18618,7 +19573,7 @@ var _user$project$EditTab$makeStepper = F6(
 									]),
 								_elm_lang$core$Native_List.fromArray(
 									[
-										_elm_lang$html$Html$text(value)
+										_elm_lang$html$Html$text(leftSubValue)
 									])),
 								A2(
 								_elm_lang$html$Html$li,
@@ -18637,7 +19592,87 @@ var _user$project$EditTab$makeStepper = F6(
 										mdl,
 										_elm_lang$core$Native_List.fromArray(
 											[
-												_debois$elm_mdl$Material_Button$onClick(decrementMsg)
+												_debois$elm_mdl$Material_Button$onClick(
+												_user$project$Msg$UpdateExportModel(decrementMsg))
+											]),
+										_elm_lang$core$Native_List.fromArray(
+											[
+												_debois$elm_mdl$Material_Icon$i('remove')
+											]))
+									]))
+							])),
+						A2(
+						_elm_lang$html$Html$ul,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$style(
+								_elm_lang$core$Native_List.fromArray(
+									[
+										{ctor: '_Tuple2', _0: 'list-style', _1: 'none'},
+										{ctor: '_Tuple2', _0: 'padding', _1: '0'},
+										{ctor: '_Tuple2', _0: 'margin', _1: '0'}
+									]))
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								A2(
+								_elm_lang$html$Html$li,
+								_elm_lang$core$Native_List.fromArray(
+									[]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										A5(
+										_debois$elm_mdl$Material_Button$render,
+										_user$project$Msg$Mdl,
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											index,
+											_elm_lang$core$Native_List.fromArray(
+												[2])),
+										mdl,
+										_elm_lang$core$Native_List.fromArray(
+											[
+												_debois$elm_mdl$Material_Button$onClick(
+												_user$project$Msg$UpdateExportModel(incrementSubPredicateMsg))
+											]),
+										_elm_lang$core$Native_List.fromArray(
+											[
+												_debois$elm_mdl$Material_Icon$i('add')
+											]))
+									])),
+								A2(
+								_elm_lang$html$Html$li,
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html_Attributes$style(
+										_elm_lang$core$Native_List.fromArray(
+											[
+												{ctor: '_Tuple2', _0: 'margin-left', _1: '2em'}
+											]))
+									]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text(rightSubValue)
+									])),
+								A2(
+								_elm_lang$html$Html$li,
+								_elm_lang$core$Native_List.fromArray(
+									[]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										A5(
+										_debois$elm_mdl$Material_Button$render,
+										_user$project$Msg$Mdl,
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											index,
+											_elm_lang$core$Native_List.fromArray(
+												[-1])),
+										mdl,
+										_elm_lang$core$Native_List.fromArray(
+											[
+												_debois$elm_mdl$Material_Button$onClick(
+												_user$project$Msg$UpdateExportModel(decrementSubPredicateMsg))
 											]),
 										_elm_lang$core$Native_List.fromArray(
 											[
@@ -18677,23 +19712,62 @@ var _user$project$EditTab$toggleSwitchCell = F5(
 	});
 var _user$project$EditTab$protoPieceToSVG = F3(
 	function (pieceAppearances, center, protoPiece) {
-		var _p1 = protoPiece;
-		if (_p1.ctor === 'ActualPiece') {
-			return A3(_user$project$DevControlsCommon$pieceTypeToSVG, pieceAppearances, center, _p1._0);
+		var _p9 = protoPiece;
+		if (_p9.ctor === 'ActualPiece') {
+			return A3(_user$project$DevControlsCommon$pieceTypeToSVG, pieceAppearances, center, _p9._0);
 		} else {
 			return _user$project$Playfield$nullSVG;
 		}
 	});
 var _user$project$EditTab$displayProtoPieceType = function (protoPiece) {
-	var _p2 = protoPiece;
-	if (_p2.ctor === 'ActualPiece') {
-		return _user$project$DevControlsCommon$displayPiecetype(_p2._0);
+	var _p10 = protoPiece;
+	if (_p10.ctor === 'ActualPiece') {
+		return _user$project$DevControlsCommon$displayPiecetype(_p10._0);
 	} else {
 		return _elm_lang$core$Native_List.fromArray(
 			[
 				_elm_lang$html$Html$text('No piece')
 			]);
 	}
+};
+var _user$project$EditTab$protoControllerSplitter = F2(
+	function (f, protoPiece) {
+		var _p11 = protoPiece;
+		if (_p11.ctor === 'ActualPiece') {
+			return f(_p11._0.controller);
+		} else {
+			return false;
+		}
+	});
+var _user$project$EditTab$splitOnController = function (list) {
+	return _elm_lang$core$Native_List.fromArray(
+		[
+			A2(
+			_elm_lang$core$Basics_ops['++'],
+			A2(
+				_elm_lang$core$List$filter,
+				_user$project$EditTab$protoControllerSplitter(_user$project$Pieces$isPlayerController),
+				list),
+			A2(
+				_elm_lang$core$List$filter,
+				F2(
+					function (x, y) {
+						return _elm_lang$core$Native_Utils.eq(x, y);
+					})(_user$project$Pieces$NoPiece),
+				list)),
+			A2(
+			_elm_lang$core$List$filter,
+			_user$project$EditTab$protoControllerSplitter(_user$project$Pieces$isComputerController),
+			list),
+			A2(
+			_elm_lang$core$List$filter,
+			_user$project$EditTab$protoControllerSplitter(_user$project$Pieces$isBothController),
+			list),
+			A2(
+			_elm_lang$core$List$filter,
+			_user$project$EditTab$protoControllerSplitter(_user$project$Pieces$isNoneController),
+			list)
+		]);
 };
 var _user$project$EditTab$render = function (model) {
 	return A2(
@@ -18708,46 +19782,6 @@ var _user$project$EditTab$render = function (model) {
 					[]),
 				_elm_lang$core$Native_List.fromArray(
 					[
-						A2(
-						_debois$elm_mdl$Material_Grid$cell,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 4)
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								A5(
-								_debois$elm_mdl$Material_Button$render,
-								_user$project$Msg$Mdl,
-								_elm_lang$core$Native_List.fromArray(
-									[1]),
-								model.mdl,
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_debois$elm_mdl$Material_Button$onClick(_user$project$Msg$GenerateBoard),
-										A2(_debois$elm_mdl$Material_Options$css, 'margin', '0 24px')
-									]),
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_debois$elm_mdl$Material_Icon$i('cached'),
-										A2(
-										_debois$elm_mdl$Material_Options$span,
-										_elm_lang$core$Native_List.fromArray(
-											[
-												A2(_debois$elm_mdl$Material_Options$css, 'width', '4px')
-											]),
-										_elm_lang$core$Native_List.fromArray(
-											[])),
-										_elm_lang$html$Html$text('Generate Board')
-									]))
-							]))
-					])),
-				A2(
-				_debois$elm_mdl$Material_Grid$grid,
-				_elm_lang$core$Native_List.fromArray(
-					[]),
-				_elm_lang$core$Native_List.fromArray(
-					[
 						A5(
 						_user$project$EditTab$toggleSwitchCell,
 						_elm_lang$core$Native_List.fromArray(
@@ -18756,14 +19790,6 @@ var _user$project$EditTab$render = function (model) {
 						_user$project$Msg$ToggleSpaceOutlines,
 						'Show outlines of empty spaces',
 						model.showSpaceOutlines),
-						A5(
-						_user$project$EditTab$toggleSwitchCell,
-						_elm_lang$core$Native_List.fromArray(
-							[9]),
-						model.mdl,
-						_user$project$Msg$ToggleSelfMoves,
-						'Allow \"moving\" to same space',
-						model.allowSelfMoves),
 						A5(
 						_user$project$EditTab$toggleSwitchCell,
 						_elm_lang$core$Native_List.fromArray(
@@ -18791,32 +19817,36 @@ var _user$project$EditTab$render = function (model) {
 						_debois$elm_mdl$Material_Grid$cell,
 						_elm_lang$core$Native_List.fromArray(
 							[
-								A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 4)
+								A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 6)
 							]),
-						A6(
-							_user$project$EditTab$makeStepper,
+						A8(
+							_user$project$EditTab$makeGamePredicateSelector,
 							_elm_lang$core$Native_List.fromArray(
 								[12]),
 							model.mdl,
 							'win condition',
 							_user$project$Msg$DecrementWinCon,
 							_user$project$Msg$IncrementWinCon,
-							_user$project$Model$getWinConString(model))),
+							_user$project$Msg$DecrementSubWinCon,
+							_user$project$Msg$IncrementSubWinCon,
+							_user$project$GameEndCons$getWinConString(model.exportModel.gameEndCons))),
 						A2(
 						_debois$elm_mdl$Material_Grid$cell,
 						_elm_lang$core$Native_List.fromArray(
 							[
-								A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 4)
+								A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 6)
 							]),
-						A6(
-							_user$project$EditTab$makeStepper,
+						A8(
+							_user$project$EditTab$makeGamePredicateSelector,
 							_elm_lang$core$Native_List.fromArray(
 								[13]),
 							model.mdl,
 							'loss condition',
 							_user$project$Msg$DecrementLossCon,
 							_user$project$Msg$IncrementLossCon,
-							_user$project$Model$getLossConString(model))),
+							_user$project$Msg$DecrementSubLossCon,
+							_user$project$Msg$IncrementSubLossCon,
+							_user$project$GameEndCons$getLossConString(model.exportModel.gameEndCons))),
 						A2(
 						_debois$elm_mdl$Material_Grid$cell,
 						_elm_lang$core$Native_List.fromArray(
@@ -18824,14 +19854,28 @@ var _user$project$EditTab$render = function (model) {
 								A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 4)
 							]),
 						A6(
-							_user$project$EditTab$makeStepper,
+							_user$project$EditTab$makeLabeledInput,
 							_elm_lang$core$Native_List.fromArray(
 								[5]),
 							model.mdl,
 							'gridWidth',
-							_user$project$Msg$DecrementGridWidth,
-							_user$project$Msg$IncrementGridWidth,
-							_elm_lang$core$Basics$toString(model.gridWidth))),
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$html$Html_Attributes$type$('number'),
+									_elm_lang$html$Html_Attributes$min('1'),
+									_elm_lang$html$Html_Attributes$step('1'),
+									_elm_lang$html$Html_Attributes$style(
+									_elm_lang$core$Native_List.fromArray(
+										[
+											{ctor: '_Tuple2', _0: 'flex', _1: '1'},
+											{ctor: '_Tuple2', _0: 'background-color', _1: _user$project$DevControlsCommon$background}
+										]))
+								]),
+							function (_p12) {
+								return _user$project$Msg$UpdateExportModel(
+									_user$project$Msg$UpdateGridWidth(_p12));
+							},
+							_elm_lang$core$Basics$toString(model.exportModel.gridWidth))),
 						A2(
 						_debois$elm_mdl$Material_Grid$cell,
 						_elm_lang$core$Native_List.fromArray(
@@ -18839,14 +19883,28 @@ var _user$project$EditTab$render = function (model) {
 								A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 4)
 							]),
 						A6(
-							_user$project$EditTab$makeStepper,
+							_user$project$EditTab$makeLabeledInput,
 							_elm_lang$core$Native_List.fromArray(
 								[6]),
 							model.mdl,
 							'gridHeight',
-							_user$project$Msg$DecrementGridHeight,
-							_user$project$Msg$IncrementGridHeight,
-							_elm_lang$core$Basics$toString(model.gridHeight))),
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$html$Html_Attributes$type$('number'),
+									_elm_lang$html$Html_Attributes$min('1'),
+									_elm_lang$html$Html_Attributes$step('1'),
+									_elm_lang$html$Html_Attributes$style(
+									_elm_lang$core$Native_List.fromArray(
+										[
+											{ctor: '_Tuple2', _0: 'flex', _1: '1'},
+											{ctor: '_Tuple2', _0: 'background-color', _1: _user$project$DevControlsCommon$background}
+										]))
+								]),
+							function (_p13) {
+								return _user$project$Msg$UpdateExportModel(
+									_user$project$Msg$UpdateGridHeight(_p13));
+							},
+							_elm_lang$core$Basics$toString(model.exportModel.gridHeight))),
 						A2(
 						_debois$elm_mdl$Material_Grid$cell,
 						_elm_lang$core$Native_List.fromArray(
@@ -18854,14 +19912,28 @@ var _user$project$EditTab$render = function (model) {
 								A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 4)
 							]),
 						A6(
-							_user$project$EditTab$makeStepper,
+							_user$project$EditTab$makeLabeledInput,
 							_elm_lang$core$Native_List.fromArray(
 								[7]),
 							model.mdl,
 							'scale',
-							_user$project$Msg$DecrementViewScale,
-							_user$project$Msg$IncrementViewScale,
-							_elm_lang$core$Basics$toString(model.viewScale)))
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$html$Html_Attributes$type$('number'),
+									_elm_lang$html$Html_Attributes$min('1'),
+									_elm_lang$html$Html_Attributes$step('0.5'),
+									_elm_lang$html$Html_Attributes$style(
+									_elm_lang$core$Native_List.fromArray(
+										[
+											{ctor: '_Tuple2', _0: 'flex', _1: '1'},
+											{ctor: '_Tuple2', _0: 'background-color', _1: _user$project$DevControlsCommon$background}
+										]))
+								]),
+							function (_p14) {
+								return _user$project$Msg$UpdateExportModel(
+									_user$project$Msg$UpdateViewScale(_p14));
+							},
+							_elm_lang$core$Basics$toString(model.exportModel.viewScale)))
 					])),
 				A2(
 				_debois$elm_mdl$Material_Grid$grid,
@@ -18878,12 +19950,12 @@ var _user$project$EditTab$render = function (model) {
 						_elm_lang$core$Native_List.fromArray(
 							[
 								A9(
-								_user$project$EditTab$deckControl,
+								_user$project$EditTab$exportDeckControl,
 								_elm_lang$core$Native_List.fromArray(
 									[2]),
 								model.mdl,
+								model.exportModel.spaceDeck,
 								_user$project$Spaces$spaceTypePossibilities,
-								model.spaceDeck,
 								'space type',
 								_user$project$DevControlsCommon$displaySpaceType,
 								_user$project$Msg$SpaceDeckDecrement,
@@ -18905,19 +19977,29 @@ var _user$project$EditTab$render = function (model) {
 							]),
 						_elm_lang$core$Native_List.fromArray(
 							[
-								A9(
-								_user$project$EditTab$deckControl,
-								_elm_lang$core$Native_List.fromArray(
-									[3]),
-								model.mdl,
-								_user$project$Pieces$protoPiecePossibilities,
-								model.pieceDeck,
-								'piece type',
-								_user$project$EditTab$displayProtoPieceType,
-								_user$project$Msg$PieceDeckDecrement,
-								_user$project$Msg$PieceDeckIncrement,
-								_user$project$DevControlsCommon$positionedSvgMakerToHtmlMaker(
-									_user$project$EditTab$protoPieceToSVG(model.pieceAppearances)))
+								function () {
+								var deckAndPossibilitiesList = A3(
+									_elm_lang$core$List$map2,
+									F2(
+										function (v0, v1) {
+											return {ctor: '_Tuple2', _0: v0, _1: v1};
+										}),
+									_user$project$EditTab$splitOnController(model.exportModel.pieceDeck),
+									_user$project$EditTab$splitOnController(_user$project$Pieces$protoPiecePossibilities));
+								var tabbedDeckBundle = A3(
+									_elm_lang$core$List$map2,
+									F2(
+										function (v0, v1) {
+											return {ctor: '_Tuple2', _0: v0, _1: v1};
+										}),
+									deckAndPossibilitiesList,
+									_user$project$EditTab$pieceDeckContolTabLabels);
+								return _user$project$EditTab$tabbedDeckControl(
+									_elm_lang$core$Native_List.fromArray(
+										[3]))(model.mdl)(tabbedDeckBundle)('piece type')(_user$project$EditTab$displayProtoPieceType)(_user$project$Msg$PieceDeckDecrement)(_user$project$Msg$PieceDeckIncrement)(
+									_user$project$DevControlsCommon$positionedSvgMakerToHtmlMaker(
+										_user$project$EditTab$protoPieceToSVG(model.exportModel.pieceAppearances)))(_user$project$Msg$SelectPieceDeckTab)(model.pieceDeckTabIndex);
+							}()
 							]))
 					]))
 			]));
@@ -18932,6 +20014,120 @@ var _user$project$DevControls$make = function (model) {
 				[]),
 			_elm_lang$core$Native_List.fromArray(
 				[])),
+			A2(
+			_debois$elm_mdl$Material_Grid$grid,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_debois$elm_mdl$Material_Grid$cell,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 2)
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A5(
+							_debois$elm_mdl$Material_Button$render,
+							_user$project$Msg$Mdl,
+							_elm_lang$core$Native_List.fromArray(
+								[-7]),
+							model.mdl,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_debois$elm_mdl$Material_Button$onClick(_user$project$Msg$SaveAs),
+									A2(_debois$elm_mdl$Material_Options$css, 'margin', '0 24px')
+								]),
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_debois$elm_mdl$Material_Icon$i('file_download'),
+									A2(
+									_debois$elm_mdl$Material_Options$span,
+									_elm_lang$core$Native_List.fromArray(
+										[
+											A2(_debois$elm_mdl$Material_Options$css, 'width', '4px')
+										]),
+									_elm_lang$core$Native_List.fromArray(
+										[])),
+									_elm_lang$html$Html$text('save')
+								]))
+						])),
+					A2(
+					_debois$elm_mdl$Material_Grid$cell,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 2)
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							model.showFileInput ? A2(
+							_elm_lang$html$Html$input,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$html$Html_Attributes$type$('file'),
+									_elm_lang$html$Html_Attributes$id('fileInput')
+								]),
+							_elm_lang$core$Native_List.fromArray(
+								[])) : A5(
+							_debois$elm_mdl$Material_Button$render,
+							_user$project$Msg$Mdl,
+							_elm_lang$core$Native_List.fromArray(
+								[-8]),
+							model.mdl,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_debois$elm_mdl$Material_Button$onClick(_user$project$Msg$Load),
+									A2(_debois$elm_mdl$Material_Options$css, 'margin', '0 24px')
+								]),
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_debois$elm_mdl$Material_Icon$i('file_upload'),
+									A2(
+									_debois$elm_mdl$Material_Options$span,
+									_elm_lang$core$Native_List.fromArray(
+										[
+											A2(_debois$elm_mdl$Material_Options$css, 'width', '4px')
+										]),
+									_elm_lang$core$Native_List.fromArray(
+										[])),
+									_elm_lang$html$Html$text('load')
+								]))
+						])),
+					A2(
+					_debois$elm_mdl$Material_Grid$cell,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 3)
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A5(
+							_debois$elm_mdl$Material_Button$render,
+							_user$project$Msg$Mdl,
+							_elm_lang$core$Native_List.fromArray(
+								[1]),
+							model.mdl,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_debois$elm_mdl$Material_Button$onClick(_user$project$Msg$GenerateBoard),
+									A2(_debois$elm_mdl$Material_Options$css, 'margin', '0 24px')
+								]),
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_debois$elm_mdl$Material_Icon$i('cached'),
+									A2(
+									_debois$elm_mdl$Material_Options$span,
+									_elm_lang$core$Native_List.fromArray(
+										[
+											A2(_debois$elm_mdl$Material_Options$css, 'width', '4px')
+										]),
+									_elm_lang$core$Native_List.fromArray(
+										[])),
+									_elm_lang$html$Html$text('Generate Board')
+								]))
+						]))
+				])),
 			A6(
 			_debois$elm_mdl$Material_Tabs$render,
 			_user$project$Msg$Mdl,
@@ -19072,7 +20268,7 @@ var _user$project$View$background = _elm_lang$core$Native_List.fromArray(
 				_elm_lang$svg$Svg_Attributes$y('0'),
 				_elm_lang$svg$Svg_Attributes$width('100%'),
 				_elm_lang$svg$Svg_Attributes$height('100%'),
-				_elm_lang$svg$Svg_Attributes$fill('#08f'),
+				_elm_lang$svg$Svg_Attributes$fill('#7F9Fff'),
 				_elm_lang$svg$Svg_Events$onClick(_user$project$Msg$HitTable),
 				_elm_lang$svg$Svg_Attributes$cursor('pointer')
 			]),
@@ -19080,8 +20276,8 @@ var _user$project$View$background = _elm_lang$core$Native_List.fromArray(
 			[]))
 	]);
 var _user$project$View$view = function (model) {
-	var viewHeight = _user$project$View$playfieldHeight * model.viewScale;
-	var viewWidth = _user$project$View$playfieldWidth * model.viewScale;
+	var viewHeight = _user$project$View$playfieldHeight * model.exportModel.viewScale;
+	var viewWidth = _user$project$View$playfieldWidth * model.exportModel.viewScale;
 	var gameResultText = function () {
 		var _p0 = model.gameResult;
 		switch (_p0.ctor) {
@@ -19103,60 +20299,75 @@ var _user$project$View$view = function (model) {
 	var playfield = _elm_lang$core$Native_List.fromArray(
 		[
 			A2(
-			_elm_lang$svg$Svg$svg,
+			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
 				[
-					_elm_lang$svg$Svg_Attributes$width(_user$project$View$playfieldWidthString),
-					_elm_lang$svg$Svg_Attributes$height(_user$project$View$playfieldHeightString),
-					_elm_lang$svg$Svg_Attributes$viewBox(
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						'0 0 ',
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(viewWidth),
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								' ',
-								_elm_lang$core$Basics$toString(viewHeight)))))
-				]),
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				_user$project$View$background,
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					_user$project$Playfield$getSpaces(model),
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						_user$project$Playfield$getPieces(model),
-						gameResultText)))),
-			A2(
-			_elm_lang$html$Html$button,
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$svg$Svg_Events$onClick(_user$project$Msg$MakeAIMove),
 					_elm_lang$html$Html_Attributes$style(
 					_elm_lang$core$Native_List.fromArray(
 						[
-							{ctor: '_Tuple2', _0: 'font-size', _1: 'xx-large'},
-							{ctor: '_Tuple2', _0: 'padding', _1: '0px'},
-							{ctor: '_Tuple2', _0: 'margin', _1: '0px'},
-							{
-							ctor: '_Tuple2',
-							_0: 'width',
-							_1: _user$project$View$px(_user$project$View$playfieldWidth)
-						},
-							{
-							ctor: '_Tuple2',
-							_0: 'height',
-							_1: _user$project$View$px((_user$project$View$playfieldHeight / 8) | 0)
-						},
-							{ctor: '_Tuple2', _0: 'pointer-events', _1: 'auto'}
+							{ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+							{ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
+							{ctor: '_Tuple2', _0: 'align-items', _1: 'center'}
 						]))
 				]),
 			_elm_lang$core$Native_List.fromArray(
 				[
-					_elm_lang$html$Html$text('End turn')
+					A2(
+					_elm_lang$svg$Svg$svg,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$svg$Svg_Attributes$width(_user$project$View$playfieldWidthString),
+							_elm_lang$svg$Svg_Attributes$height(_user$project$View$playfieldHeightString),
+							_elm_lang$svg$Svg_Attributes$viewBox(
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'0 0 ',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(viewWidth),
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										' ',
+										_elm_lang$core$Basics$toString(viewHeight)))))
+						]),
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_user$project$View$background,
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_user$project$Playfield$getSpaces(model),
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								_user$project$Playfield$getPieces(model),
+								gameResultText)))),
+					A2(
+					_elm_lang$html$Html$button,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$svg$Svg_Events$onClick(_user$project$Msg$MakeAIMove),
+							_elm_lang$html$Html_Attributes$style(
+							_elm_lang$core$Native_List.fromArray(
+								[
+									{ctor: '_Tuple2', _0: 'font-size', _1: 'xx-large'},
+									{ctor: '_Tuple2', _0: 'padding', _1: '0px'},
+									{ctor: '_Tuple2', _0: 'margin', _1: '0px'},
+									{
+									ctor: '_Tuple2',
+									_0: 'width',
+									_1: _user$project$View$px(_user$project$View$playfieldWidth)
+								},
+									{
+									ctor: '_Tuple2',
+									_0: 'height',
+									_1: _user$project$View$px((_user$project$View$playfieldHeight / 8) | 0)
+								},
+									{ctor: '_Tuple2', _0: 'pointer-events', _1: 'auto'}
+								]))
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('End turn')
+						]))
 				]))
 		]);
 	var elements = model.debug ? A2(
@@ -19170,18 +20381,28 @@ var _user$project$View$view = function (model) {
 		elements);
 };
 
+var _user$project$Ports$alert = _elm_lang$core$Native_Platform.outgoingPort(
+	'alert',
+	function (v) {
+		return v;
+	});
 var _user$project$Ports$sound = _elm_lang$core$Native_Platform.outgoingPort(
 	'sound',
 	function (v) {
 		return v;
 	});
+var _user$project$Ports$saveAs = _elm_lang$core$Native_Platform.outgoingPort(
+	'saveAs',
+	function (v) {
+		return [v._0, v._1];
+	});
+var _user$project$Ports$load = _elm_lang$core$Native_Platform.outgoingPort(
+	'load',
+	function (v) {
+		return null;
+	});
+var _user$project$Ports$recieveFile = _elm_lang$core$Native_Platform.incomingPort('recieveFile', _elm_lang$core$Json_Decode$string);
 
-var _user$project$Update$lowerScale = function (oldScale) {
-	return (_elm_lang$core$Native_Utils.cmp(oldScale, 1) > 0) ? (oldScale - 0.5) : oldScale;
-};
-var _user$project$Update$higherScale = function (oldScale) {
-	return oldScale + 0.5;
-};
 var _user$project$Update$checkPredicate = F3(
 	function (model, predicate, pieces) {
 		var _p0 = predicate;
@@ -19218,14 +20439,14 @@ var _user$project$Update$checkPredicate = F3(
 						_elm_lang$core$List$any,
 						function (_p3) {
 							var _p4 = _p3;
-							return A5(_user$project$Movement$canPieceMoveToSpace, model.allowSelfMoves, pieces, model.spaces, _p4._0, _p4._1);
+							return A4(_user$project$Movement$canPieceMoveToSpace, pieces, model.spaces, _p4._0, _p4._1);
 						},
 						indexPairs));
 		}
 	});
 var _user$project$Update$getGameResult = F2(
 	function (model, pieces) {
-		var _p5 = model.gameEndCons;
+		var _p5 = model.exportModel.gameEndCons;
 		return A3(_user$project$Update$checkPredicate, model, _p5._0, pieces) ? _user$project$Model$Win : (A3(_user$project$Update$checkPredicate, model, _p5._1, pieces) ? _user$project$Model$Loss : _user$project$Model$TBD);
 	});
 var _user$project$Update$randomAIMove = function (model) {
@@ -19244,10 +20465,197 @@ var _user$project$Update$randomAIMove = function (model) {
 		return model;
 	}
 };
+var _user$project$Update$generateBoardInfoHelper = F2(
+	function (attempts, model) {
+		generateBoardInfoHelper:
+		while (true) {
+			var _p7 = A4(_user$project$Model$makeSpaces, model.exportModel.gridWidth, model.exportModel.gridHeight, model.exportModel.spaceDeck, model.seed);
+			var spaces = _p7._0;
+			var postSpacesSeed = _p7._1;
+			var _p8 = A4(_user$project$Model$makePieces, spaces, model.exportModel.pieceDeck, model.exportModel.moveTypeDeck, postSpacesSeed);
+			var pieces = _p8._0;
+			var newSeed = _p8._1;
+			var gameResult = A2(_user$project$Update$getGameResult, model, pieces);
+			if (_elm_lang$core$Native_Utils.eq(gameResult, _user$project$Model$TBD) || (_elm_lang$core$Native_Utils.cmp(attempts, 0) < 1)) {
+				return {ctor: '_Tuple4', _0: spaces, _1: pieces, _2: gameResult, _3: newSeed};
+			} else {
+				var _v5 = attempts - 1,
+					_v6 = _elm_lang$core$Native_Utils.update(
+					model,
+					{seed: newSeed});
+				attempts = _v5;
+				model = _v6;
+				continue generateBoardInfoHelper;
+			}
+		}
+	});
+var _user$project$Update$generateBoardInfo = function (model) {
+	return A2(_user$project$Update$generateBoardInfoHelper, 4, model);
+};
+var _user$project$Update$generateBoard = function (model) {
+	var _p9 = _user$project$Update$generateBoardInfo(model);
+	var spaces = _p9._0;
+	var pieces = _p9._1;
+	var gameResult = _p9._2;
+	var newSeed = _p9._3;
+	var cmdList = _elm_lang$core$Native_Utils.eq(gameResult, _user$project$Model$TBD) ? _elm_lang$core$Native_List.fromArray(
+		[]) : _elm_lang$core$Native_List.fromArray(
+		[
+			_user$project$Ports$alert('This game has ended before it began! You might want to adjust some parameters to make this less likely to happen again.')
+		]);
+	return A2(
+		_elm_lang$core$Platform_Cmd_ops['!'],
+		_elm_lang$core$Native_Utils.update(
+			model,
+			{seed: newSeed, spaces: spaces, pieces: pieces, gameResult: gameResult}),
+		cmdList);
+};
+var _user$project$Update$updateExportModel = F2(
+	function (msg, model) {
+		var _p10 = msg;
+		switch (_p10.ctor) {
+			case 'SpaceDeckIncrement':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						spaceDeck: A2(
+							_elm_lang$core$Basics_ops['++'],
+							A2(_elm_lang$core$List$repeat, _p10._1, _p10._0),
+							model.spaceDeck)
+					});
+			case 'SpaceDeckDecrement':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						spaceDeck: A3(
+							_elm_lang$core$List$foldl,
+							_user$project$Extras$ignoreFirstArg(
+								_user$project$Extras$remove(_p10._0)),
+							model.spaceDeck,
+							_elm_lang$core$Native_List.range(1, _p10._1))
+					});
+			case 'PieceDeckIncrement':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						pieceDeck: A2(
+							_elm_lang$core$Basics_ops['++'],
+							A2(_elm_lang$core$List$repeat, _p10._1, _p10._0),
+							model.pieceDeck)
+					});
+			case 'PieceDeckDecrement':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						pieceDeck: A3(
+							_elm_lang$core$List$foldl,
+							_user$project$Extras$ignoreFirstArg(
+								_user$project$Extras$remove(_p10._0)),
+							model.pieceDeck,
+							_elm_lang$core$Native_List.range(1, _p10._1))
+					});
+			case 'UpdateGridWidth':
+				var _p11 = _elm_lang$core$String$toInt(_p10._0);
+				if (_p11.ctor === 'Ok') {
+					return _elm_lang$core$Native_Utils.update(
+						model,
+						{gridWidth: _p11._0});
+				} else {
+					return model;
+				}
+			case 'UpdateGridHeight':
+				var _p12 = _elm_lang$core$String$toInt(_p10._0);
+				if (_p12.ctor === 'Ok') {
+					return _elm_lang$core$Native_Utils.update(
+						model,
+						{gridHeight: _p12._0});
+				} else {
+					return model;
+				}
+			case 'UpdateColour':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						pieceAppearances: A3(_user$project$PieceAppearances$updateColour, _p10._0, _p10._1, model.pieceAppearances)
+					});
+			case 'UpdateViewScale':
+				var _p13 = _elm_lang$core$String$toFloat(_p10._0);
+				if (_p13.ctor === 'Ok') {
+					return _elm_lang$core$Native_Utils.update(
+						model,
+						{viewScale: _p13._0});
+				} else {
+					return model;
+				}
+			case 'DecrementWinCon':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						gameEndCons: _user$project$GameEndCons$decrementWinCon(model.gameEndCons)
+					});
+			case 'IncrementWinCon':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						gameEndCons: _user$project$GameEndCons$incrementWinCon(model.gameEndCons)
+					});
+			case 'DecrementLossCon':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						gameEndCons: _user$project$GameEndCons$decrementLossCon(model.gameEndCons)
+					});
+			case 'IncrementLossCon':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						gameEndCons: _user$project$GameEndCons$incrementLossCon(model.gameEndCons)
+					});
+			case 'DecrementSubWinCon':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						gameEndCons: A2(
+							_elm_lang$core$Debug$log,
+							'',
+							_user$project$GameEndCons$decrementSubWinCon(model.gameEndCons))
+					});
+			case 'IncrementSubWinCon':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						gameEndCons: _user$project$GameEndCons$incrementSubWinCon(model.gameEndCons)
+					});
+			case 'DecrementSubLossCon':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						gameEndCons: _user$project$GameEndCons$decrementSubLossCon(model.gameEndCons)
+					});
+			case 'IncrementSubLossCon':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						gameEndCons: _user$project$GameEndCons$incrementSubLossCon(model.gameEndCons)
+					});
+			case 'EditPoints':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						pieceAppearances: A3(_user$project$PieceAppearances$updatePoints, _p10._0, _p10._1, model.pieceAppearances)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						pieceAppearances: A3(_user$project$PieceAppearances$updateIcon, _p10._1, _p10._0, model.pieceAppearances)
+					});
+		}
+	});
 var _user$project$Update$update = F2(
 	function (message, model) {
-		var _p7 = message;
-		switch (_p7.ctor) {
+		var _p14 = message;
+		switch (_p14.ctor) {
 			case 'HitTable':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
@@ -19264,7 +20672,7 @@ var _user$project$Update$update = F2(
 					_elm_lang$core$Native_Utils.update(
 						model,
 						{
-							pieceSelected: _elm_lang$core$Maybe$Just(_p7._0)
+							pieceSelected: _elm_lang$core$Maybe$Just(_p14._0)
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -19277,7 +20685,7 @@ var _user$project$Update$update = F2(
 					_elm_lang$core$Native_List.fromArray(
 						[]));
 			case 'MovePiece':
-				var newPieces = A3(_user$project$Movement$getNewPieces, model, _p7._0, _p7._1);
+				var newPieces = A3(_user$project$Movement$getNewPieces, model, _p14._0, _p14._1);
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
@@ -19292,131 +20700,30 @@ var _user$project$Update$update = F2(
 							_user$project$Ports$sound('clack')
 						]));
 			case 'GenerateBoard':
-				var _p8 = A4(_user$project$Model$makeSpaces, model.gridWidth, model.gridHeight, model.spaceDeck, model.seed);
-				var spaces = _p8._0;
-				var postSpacesSeed = _p8._1;
-				var _p9 = A4(_user$project$Model$makePieces, spaces, model.pieceDeck, model.moveTypeDeck, postSpacesSeed);
-				var pieces = _p9._0;
-				var newSeed = _p9._1;
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{
-							seed: newSeed,
-							spaces: spaces,
-							pieces: pieces,
-							gameResult: A2(_user$project$Update$getGameResult, model, pieces)
-						}),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
+				return _user$project$Update$generateBoard(model);
 			case 'SelectTab':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						model,
-						{tabIndex: _p7._0}),
+						{tabIndex: _p14._0}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
-			case 'SpaceDeckIncrement':
+			case 'SelectPieceDeckTab':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{pieceDeckTabIndex: _p14._0}),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			case 'UpdateExportModel':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						model,
 						{
-							spaceDeck: A2(
-								_elm_lang$core$Basics_ops['++'],
-								A2(_elm_lang$core$List$repeat, _p7._1, _p7._0),
-								model.spaceDeck)
-						}),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			case 'SpaceDeckDecrement':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{
-							spaceDeck: A3(
-								_elm_lang$core$List$foldl,
-								_user$project$Extras$ignoreFirstArg(
-									_user$project$Extras$remove(_p7._0)),
-								model.spaceDeck,
-								_elm_lang$core$Native_List.range(1, _p7._1))
-						}),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			case 'PieceDeckIncrement':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{
-							pieceDeck: A2(
-								_elm_lang$core$Basics_ops['++'],
-								A2(_elm_lang$core$List$repeat, _p7._1, _p7._0),
-								model.pieceDeck)
-						}),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			case 'PieceDeckDecrement':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{
-							pieceDeck: A3(
-								_elm_lang$core$List$foldl,
-								_user$project$Extras$ignoreFirstArg(
-									_user$project$Extras$remove(_p7._0)),
-								model.pieceDeck,
-								_elm_lang$core$Native_List.range(1, _p7._1))
-						}),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			case 'IncrementGridWidth':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{gridWidth: model.gridWidth + 1}),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			case 'DecrementGridWidth':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{
-							gridWidth: A2(_elm_lang$core$Basics$max, 0, model.gridWidth - 1)
-						}),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			case 'IncrementGridHeight':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{gridHeight: model.gridHeight + 1}),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			case 'DecrementGridHeight':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{
-							gridHeight: A2(_elm_lang$core$Basics$max, 0, model.gridHeight - 1)
-						}),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			case 'UpdateColour':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{
-							pieceAppearances: A3(_user$project$PieceAppearances$updateColour, _p7._0, _p7._1, model.pieceAppearances)
+							exportModel: A2(_user$project$Update$updateExportModel, _p14._0, model.exportModel)
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -19427,16 +20734,6 @@ var _user$project$Update$update = F2(
 						model,
 						{
 							showSpaceOutlines: _elm_lang$core$Basics$not(model.showSpaceOutlines)
-						}),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			case 'ToggleSelfMoves':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{
-							allowSelfMoves: _elm_lang$core$Basics$not(model.allowSelfMoves)
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -19460,86 +20757,6 @@ var _user$project$Update$update = F2(
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
-			case 'IncrementViewScale':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{
-							viewScale: _user$project$Update$higherScale(model.viewScale)
-						}),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			case 'DecrementViewScale':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{
-							viewScale: _user$project$Update$lowerScale(model.viewScale)
-						}),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			case 'DecrementWinCon':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{
-							gameEndCons: _user$project$Model$decrementWinCon(model.gameEndCons)
-						}),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			case 'IncrementWinCon':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{
-							gameEndCons: _user$project$Model$incrementWinCon(model.gameEndCons)
-						}),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			case 'DecrementLossCon':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{
-							gameEndCons: _user$project$Model$decrementLossCon(model.gameEndCons)
-						}),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			case 'IncrementLossCon':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{
-							gameEndCons: _user$project$Model$incrementLossCon(model.gameEndCons)
-						}),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			case 'EditPoints':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{
-							pieceAppearances: A3(_user$project$PieceAppearances$updatePoints, _p7._0, _p7._1, model.pieceAppearances)
-						}),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			case 'SetIcon':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{
-							pieceAppearances: A3(_user$project$PieceAppearances$updateIcon, _p7._1, _p7._0, model.pieceAppearances)
-						}),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
 			case 'MakeAIMove':
 				return _user$project$Model$canMove(model) ? A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
@@ -19552,6 +20769,66 @@ var _user$project$Update$update = F2(
 					model,
 					_elm_lang$core$Native_List.fromArray(
 						[]));
+			case 'SaveAs':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					model,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_user$project$Ports$saveAs(
+							{
+								ctor: '_Tuple2',
+								_0: _user$project$ExportModel$toString(model.exportModel),
+								_1: 'editorState.txt'
+							})
+						]));
+			case 'Load':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{showFileInput: true}),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_user$project$Ports$load(
+							{ctor: '_Tuple0'})
+						]));
+			case 'RecieveLoadedFile':
+				var _p18 = _p14._0;
+				var _p15 = _user$project$ExportModel$parse(_p18);
+				if (_p15.ctor === 'Ok') {
+					return _user$project$Update$generateBoard(
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{exportModel: _p15._0, showFileInput: false}));
+				} else {
+					var _p16 = _user$project$ExportModel$parseDefaultingOnError(_p18);
+					if (_p16.ctor === 'Ok') {
+						var _p17 = _user$project$Update$generateBoard(
+							_elm_lang$core$Native_Utils.update(
+								model,
+								{exportModel: _p16._0, showFileInput: false}));
+						var newModel = _p17._0;
+						var cmd = _p17._1;
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							newModel,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									cmd,
+									_user$project$Ports$alert(
+									A2(_elm_lang$core$Basics_ops['++'], 'Falling back to some defaults since parsing the file failed with this message: ', _p15._0))
+								]));
+					} else {
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							model,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_user$project$Ports$alert(_p16._0)
+								]));
+					}
+				}
 			case 'Animate':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
@@ -19563,7 +20840,7 @@ var _user$project$Update$update = F2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						model,
-						{windowSize: _p7._0}),
+						{windowSize: _p14._0}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
 			case 'GetSeed':
@@ -19576,7 +20853,7 @@ var _user$project$Update$update = F2(
 								A2(
 									_elm_lang$core$Debug$log,
 									'seed',
-									_elm_lang$core$Basics$round(_p7._0)))
+									_elm_lang$core$Basics$round(_p14._0)))
 						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
@@ -19589,19 +20866,17 @@ var _user$project$Update$update = F2(
 							_user$project$Ports$sound('tableHit')
 						]));
 			default:
-				return A2(_debois$elm_mdl$Material$update, _p7._0, model);
+				return A2(_debois$elm_mdl$Material$update, _p14._0, model);
 		}
 	});
 
 var _user$project$Main$alwaysList = _elm_lang$core$Native_List.fromArray(
 	[
-		_elm_lang$window$Window$resizes(_user$project$Msg$Resize)
+		_elm_lang$window$Window$resizes(_user$project$Msg$Resize),
+		_user$project$Ports$recieveFile(_user$project$Msg$RecieveLoadedFile)
 	]);
 var _user$project$Main$subscriptions = function (model) {
-	var sometimesList = _elm_lang$core$Native_List.fromArray(
-		[]);
-	return _elm_lang$core$Platform_Sub$batch(
-		A2(_elm_lang$core$Basics_ops['++'], _user$project$Main$alwaysList, sometimesList));
+	return _elm_lang$core$Platform_Sub$batch(_user$project$Main$alwaysList);
 };
 var _user$project$Main$init = A2(
 	_elm_lang$core$Platform_Cmd_ops['!'],
