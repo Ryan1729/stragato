@@ -19248,118 +19248,164 @@ _user$project$EditTab_ops['...'] = function (_p0) {
 var _user$project$EditTab$deckControl = F9(
 	function (index, mdl, currentDeck, possibilities, typeHeading, typeDisplay, removeMessage, addMessage, elementView) {
 		return A2(
-			_debois$elm_mdl$Material_Table$table,
+			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
 				[
-					A2(_debois$elm_mdl$Material_Options$css, 'background-color', _user$project$DevControlsCommon$background)
+					_elm_lang$html$Html_Attributes$style(
+					_elm_lang$core$Native_List.fromArray(
+						[
+							{ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+							{ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
+							{ctor: '_Tuple2', _0: 'align-items', _1: 'center'}
+						]))
 				]),
 			_elm_lang$core$Native_List.fromArray(
 				[
 					A2(
-					_debois$elm_mdl$Material_Table$thead,
+					_elm_lang$html$Html$div,
 					_elm_lang$core$Native_List.fromArray(
 						[]),
 					_elm_lang$core$Native_List.fromArray(
 						[
 							A2(
-							_debois$elm_mdl$Material_Table$tr,
+							_elm_lang$html$Html$div,
 							_elm_lang$core$Native_List.fromArray(
-								[]),
+								[
+									_elm_lang$html$Html_Attributes$style(
+									_elm_lang$core$Native_List.fromArray(
+										[
+											{ctor: '_Tuple2', _0: 'width', _1: '100%'},
+											{ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+											{ctor: '_Tuple2', _0: 'background-color', _1: _user$project$DevControlsCommon$background}
+										]))
+								]),
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$html$Html$text(
+									A2(
+										F2(
+											function (x, y) {
+												return A2(_elm_lang$core$Basics_ops['++'], x, y);
+											}),
+										'Total: ',
+										_elm_lang$core$Basics$toString(
+											_elm_lang$core$List$length(currentDeck))))
+								])),
+							A2(
+							_debois$elm_mdl$Material_Table$table,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									A2(_debois$elm_mdl$Material_Options$css, 'background-color', _user$project$DevControlsCommon$background)
+								]),
 							_elm_lang$core$Native_List.fromArray(
 								[
 									A2(
-									_debois$elm_mdl$Material_Table$th,
+									_debois$elm_mdl$Material_Table$thead,
 									_elm_lang$core$Native_List.fromArray(
 										[]),
 									_elm_lang$core$Native_List.fromArray(
 										[
-											_elm_lang$html$Html$text('Deck Element')
-										])),
-									A2(
-									_debois$elm_mdl$Material_Table$th,
-									_elm_lang$core$Native_List.fromArray(
-										[]),
-									_elm_lang$core$Native_List.fromArray(
-										[
-											_elm_lang$html$Html$text(typeHeading)
-										])),
-									A2(
-									_debois$elm_mdl$Material_Table$th,
-									_elm_lang$core$Native_List.fromArray(
-										[_debois$elm_mdl$Material_Table$numeric]),
-									_elm_lang$core$Native_List.fromArray(
-										[
-											_elm_lang$html$Html$text('Quantity')
-										]))
-								]))
-						])),
-					A2(
-					_debois$elm_mdl$Material_Table$tbody,
-					_elm_lang$core$Native_List.fromArray(
-						[]),
-					A2(
-						_elm_lang$core$List$map,
-						function (item) {
-							return A2(
-								_debois$elm_mdl$Material_Table$tr,
-								_elm_lang$core$Native_List.fromArray(
-									[]),
-								_elm_lang$core$Native_List.fromArray(
-									[
-										A2(
-										_debois$elm_mdl$Material_Table$td,
-										_elm_lang$core$Native_List.fromArray(
-											[]),
-										_elm_lang$core$Native_List.fromArray(
-											[
-												elementView(item)
-											])),
-										A2(
-										_debois$elm_mdl$Material_Table$td,
-										_elm_lang$core$Native_List.fromArray(
-											[]),
-										typeDisplay(item)),
-										A2(
-										_debois$elm_mdl$Material_Table$td,
-										_elm_lang$core$Native_List.fromArray(
-											[]),
-										_elm_lang$core$Native_List.fromArray(
-											[
-												function () {
-												var currentAmount = A2(_user$project$EditTab$amountOfItemInDeck, item, currentDeck);
-												return A2(
-													_elm_lang$html$Html$input,
+											A2(
+											_debois$elm_mdl$Material_Table$tr,
+											_elm_lang$core$Native_List.fromArray(
+												[]),
+											_elm_lang$core$Native_List.fromArray(
+												[
+													A2(
+													_debois$elm_mdl$Material_Table$th,
+													_elm_lang$core$Native_List.fromArray(
+														[]),
 													_elm_lang$core$Native_List.fromArray(
 														[
-															_elm_lang$html$Html_Attributes$type$('number'),
-															_elm_lang$html$Html_Attributes$min('0'),
-															_elm_lang$html$Html_Attributes$step('any'),
-															_elm_lang$html$Html_Events$onInput(
-															function (_p3) {
-																return function (newAmount) {
-																	return (_elm_lang$core$Native_Utils.cmp(newAmount, currentAmount) > 0) ? A2(addMessage, item, newAmount - currentAmount) : ((_elm_lang$core$Native_Utils.cmp(newAmount, currentAmount) < 0) ? A2(removeMessage, item, currentAmount - newAmount) : _user$project$Msg$NoOp);
-																}(
-																	A2(
-																		_elm_lang$core$Result$withDefault,
-																		currentAmount,
-																		_elm_lang$core$String$toInt(_p3)));
-															}),
-															_elm_lang$html$Html_Attributes$value(
-															_elm_lang$core$Basics$toString(currentAmount)),
-															_elm_lang$html$Html_Attributes$style(
-															_elm_lang$core$Native_List.fromArray(
-																[
-																	{ctor: '_Tuple2', _0: 'width', _1: '4rem'},
-																	{ctor: '_Tuple2', _0: 'background-color', _1: _user$project$DevControlsCommon$background}
-																]))
-														]),
+															_elm_lang$html$Html$text('Deck Element')
+														])),
+													A2(
+													_debois$elm_mdl$Material_Table$th,
 													_elm_lang$core$Native_List.fromArray(
-														[]));
-											}()
-											]))
-									]));
-						},
-						possibilities))
+														[]),
+													_elm_lang$core$Native_List.fromArray(
+														[
+															_elm_lang$html$Html$text(typeHeading)
+														])),
+													A2(
+													_debois$elm_mdl$Material_Table$th,
+													_elm_lang$core$Native_List.fromArray(
+														[_debois$elm_mdl$Material_Table$numeric]),
+													_elm_lang$core$Native_List.fromArray(
+														[
+															_elm_lang$html$Html$text('Quantity')
+														]))
+												]))
+										])),
+									A2(
+									_debois$elm_mdl$Material_Table$tbody,
+									_elm_lang$core$Native_List.fromArray(
+										[]),
+									A2(
+										_elm_lang$core$List$map,
+										function (item) {
+											return A2(
+												_debois$elm_mdl$Material_Table$tr,
+												_elm_lang$core$Native_List.fromArray(
+													[]),
+												_elm_lang$core$Native_List.fromArray(
+													[
+														A2(
+														_debois$elm_mdl$Material_Table$td,
+														_elm_lang$core$Native_List.fromArray(
+															[]),
+														_elm_lang$core$Native_List.fromArray(
+															[
+																elementView(item)
+															])),
+														A2(
+														_debois$elm_mdl$Material_Table$td,
+														_elm_lang$core$Native_List.fromArray(
+															[]),
+														typeDisplay(item)),
+														A2(
+														_debois$elm_mdl$Material_Table$td,
+														_elm_lang$core$Native_List.fromArray(
+															[]),
+														_elm_lang$core$Native_List.fromArray(
+															[
+																function () {
+																var currentAmount = A2(_user$project$EditTab$amountOfItemInDeck, item, currentDeck);
+																return A2(
+																	_elm_lang$html$Html$input,
+																	_elm_lang$core$Native_List.fromArray(
+																		[
+																			_elm_lang$html$Html_Attributes$type$('number'),
+																			_elm_lang$html$Html_Attributes$min('0'),
+																			_elm_lang$html$Html_Attributes$step('any'),
+																			_elm_lang$html$Html_Events$onInput(
+																			function (_p3) {
+																				return function (newAmount) {
+																					return (_elm_lang$core$Native_Utils.cmp(newAmount, currentAmount) > 0) ? A2(addMessage, item, newAmount - currentAmount) : ((_elm_lang$core$Native_Utils.cmp(newAmount, currentAmount) < 0) ? A2(removeMessage, item, currentAmount - newAmount) : _user$project$Msg$NoOp);
+																				}(
+																					A2(
+																						_elm_lang$core$Result$withDefault,
+																						currentAmount,
+																						_elm_lang$core$String$toInt(_p3)));
+																			}),
+																			_elm_lang$html$Html_Attributes$value(
+																			_elm_lang$core$Basics$toString(currentAmount)),
+																			_elm_lang$html$Html_Attributes$style(
+																			_elm_lang$core$Native_List.fromArray(
+																				[
+																					{ctor: '_Tuple2', _0: 'width', _1: '4rem'},
+																					{ctor: '_Tuple2', _0: 'background-color', _1: _user$project$DevControlsCommon$background}
+																				]))
+																		]),
+																	_elm_lang$core$Native_List.fromArray(
+																		[]));
+															}()
+															]))
+													]));
+										},
+										possibilities))
+								]))
+						]))
 				]));
 	});
 var _user$project$EditTab$exportDeckControl = F9(
@@ -19379,22 +19425,7 @@ var _user$project$EditTab$exportDeckControl = F9(
 var _user$project$EditTab$deckControlTab = F8(
 	function (index, mdl, typeHeading, typeDisplay, removeMessage, addMessage, elementView, _p4) {
 		var _p5 = _p4;
-		return A2(
-			_elm_lang$html$Html$div,
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$html$Html_Attributes$style(
-					_elm_lang$core$Native_List.fromArray(
-						[
-							{ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-							{ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
-							{ctor: '_Tuple2', _0: 'align-items', _1: 'center'}
-						]))
-				]),
-			_elm_lang$core$Native_List.fromArray(
-				[
-					A9(_user$project$EditTab$exportDeckControl, index, mdl, _p5._0, _p5._1, typeHeading, typeDisplay, removeMessage, addMessage, elementView)
-				]));
+		return A9(_user$project$EditTab$exportDeckControl, index, mdl, _p5._0, _p5._1, typeHeading, typeDisplay, removeMessage, addMessage, elementView);
 	});
 var _user$project$EditTab$tabbedDeckControl = function (index) {
 	return function (mdl) {
