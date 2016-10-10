@@ -293,53 +293,70 @@ deckControl :
     -> (a -> Html Msg)
     -> Html Msg
 deckControl index mdl currentDeck possibilities typeHeading typeDisplay removeMessage addMessage elementView =
-    Table.table [ css "background-color" DCC.background ]
-        [ Table.thead []
-            [ Table.tr []
-                [ Table.th [{- Table.onClick Reorder -}]
-                    [ text "Deck Element" ]
-                , Table.th [] [ text typeHeading ]
-                , Table.th [ Table.numeric ] [ text "Quantity" ]
+    div
+        [ style
+            [ ( "display", "flex" )
+            , ( "flex-direction", "column" )
+            , ( "align-items", "center" )
+            ]
+        ]
+        [ div []
+            [ div [ style [ ( "width", "100%" ), ( "text-align", "center" ), ( "background-color", DCC.background ) ] ]
+                [ currentDeck
+                    |> List.length
+                    |> toString
+                    |> ((++) "Total: ")
+                    |> text
+                ]
+            , Table.table [ css "background-color" DCC.background ]
+                [ Table.thead []
+                    [ Table.tr []
+                        [ Table.th [{- Table.onClick Reorder -}]
+                            [ text "Deck Element" ]
+                        , Table.th [] [ text typeHeading ]
+                        , Table.th [ Table.numeric ] [ text "Quantity" ]
+                        ]
+                    ]
+                , Table.tbody []
+                    (possibilities
+                        |> List.map
+                            (\item ->
+                                Table.tr []
+                                    [ Table.td []
+                                        [ elementView item
+                                        ]
+                                    , Table.td []
+                                        <| typeDisplay item
+                                    , Table.td []
+                                        [ let
+                                            currentAmount =
+                                                amountOfItemInDeck item currentDeck
+                                          in
+                                            Html.input
+                                                [ Html.Attributes.type' "number"
+                                                , Html.Attributes.min "0"
+                                                , Html.Attributes.step "any"
+                                                , String.toInt
+                                                    >> Result.withDefault currentAmount
+                                                    >> (\newAmount ->
+                                                            if newAmount > currentAmount then
+                                                                addMessage item (newAmount - currentAmount)
+                                                            else if newAmount < currentAmount then
+                                                                removeMessage item (currentAmount - newAmount)
+                                                            else
+                                                                NoOp
+                                                       )
+                                                    |> onInput
+                                                , currentAmount |> toString |> Html.Attributes.value
+                                                , style [ ( "width", "4rem" ), ( "background-color", DCC.background ) ]
+                                                ]
+                                                []
+                                        ]
+                                    ]
+                            )
+                    )
                 ]
             ]
-        , Table.tbody []
-            (possibilities
-                |> List.map
-                    (\item ->
-                        Table.tr []
-                            [ Table.td []
-                                [ elementView item
-                                ]
-                            , Table.td []
-                                <| typeDisplay item
-                            , Table.td []
-                                [ let
-                                    currentAmount =
-                                        amountOfItemInDeck item currentDeck
-                                  in
-                                    Html.input
-                                        [ Html.Attributes.type' "number"
-                                        , Html.Attributes.min "0"
-                                        , Html.Attributes.step "any"
-                                        , String.toInt
-                                            >> Result.withDefault currentAmount
-                                            >> (\newAmount ->
-                                                    if newAmount > currentAmount then
-                                                        addMessage item (newAmount - currentAmount)
-                                                    else if newAmount < currentAmount then
-                                                        removeMessage item (currentAmount - newAmount)
-                                                    else
-                                                        NoOp
-                                               )
-                                            |> onInput
-                                        , currentAmount |> toString |> Html.Attributes.value
-                                        , style [ ( "width", "4rem" ), ( "background-color", DCC.background ) ]
-                                        ]
-                                        []
-                                ]
-                            ]
-                    )
-            )
         ]
 
 
@@ -447,23 +464,15 @@ deckControlTab :
     -> ( List a, List a )
     -> Html Msg
 deckControlTab index mdl typeHeading typeDisplay removeMessage addMessage elementView ( currentDeck, possibilities ) =
-    div
-        [ style
-            [ ( "display", "flex" )
-            , ( "flex-direction", "column" )
-            , ( "align-items", "center" )
-            ]
-        ]
-        [ exportDeckControl index
-            mdl
-            currentDeck
-            possibilities
-            typeHeading
-            typeDisplay
-            removeMessage
-            addMessage
-            elementView
-        ]
+    exportDeckControl index
+        mdl
+        currentDeck
+        possibilities
+        typeHeading
+        typeDisplay
+        removeMessage
+        addMessage
+        elementView
 
 
 amountOfItemInDeck : a -> List a -> Int
