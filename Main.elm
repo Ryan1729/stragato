@@ -28,13 +28,11 @@ main =
 init =
     defaultState
         ! [ Task.perform (always <| GetSeed -1.0) GetSeed Time.now
-          , Task.perform (always <| Resize { width = 600, height = 600 }) Resize Window.size
           ]
 
 
 alwaysList =
-    [ Window.resizes Resize
-    , Ports.recieveFile RecieveLoadedFile
+    [ Ports.recieveFile RecieveLoadedFile
       -- , AnimationFrame.diffs Animate
     ]
 

@@ -16,7 +16,6 @@ type Msg
     | MovePiece Int ( Int, Int )
     | GetSeed Float
     | GenerateBoard
-    | Resize { width : Int, height : Int }
     | MakeAIMove
     | SelectTab Int
     | SelectPieceDeckTab Int

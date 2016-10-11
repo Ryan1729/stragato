@@ -53,9 +53,6 @@ fontHeightFraction =
 view : Model -> Html Msg
 view model =
     let
-        -- size = model.windowSize
-        -- windowWidth = size.width
-        -- windowHeight = size.height
         viewWidth =
             playfieldWidth * model.exportModel.viewScale
 

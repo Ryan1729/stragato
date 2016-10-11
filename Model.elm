@@ -29,7 +29,6 @@ type alias Model =
     , debug : Bool
     , showSpaceOutlines : Bool
     , allowMovingAllPieces : Bool
-    , windowSize : { width : Int, height : Int }
     , mdl : Material.Model
     }
 
@@ -48,7 +47,6 @@ defaultState =
     , debug = True
     , showSpaceOutlines = True
     , allowMovingAllPieces = False
-    , windowSize = { width = 600, height = 600 }
     , mdl = Material.model
     }
 

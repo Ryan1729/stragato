@@ -116,9 +116,6 @@ update message model =
         Animate _ ->
             model ! []
 
-        Resize size ->
-            { model | windowSize = size } ! []
-
         GetSeed time ->
             { model
                 | seed =
