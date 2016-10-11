@@ -9,14 +9,8 @@ import PieceAppearances exposing (Icon)
 
 
 type Msg
-    = HitTable
-    | SelectPiece Int
-    | ClearPieceSelection
-    | Animate Float
-    | MovePiece Int ( Int, Int )
+    = Animate Float
     | GetSeed Float
-    | GenerateBoard
-    | MakeAIMove
     | SelectTab Int
     | SelectPieceDeckTab Int
     | Mdl (Material.Msg Msg)

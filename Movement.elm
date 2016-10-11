@@ -10,9 +10,10 @@ import Deck
 import Math.Vector2 as V2 exposing (Vec2, vec2)
 import PieceAppearances exposing (PieceAppearances)
 import PosInt
+import ExportModel exposing (ExportModel)
 
 
-getNewPieces : Model -> Int -> SpaceIndex -> Pieces
+getNewPieces : { model | spaces : Spaces, pieces : Pieces, exportModel : ExportModel } -> Int -> SpaceIndex -> Pieces
 getNewPieces model pieceID spaceID =
     if
         canPieceMoveToSpace model.pieces
@@ -74,7 +75,7 @@ movePieceToSpace pieceAppearances pieces spaces index spaceIndex =
             pieces
 
 
-getPossibleMoveList : Model -> List ( Int, SpaceIndex )
+getPossibleMoveList : { model | spaces : Spaces, pieces : Pieces } -> List ( Int, SpaceIndex )
 getPossibleMoveList model =
     let
         cpuMovablePieces =

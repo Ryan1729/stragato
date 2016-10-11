@@ -16,49 +16,33 @@ import ExportModel exposing (ExportModel)
 
 
 type alias Model =
-    { pieceSelected : Maybe Int
-    , pieces : Pieces
+    { pieces : Pieces
     , spaces : Spaces
     , seed : Seed
     , tabIndex : Int
     , pieceDeckTabIndex : Int
     , exportModel : ExportModel
-    , gameResult : GameResult
     , ignoreGameResult : Bool
-    , showFileInput : Bool
-    , debug : Bool
     , showSpaceOutlines : Bool
     , allowMovingAllPieces : Bool
+    , showFileInput : Bool
     , mdl : Material.Model
     }
 
 
 defaultState =
-    { pieceSelected = Nothing
-    , pieces = defaultPieces
+    { pieces = defaultPieces
     , spaces = defaultSpaces
     , seed = (Random.initialSeed 42)
     , tabIndex = 0
     , pieceDeckTabIndex = 0
     , exportModel = ExportModel.defaultExportModel
-    , gameResult = TBD
     , ignoreGameResult = False
     , showFileInput = False
-    , debug = True
     , showSpaceOutlines = True
     , allowMovingAllPieces = False
     , mdl = Material.model
     }
-
-
-
---TODO: should draws be possible?
-
-
-type GameResult
-    = Win
-    | Loss
-    | TBD
 
 
 defaultSpaces =
@@ -146,8 +130,3 @@ attemptPiece protoPiece position =
 
         NoPiece ->
             Nothing
-
-
-canMove : Model -> Bool
-canMove model =
-    model.ignoreGameResult || model.gameResult == TBD

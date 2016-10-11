@@ -1,10 +1,10 @@
-module Main exposing (..)
+module Editor exposing (..)
 
 import Html.App exposing (program)
 import View exposing (view)
 import Model exposing (defaultState)
 import Update exposing (update)
-import Msg exposing (Msg(Animate, GetSeed, Resize, RecieveLoadedFile))
+import Msg exposing (Msg(Animate, GetSeed, RecieveLoadedFile))
 import Window
 import Mouse
 import AnimationFrame

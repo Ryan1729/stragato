@@ -50,18 +50,6 @@ make model =
                     , text "load"
                     ]
             ]
-        , cell [ size All 3 ]
-            [ Button.render Msg.Mdl
-                [ 1 ]
-                model.mdl
-                [ Button.onClick Msg.GenerateBoard
-                , css "margin" "0 24px"
-                ]
-                [ Icon.i "cached"
-                , Options.span [ css "width" "4px" ] []
-                , text "Generate Board"
-                ]
-            ]
         ]
     , Tabs.render Msg.Mdl
         [ -1 ]
@@ -95,9 +83,7 @@ make model =
 
             _ ->
                 div []
-                    [ text <| toString model.gameResult
-                    , Html.hr [] []
-                    , text (toString model)
+                    [ text (toString model)
                     ]
         ]
     ]

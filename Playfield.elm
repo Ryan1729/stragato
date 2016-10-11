@@ -1,10 +1,10 @@
 module Playfield exposing (..)
 
-import Model exposing (Model)
+import GameModel exposing (Model)
 import Svg exposing (Svg, svg, rect, polygon, circle, g, Attribute)
 import Svg.Attributes exposing (..)
 import Svg.Events exposing (onClick, on)
-import Msg exposing (Msg(SelectPiece, ClearPieceSelection, Mdl))
+import GameMsg exposing (Msg(SelectPiece, ClearPieceSelection))
 import Math.Vector2 as V2 exposing (Vec2, vec2, getX, getY, add, scale)
 import Points
 import Array
@@ -78,7 +78,7 @@ getSpaceView showOutlines pieceSelectedInfo ( index, currentSpace ) =
                 Just ( id, canMoveHere ) ->
                     let
                         baseExtras =
-                            [ onClick <| Msg.MovePiece id index, cursor "pointer" ]
+                            [ onClick <| GameMsg.MovePiece id index, cursor "pointer" ]
                     in
                         if canMoveHere then
                             baseExtras
@@ -136,7 +136,7 @@ getPieceAttributes model currentID currentPiece =
                 case Spaces.getSpaceFromPosition model.spaces currentPiece.position of
                     Just spaceIndex ->
                         [ onClick
-                            <| Msg.MovePiece selectedID
+                            <| GameMsg.MovePiece selectedID
                                 spaceIndex
                         , cursor "pointer"
                         , stroke "grey"
@@ -156,19 +156,18 @@ getPieceAttributes model currentID currentPiece =
 
 shouldAllowSelecting : Model -> Piece -> Bool
 shouldAllowSelecting model currentPiece =
-    Model.canMove model
+    GameModel.canMove model
         && (model.allowMovingAllPieces
                 || Pieces.isPlayerControllable currentPiece
            )
 
 
-piece : PieceAppearances -> List (Attribute Msg) -> Vec2 -> PieceType -> Svg Msg
+piece : PieceAppearances -> List (Attribute msg) -> Vec2 -> PieceType -> Svg msg
 piece pieceAppearances extras center pieceType =
     let
         otherAttributes =
             basicPieceAttributes ++ extras
     in
-        --TODO get record pattern matching working/report bug
         case ( PieceAppearances.get pieceType pieceAppearances, pieceType.moveType ) of
             ( ( PointsList pointsList, fillString, icon ), moveType ) ->
                 (polygonPiece
@@ -188,7 +187,7 @@ piece pieceAppearances extras center pieceType =
                     |> addIcon icon center
 
 
-addIcon : Icon -> Vec2 -> Svg Msg -> Svg Msg
+addIcon : Icon -> Vec2 -> Svg msg -> Svg msg
 addIcon icon center pieceView =
     let
         baseList =
@@ -228,7 +227,7 @@ scaledSpacePointsList =
         Points.spacePointsList
 
 
-emptySpaceIcon : Vec2 -> Svg Msg
+emptySpaceIcon : Vec2 -> Svg msg
 emptySpaceIcon center =
     let
         iconCenter =
@@ -283,12 +282,12 @@ polygonPiece finalAttributes =
         []
 
 
-eyePiece : List (Attribute Msg) -> Vec2 -> Svg Msg
+eyePiece : List (Attribute msg) -> Vec2 -> Svg msg
 eyePiece attributes center =
     eyePieceSized Points.circleRadius attributes center
 
 
-eyePieceSized : Float -> List (Attribute Msg) -> Vec2 -> Svg Msg
+eyePieceSized : Float -> List (Attribute msg) -> Vec2 -> Svg msg
 eyePieceSized radius attributes center =
     let
         centerX =
@@ -366,7 +365,7 @@ eyePieceSclera centerX xString centerY yString =
             ]
 
 
-space : Bool -> List (Attribute Msg) -> Vec2 -> SpaceType -> Svg Msg
+space : Bool -> List (Attribute msg) -> Vec2 -> SpaceType -> Svg msg
 space showOutlines extras center spaceType =
     let
         appearance =
