@@ -27,10 +27,18 @@
     <audio id="aud2" src="sounds/tableHit.wav" preload="auto" controls="none" style="display: none;"></audio>
     <audio id="audspare" preload="auto" controls="none" style="display: none;"></audio>
     <script src="FileSaver.js"></script>
-    <script src="elm.js"></script>
+    <div id="game"></div>
+    <div id="editor"></div>
+    <script src="game.js"></script>
+    <script src="editor.js"></script>
     <script>
         ;(function() {
-            var app = Elm.Main.fullscreen();
+            var app = Elm.Editor.embed(document.getElementById('editor'));
+
+            var game = Elm.Game.embed(document.getElementById('game'), null);
+            app.ports.sendToGame.subscribe(function(info) {
+                game.ports.recieveFromEditor.send(info)
+            });
 
             var sounds = {
                 clack: document.getElementById("aud1"),

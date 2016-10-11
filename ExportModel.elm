@@ -16,7 +16,6 @@ type alias ExportModel =
     , gridHeight : Int
     , spaceDeck : List SpaceType
     , pieceDeck : List ProtoPiece
-    , moveTypeDeck : List MoveType
     , gameEndCons : GameEndCons
     , viewScale : Float
     , pieceAppearances : PieceAppearances
@@ -28,7 +27,6 @@ defaultExportModel =
     , gridHeight = defaultHeight
     , spaceDeck = defaultSpaceDeck
     , pieceDeck = defaultPieceTypeDeck
-    , moveTypeDeck = defaultMoveTypeDeck
     , gameEndCons = defaultGameEndCons
     , viewScale = defaultViewScale
     , pieceAppearances = defaultPieceAppearances
@@ -122,7 +120,6 @@ encode exportModel =
         , ( "gridHeight", Encode.int exportModel.gridHeight )
         , ( "spaceDeck", encodeMap encodeSpaceType exportModel.spaceDeck )
         , ( "pieceDeck", encodeMap encodeProtoPiece exportModel.pieceDeck )
-        , ( "moveTypeDeck", encodeMap encodeMoveType exportModel.moveTypeDeck )
         , ( "gameEndCons", encodeGameEndCons exportModel.gameEndCons )
         , ( "viewScale", Encode.float exportModel.viewScale )
         , ( "pieceAppearances"
@@ -321,7 +318,6 @@ decoder =
         `apply` strictGridHeight
         `apply` strictSpaceDeck
         `apply` strictPieceDeck
-        `apply` strictMoveTypeDeck
         `apply` strictGameEndCons
         `apply` strictViewScale
         `apply` strictPieceAppearances
@@ -341,10 +337,6 @@ strictSpaceDeck =
 
 strictPieceDeck =
     "pieceDeck" := Decode.list protoPieceDecoder
-
-
-strictMoveTypeDeck =
-    "moveTypeDeck" := Decode.list moveTypeDecoder
 
 
 strictGameEndCons =
@@ -377,10 +369,6 @@ lenientDecoder =
         `apply` Decode.oneOf
                     [ strictPieceDeck
                     , Decode.succeed defaultPieceTypeDeck
-                    ]
-        `apply` Decode.oneOf
-                    [ strictMoveTypeDeck
-                    , Decode.succeed defaultMoveTypeDeck
                     ]
         `apply` Decode.oneOf
                     [ strictGameEndCons

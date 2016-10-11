@@ -263,7 +263,6 @@ generateBoardInfoHelper attempts model =
         ( pieces, newSeed ) =
             Model.makePieces spaces
                 model.exportModel.pieceDeck
-                model.exportModel.moveTypeDeck
                 postSpacesSeed
 
         gameResult =

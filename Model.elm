@@ -75,7 +75,6 @@ defaultPieces : Pieces
 defaultPieces =
     makePieces defaultSpaces
         ExportModel.defaultPieceTypeDeck
-        ExportModel.defaultMoveTypeDeck
         (Random.initialSeed -421)
         |> fst
 
@@ -114,8 +113,8 @@ makeGridPoints width height =
             )
 
 
-makePieces : Spaces -> List ProtoPiece -> List MoveType -> Seed -> ( Pieces, Seed )
-makePieces spaces protoPieceDeck moveTypeDeck seed =
+makePieces : Spaces -> List ProtoPiece -> Seed -> ( Pieces, Seed )
+makePieces spaces protoPieceDeck seed =
     let
         filteredPositions =
             Spaces.getActualSpacePositions spaces
@@ -123,17 +122,11 @@ makePieces spaces protoPieceDeck moveTypeDeck seed =
         pieceAmount =
             List.length filteredPositions
 
-        ( pieceTypes, postPieceTypesSeed ) =
+        ( pieceTypes, newSeed ) =
             Deck.fillListFromDeck NoPiece
                 protoPieceDeck
                 pieceAmount
                 seed
-
-        ( moveTypes, newSeed ) =
-            Deck.fillListFromDeck AnySpace
-                moveTypeDeck
-                pieceAmount
-                postPieceTypesSeed
 
         pieces =
             List.map2 attemptPiece pieceTypes filteredPositions
