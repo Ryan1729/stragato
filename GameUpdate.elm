@@ -56,10 +56,24 @@ update msg model =
         RecieveEditorFile value ->
             let
                 newModel =
-                    value
-                        |> TransferModel.parse
-                        |> Result.map (applyTransferModelToGameModel model)
-                        |> Result.withDefault model
+                    case
+                        value
+                            |> TransferModel.parse
+                            |> Result.map (applyTransferModelToGameModel model)
+                    of
+                        Ok m ->
+                            let
+                                _ =
+                                    Debug.log "match" (m == model)
+                            in
+                                m
+
+                        Err message ->
+                            let
+                                _ =
+                                    Debug.log "message" message
+                            in
+                                model
             in
                 newModel ! []
 

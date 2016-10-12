@@ -18,6 +18,7 @@ import GameEndCons exposing (GameEndCons(..), GamePredicate(..))
 import ExportModel exposing (ExportModel)
 import String
 import CommonUpdate
+import TransferModel
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -30,16 +31,32 @@ update message model =
             { model | pieceDeckTabIndex = tabIndex } ! []
 
         UpdateExportModel exportMsg ->
-            { model | exportModel = updateExportModel exportMsg model.exportModel } ! []
+            let
+                newModel =
+                    { model | exportModel = updateExportModel exportMsg model.exportModel }
+            in
+                newModel ! [ newModel |> encodeAndSend ]
 
         ToggleSpaceOutlines ->
-            { model | showSpaceOutlines = not model.showSpaceOutlines } ! []
+            let
+                newModel =
+                    { model | showSpaceOutlines = not model.showSpaceOutlines }
+            in
+                newModel ! [ newModel |> encodeAndSend ]
 
         ToggleAllowMovingAllPieces ->
-            { model | allowMovingAllPieces = not model.allowMovingAllPieces } ! []
+            let
+                newModel =
+                    { model | allowMovingAllPieces = not model.allowMovingAllPieces }
+            in
+                newModel ! [ newModel |> encodeAndSend ]
 
         ToggleIgnoreGameResult ->
-            { model | ignoreGameResult = not model.ignoreGameResult } ! []
+            let
+                newModel =
+                    { model | ignoreGameResult = not model.ignoreGameResult }
+            in
+                newModel ! [ newModel |> encodeAndSend ]
 
         SaveAs ->
             model
@@ -55,26 +72,36 @@ update message model =
         RecieveLoadedFile fileString ->
             case ExportModel.parse fileString of
                 Ok newExportModel ->
-                    { model
-                        | exportModel = newExportModel
-                        , showFileInput = False
-                    }
-                        ! []
+                    let
+                        newModel =
+                            { model
+                                | exportModel = newExportModel
+                                , showFileInput = False
+                            }
+                    in
+                        newModel ! [ newModel |> encodeAndSend ]
 
                 Err message ->
                     case ExportModel.parseDefaultingOnError fileString of
                         Ok newExportModelUsingDefaults ->
-                            { model
-                                | exportModel = newExportModelUsingDefaults
-                                , showFileInput = False
-                            }
-                                ! [ CommonPorts.alert
-                                        <| "Falling back to some defaults since parsing the file failed with this message: "
-                                        ++ message
-                                  ]
+                            let
+                                newModel =
+                                    { model
+                                        | exportModel = newExportModelUsingDefaults
+                                        , showFileInput = False
+                                    }
+                            in
+                                newModel
+                                    ! [ CommonPorts.alert
+                                            <| "Falling back to some defaults since parsing the file failed with this message: "
+                                            ++ message
+                                      , newModel |> encodeAndSend
+                                      ]
 
                         Err message2 ->
-                            model ! [ CommonPorts.alert message2 ]
+                            model
+                                ! [ CommonPorts.alert message2
+                                  ]
 
         --TODO animate something or remove this!
         Animate _ ->
@@ -90,6 +117,13 @@ update message model =
         Mdl msg' ->
             Material.update msg'
                 model
+
+
+encodeAndSend : Model -> Cmd Msg
+encodeAndSend =
+    Model.modelToTransferModel
+        >> TransferModel.encode
+        >> EditorPorts.sendToGame
 
 
 updateExportModel : ExportMsg -> ExportModel -> ExportModel

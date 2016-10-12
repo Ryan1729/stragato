@@ -13,6 +13,7 @@ import Deck
 import PieceAppearances exposing (PieceAppearances, Appearance)
 import GameEndCons exposing (GameEndCons(..), GamePredicate(..))
 import ExportModel exposing (ExportModel)
+import TransferModel exposing (TransferModel)
 
 
 type alias Model =
@@ -130,3 +131,14 @@ attemptPiece protoPiece position =
 
         NoPiece ->
             Nothing
+
+
+modelToTransferModel : Model -> TransferModel
+modelToTransferModel model =
+    { exportModel = model.exportModel
+    , pieces = model.pieces
+    , spaces = model.spaces
+    , ignoreGameResult = model.ignoreGameResult
+    , showSpaceOutlines = model.showSpaceOutlines
+    , allowMovingAllPieces = model.allowMovingAllPieces
+    }

@@ -37,6 +37,7 @@
 
             var game = Elm.Game.embed(document.getElementById('game'), null);
             app.ports.sendToGame.subscribe(function(info) {
+                console.log("JS")
                 game.ports.recieveFromEditor.send(info)
             });
 
