@@ -158,3 +158,11 @@ roundTo places value =
             |> toFloat
         )
             / factor
+
+
+mapFst f ( first, second ) =
+    ( f first, second )
+
+
+mapSnd f ( first, second ) =
+    ( first, f second )

@@ -9,16 +9,12 @@ import Time
 import GameMsg exposing (Msg(GetSeed))
 import Task
 import GameModel exposing (Model)
-
-
--- import TransferModel exposing (TransferModel)
-
+import TransferModel exposing (TransferModel)
 import Dict
+import Json.Decode as Decode
 
 
--- main : Program  (Maybe TransferModel)
-
-
+main : Program (Maybe Decode.Value)
 main =
     programWithFlags
         { init = init
@@ -34,32 +30,31 @@ bugWorkaround =
     GameModel.defaultState
 
 
-
--- init : Maybe TransportModel -> (Model, Cmd Msg)
-
-
-init : Maybe Int -> ( Model, Cmd Msg )
-init maybeTransportModel =
+init : Maybe Decode.Value -> ( Model, Cmd Msg )
+init maybeValue =
     let
         state =
-            case maybeTransportModel of
-                -- Just transportModel ->
-                --     { bugWorkaround
-                --         | exportModel = transportModel.exportModel
-                --         , pieces = transportModel.pieces
-                --         , spaces = Dict.fromList transportModel.spaces
-                --         , ignoreGameResult = transportModel.ignoreGameResult
-                --         , showSpaceOutlines = transportModel.showSpaceOutlines
-                --         , allowMovingAllPieces = transportModel.allowMovingAllPieces
-                --     }
-                --
-                -- Nothing ->
-                _ ->
-                    GameModel.defaultState
+            Result.fromMaybe ""
+                maybeValue
+                `Result.andThen` TransferModel.parse
+                |> Result.map (applyTransferModelToGameModel GameModel.defaultState)
+                |> Result.withDefault GameModel.defaultState
     in
         state
             ! [ Task.perform (always <| GetSeed -1.0) GetSeed Time.now
               ]
+
+
+applyTransferModelToGameModel : Model -> TransferModel -> Model
+applyTransferModelToGameModel gameModel transferModel =
+    { gameModel
+        | exportModel = transferModel.exportModel
+        , pieces = transferModel.pieces
+        , spaces = transferModel.spaces
+        , ignoreGameResult = transferModel.ignoreGameResult
+        , showSpaceOutlines = transferModel.showSpaceOutlines
+        , allowMovingAllPieces = transferModel.allowMovingAllPieces
+    }
 
 
 alwaysList =

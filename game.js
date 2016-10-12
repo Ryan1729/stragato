@@ -15276,90 +15276,24 @@ var _robertjlooby$elm_generic_dict$GenericDict$diff = F2(
 			t2);
 	});
 
-var _user$project$CommonPorts$saveAs = _elm_lang$core$Native_Platform.outgoingPort(
-	'saveAs',
-	function (v) {
-		return [v._0, v._1];
+var _user$project$Extras$mapSnd = F2(
+	function (f, _p0) {
+		var _p1 = _p0;
+		return {
+			ctor: '_Tuple2',
+			_0: _p1._0,
+			_1: f(_p1._1)
+		};
 	});
-
-var _user$project$Deck$maybeFromDeck = F2(
-	function (currentDeck, seed) {
-		var _p0 = A2(
-			_elm_lang$core$Random$step,
-			A2(
-				_elm_lang$core$Random$int,
-				0,
-				_elm_lang$core$List$length(currentDeck) - 1),
-			seed);
-		var index = _p0._0;
-		var newSeed = _p0._1;
-		var _p1 = _elm_lang$core$List$head(
-			A2(_elm_lang$core$List$drop, index, currentDeck));
-		if (_p1.ctor === 'Nothing') {
-			return _elm_lang$core$Maybe$Nothing;
-		} else {
-			var remainingElements = A2(
-				_elm_lang$core$Basics_ops['++'],
-				A2(_elm_lang$core$List$take, index, currentDeck),
-				A2(_elm_lang$core$List$drop, index + 1, currentDeck));
-			return _elm_lang$core$Maybe$Just(
-				{ctor: '_Tuple3', _0: _p1._0, _1: remainingElements, _2: newSeed});
-		}
+var _user$project$Extras$mapFst = F2(
+	function (f, _p2) {
+		var _p3 = _p2;
+		return {
+			ctor: '_Tuple2',
+			_0: f(_p3._0),
+			_1: _p3._1
+		};
 	});
-var _user$project$Deck$drawFromDeck = F4(
-	function ($default, deck, currentDeck, seed) {
-		var _p2 = A2(_user$project$Deck$maybeFromDeck, currentDeck, seed);
-		if (_p2.ctor === 'Nothing') {
-			var _p3 = A2(_user$project$Deck$maybeFromDeck, deck, seed);
-			if (_p3.ctor === 'Nothing') {
-				return {ctor: '_Tuple3', _0: $default, _1: deck, _2: seed};
-			} else {
-				return _p3._0;
-			}
-		} else {
-			return _p2._0;
-		}
-	});
-var _user$project$Deck$fillListFromDeckHelper = F6(
-	function ($default, deck, currentDeck, remainingLength, seed, result) {
-		fillListFromDeckHelper:
-		while (true) {
-			if (_elm_lang$core$Native_Utils.eq(remainingLength, 0)) {
-				return {ctor: '_Tuple2', _0: result, _1: seed};
-			} else {
-				var _p4 = A4(_user$project$Deck$drawFromDeck, $default, deck, currentDeck, seed);
-				var drawnElement = _p4._0;
-				var newDeck = _p4._1;
-				var newSeed = _p4._2;
-				var _v3 = $default,
-					_v4 = deck,
-					_v5 = newDeck,
-					_v6 = remainingLength - 1,
-					_v7 = newSeed,
-					_v8 = A2(_elm_lang$core$List_ops['::'], drawnElement, result);
-				$default = _v3;
-				deck = _v4;
-				currentDeck = _v5;
-				remainingLength = _v6;
-				seed = _v7;
-				result = _v8;
-				continue fillListFromDeckHelper;
-			}
-		}
-	});
-var _user$project$Deck$fillListFromDeck = F4(
-	function ($default, deck, length, seed) {
-		return A6(
-			_user$project$Deck$fillListFromDeckHelper,
-			$default,
-			deck,
-			deck,
-			length,
-			seed,
-			_elm_lang$core$Native_List.fromArray(
-				[]));
-	});
-
 var _user$project$Extras$roundTo = F2(
 	function (places, value) {
 		var factor = Math.pow(10, places);
@@ -15378,32 +15312,32 @@ var _user$project$Extras$getLowestAbsentIntHelper = F3(
 			} else {
 				var paritionPoint = _elm_lang$core$Basics$floor(
 					_elm_lang$core$Basics$toFloat(lowerBound + upperBound) / 2);
-				var _p0 = A2(
+				var _p4 = A2(
 					_elm_lang$core$List$partition,
 					F2(
 						function (x, y) {
 							return _elm_lang$core$Native_Utils.cmp(x, y) > -1;
 						})(paritionPoint),
 					list);
-				var lowerList = _p0._0;
-				var higherList = _p0._1;
+				var lowerList = _p4._0;
+				var higherList = _p4._1;
 				if (_elm_lang$core$Native_Utils.eq(
 					_elm_lang$core$List$length(lowerList),
 					(paritionPoint - lowerBound) + 1)) {
-					var _v0 = higherList,
-						_v1 = paritionPoint + 1,
-						_v2 = upperBound;
-					list = _v0;
-					lowerBound = _v1;
-					upperBound = _v2;
+					var _v2 = higherList,
+						_v3 = paritionPoint + 1,
+						_v4 = upperBound;
+					list = _v2;
+					lowerBound = _v3;
+					upperBound = _v4;
 					continue getLowestAbsentIntHelper;
 				} else {
-					var _v3 = lowerList,
-						_v4 = lowerBound,
-						_v5 = paritionPoint;
-					list = _v3;
-					lowerBound = _v4;
-					upperBound = _v5;
+					var _v5 = lowerList,
+						_v6 = lowerBound,
+						_v7 = paritionPoint;
+					list = _v5;
+					lowerBound = _v6;
+					upperBound = _v7;
 					continue getLowestAbsentIntHelper;
 				}
 			}
@@ -15420,19 +15354,19 @@ var _user$project$Extras$indexOfhelper = F3(
 	function (lst, elem, offset) {
 		indexOfhelper:
 		while (true) {
-			var _p1 = lst;
-			if (_p1.ctor === '[]') {
+			var _p5 = lst;
+			if (_p5.ctor === '[]') {
 				return _elm_lang$core$Maybe$Nothing;
 			} else {
-				if (_elm_lang$core$Native_Utils.eq(_p1._0, elem)) {
+				if (_elm_lang$core$Native_Utils.eq(_p5._0, elem)) {
 					return _elm_lang$core$Maybe$Just(offset);
 				} else {
-					var _v7 = _p1._1,
-						_v8 = elem,
-						_v9 = offset + 1;
-					lst = _v7;
-					elem = _v8;
-					offset = _v9;
+					var _v9 = _p5._1,
+						_v10 = elem,
+						_v11 = offset + 1;
+					lst = _v9;
+					elem = _v10;
+					offset = _v11;
 					continue indexOfhelper;
 				}
 			}
@@ -15472,31 +15406,31 @@ var _user$project$Extras$setAt = F3(
 			var tail = _elm_lang$core$List$tail(
 				A2(_elm_lang$core$List$drop, index, l));
 			var head = A2(_elm_lang$core$List$take, index, l);
-			var _p2 = tail;
-			if (_p2.ctor === 'Nothing') {
+			var _p6 = tail;
+			if (_p6.ctor === 'Nothing') {
 				return l;
 			} else {
 				return A2(
 					_elm_lang$core$List$append,
 					head,
-					A2(_elm_lang$core$List_ops['::'], value, _p2._0));
+					A2(_elm_lang$core$List_ops['::'], value, _p6._0));
 			}
 		}
 	});
 var _user$project$Extras$andThen = _elm_lang$core$Basics$flip(_elm_lang$core$List$concatMap);
 var _user$project$Extras$remove = F2(
 	function (x, xs) {
-		var _p3 = xs;
-		if (_p3.ctor === '[]') {
+		var _p7 = xs;
+		if (_p7.ctor === '[]') {
 			return _elm_lang$core$Native_List.fromArray(
 				[]);
 		} else {
-			var _p5 = _p3._1;
-			var _p4 = _p3._0;
-			return _elm_lang$core$Native_Utils.eq(x, _p4) ? _p5 : A2(
+			var _p9 = _p7._1;
+			var _p8 = _p7._0;
+			return _elm_lang$core$Native_Utils.eq(x, _p8) ? _p9 : A2(
 				_elm_lang$core$List_ops['::'],
-				_p4,
-				A2(_user$project$Extras$remove, x, _p5));
+				_p8,
+				A2(_user$project$Extras$remove, x, _p9));
 		}
 	});
 
@@ -16378,7 +16312,7 @@ var _user$project$PieceAppearances$pairWithAppearance = function (_p12) {
 	};
 };
 
-var _user$project$ExportModel$vec2Decoder = A2(
+var _user$project$CommonDecoders$vec2Decoder = A2(
 	_elm_lang$core$Json_Decode$map,
 	_elm_community$elm_linear_algebra$Math_Vector2$fromTuple,
 	A3(
@@ -16389,7 +16323,7 @@ var _user$project$ExportModel$vec2Decoder = A2(
 			}),
 		_elm_lang$core$Json_Decode$float,
 		_elm_lang$core$Json_Decode$float));
-var _user$project$ExportModel$simpleShapeDecoder = A2(
+var _user$project$CommonDecoders$simpleShapeDecoder = A2(
 	_elm_lang$core$Json_Decode$andThen,
 	_elm_lang$core$Json_Decode$string,
 	function (string) {
@@ -16400,20 +16334,20 @@ var _user$project$ExportModel$simpleShapeDecoder = A2(
 			return _elm_lang$core$Json_Decode$fail('Unknown simple shape type');
 		}
 	});
-var _user$project$ExportModel$pointsListDecoder = _elm_lang$core$Json_Decode$list(_user$project$ExportModel$vec2Decoder);
-var _user$project$ExportModel$shapeInfo = function (tag) {
+var _user$project$CommonDecoders$pointsListDecoder = _elm_lang$core$Json_Decode$list(_user$project$CommonDecoders$vec2Decoder);
+var _user$project$CommonDecoders$shapeInfo = function (tag) {
 	var _p1 = _elm_lang$core$String$toLower(tag);
 	if (_p1 === 'pointslist') {
 		return A2(
 			_elm_lang$core$Json_Decode$object1,
 			_user$project$Pieces$PointsList,
-			A2(_elm_lang$core$Json_Decode_ops[':='], '1', _user$project$ExportModel$pointsListDecoder));
+			A2(_elm_lang$core$Json_Decode_ops[':='], '1', _user$project$CommonDecoders$pointsListDecoder));
 	} else {
 		return _elm_lang$core$Json_Decode$fail(
 			A2(_elm_lang$core$Basics_ops['++'], 'Unknown tagged shape type: ', tag));
 	}
 };
-var _user$project$ExportModel$simpleIconDecoder = A2(
+var _user$project$CommonDecoders$simpleIconDecoder = A2(
 	_elm_lang$core$Json_Decode$andThen,
 	_elm_lang$core$Json_Decode$string,
 	function (string) {
@@ -16427,43 +16361,43 @@ var _user$project$ExportModel$simpleIconDecoder = A2(
 				return _elm_lang$core$Json_Decode$fail('Unknown simple shape type');
 		}
 	});
-var _user$project$ExportModel$tagDecode = _elm_lang$core$Json_Decode$andThen(
+var _user$project$CommonDecoders$tagDecode = _elm_lang$core$Json_Decode$andThen(
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'tag', _elm_lang$core$Json_Decode$string));
-var _user$project$ExportModel$taggedShapeDecoder = _user$project$ExportModel$tagDecode(_user$project$ExportModel$shapeInfo);
-var _user$project$ExportModel$shapeDecoder = _elm_lang$core$Json_Decode$oneOf(
+var _user$project$CommonDecoders$taggedShapeDecoder = _user$project$CommonDecoders$tagDecode(_user$project$CommonDecoders$shapeInfo);
+var _user$project$CommonDecoders$shapeDecoder = _elm_lang$core$Json_Decode$oneOf(
 	_elm_lang$core$Native_List.fromArray(
-		[_user$project$ExportModel$simpleShapeDecoder, _user$project$ExportModel$taggedShapeDecoder]));
-var _user$project$ExportModel$iconInfo = function (tag) {
+		[_user$project$CommonDecoders$simpleShapeDecoder, _user$project$CommonDecoders$taggedShapeDecoder]));
+var _user$project$CommonDecoders$iconInfo = function (tag) {
 	var _p3 = _elm_lang$core$String$toLower(tag);
 	switch (_p3) {
 		case 'shapespaceicon':
 			return A2(
 				_elm_lang$core$Json_Decode$object1,
 				_user$project$PieceAppearances$ShapeSpaceIcon,
-				A2(_elm_lang$core$Json_Decode_ops[':='], '1', _user$project$ExportModel$shapeDecoder));
+				A2(_elm_lang$core$Json_Decode_ops[':='], '1', _user$project$CommonDecoders$shapeDecoder));
 		case 'shapeicon':
 			return A2(
 				_elm_lang$core$Json_Decode$object1,
 				_user$project$PieceAppearances$ShapeIcon,
-				A2(_elm_lang$core$Json_Decode_ops[':='], '1', _user$project$ExportModel$shapeDecoder));
+				A2(_elm_lang$core$Json_Decode_ops[':='], '1', _user$project$CommonDecoders$shapeDecoder));
 		default:
 			return _elm_lang$core$Json_Decode$fail('Unknown shape type');
 	}
 };
-var _user$project$ExportModel$taggedIconDecoder = _user$project$ExportModel$tagDecode(_user$project$ExportModel$iconInfo);
-var _user$project$ExportModel$iconDecoder = _elm_lang$core$Json_Decode$oneOf(
+var _user$project$CommonDecoders$taggedIconDecoder = _user$project$CommonDecoders$tagDecode(_user$project$CommonDecoders$iconInfo);
+var _user$project$CommonDecoders$iconDecoder = _elm_lang$core$Json_Decode$oneOf(
 	_elm_lang$core$Native_List.fromArray(
-		[_user$project$ExportModel$simpleIconDecoder, _user$project$ExportModel$taggedIconDecoder]));
-var _user$project$ExportModel$appearanceDecoder = A4(
+		[_user$project$CommonDecoders$simpleIconDecoder, _user$project$CommonDecoders$taggedIconDecoder]));
+var _user$project$CommonDecoders$appearanceDecoder = A4(
 	_elm_lang$core$Json_Decode$tuple3,
 	F3(
 		function (v0, v1, v2) {
 			return {ctor: '_Tuple3', _0: v0, _1: v1, _2: v2};
 		}),
-	_user$project$ExportModel$shapeDecoder,
+	_user$project$CommonDecoders$shapeDecoder,
 	_elm_lang$core$Json_Decode$string,
-	_user$project$ExportModel$iconDecoder);
-var _user$project$ExportModel$stringToMoveType = function (s) {
+	_user$project$CommonDecoders$iconDecoder);
+var _user$project$CommonDecoders$stringToMoveType = function (s) {
 	var _p4 = _elm_lang$core$String$toLower(s);
 	switch (_p4) {
 		case 'occupied':
@@ -16474,8 +16408,8 @@ var _user$project$ExportModel$stringToMoveType = function (s) {
 			return _user$project$Pieces$AnySpace;
 	}
 };
-var _user$project$ExportModel$moveTypeDecoder = A2(_elm_lang$core$Json_Decode$map, _user$project$ExportModel$stringToMoveType, _elm_lang$core$Json_Decode$string);
-var _user$project$ExportModel$stringToController = function (s) {
+var _user$project$CommonDecoders$moveTypeDecoder = A2(_elm_lang$core$Json_Decode$map, _user$project$CommonDecoders$stringToMoveType, _elm_lang$core$Json_Decode$string);
+var _user$project$CommonDecoders$stringToController = function (s) {
 	var _p5 = _elm_lang$core$String$toLower(s);
 	switch (_p5) {
 		case 'player':
@@ -16488,8 +16422,8 @@ var _user$project$ExportModel$stringToController = function (s) {
 			return _user$project$Pieces$None;
 	}
 };
-var _user$project$ExportModel$controllerDecoder = A2(_elm_lang$core$Json_Decode$map, _user$project$ExportModel$stringToController, _elm_lang$core$Json_Decode$string);
-var _user$project$ExportModel$parseBump = function (string) {
+var _user$project$CommonDecoders$controllerDecoder = A2(_elm_lang$core$Json_Decode$map, _user$project$CommonDecoders$stringToController, _elm_lang$core$Json_Decode$string);
+var _user$project$CommonDecoders$parseBump = function (string) {
 	var _p6 = _elm_lang$core$String$toInt(string);
 	if (_p6.ctor === 'Ok') {
 		return _elm_lang$core$Maybe$Just(
@@ -16499,7 +16433,7 @@ var _user$project$ExportModel$parseBump = function (string) {
 		return _elm_lang$core$Maybe$Nothing;
 	}
 };
-var _user$project$ExportModel$stringToMoveEffect = function (s) {
+var _user$project$CommonDecoders$stringToMoveEffect = function (s) {
 	var list = A2(
 		_elm_lang$core$String$split,
 		' ',
@@ -16523,7 +16457,7 @@ var _user$project$ExportModel$stringToMoveEffect = function (s) {
 						_elm_lang$core$Maybe$andThen,
 						_elm_lang$core$List$tail(list),
 						_elm_lang$core$List$head),
-					_user$project$ExportModel$parseBump));
+					_user$project$CommonDecoders$parseBump));
 		case 'swap':
 			return _user$project$Pieces$Swap;
 		case 'copy':
@@ -16532,55 +16466,55 @@ var _user$project$ExportModel$stringToMoveEffect = function (s) {
 			return _user$project$Pieces$NoEffect;
 	}
 };
-var _user$project$ExportModel$moveEffectDecoder = A2(_elm_lang$core$Json_Decode$map, _user$project$ExportModel$stringToMoveEffect, _elm_lang$core$Json_Decode$string);
-var _user$project$ExportModel$pieceTypeDecoder = A4(
+var _user$project$CommonDecoders$moveEffectDecoder = A2(_elm_lang$core$Json_Decode$map, _user$project$CommonDecoders$stringToMoveEffect, _elm_lang$core$Json_Decode$string);
+var _user$project$CommonDecoders$pieceTypeDecoder = A4(
 	_elm_lang$core$Json_Decode$object3,
 	_user$project$Pieces$PieceType,
-	A2(_elm_lang$core$Json_Decode_ops[':='], 'moveEffect', _user$project$ExportModel$moveEffectDecoder),
-	A2(_elm_lang$core$Json_Decode_ops[':='], 'controller', _user$project$ExportModel$controllerDecoder),
-	A2(_elm_lang$core$Json_Decode_ops[':='], 'moveType', _user$project$ExportModel$moveTypeDecoder));
-var _user$project$ExportModel$gamePredicateInfo = function (tag) {
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'moveEffect', _user$project$CommonDecoders$moveEffectDecoder),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'controller', _user$project$CommonDecoders$controllerDecoder),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'moveType', _user$project$CommonDecoders$moveTypeDecoder));
+var _user$project$CommonDecoders$gamePredicateInfo = function (tag) {
 	var _p8 = _elm_lang$core$String$toLower(tag);
 	switch (_p8) {
 		case 'nopiecescontrolledby':
 			return A2(
 				_elm_lang$core$Json_Decode$object1,
 				_user$project$GameEndCons$NoPiecesControlledBy,
-				A2(_elm_lang$core$Json_Decode_ops[':='], '1', _user$project$ExportModel$controllerDecoder));
+				A2(_elm_lang$core$Json_Decode_ops[':='], '1', _user$project$CommonDecoders$controllerDecoder));
 		case 'nopiecesstrictlycontrolledby':
 			return A2(
 				_elm_lang$core$Json_Decode$object1,
 				_user$project$GameEndCons$NoPiecesStrictlyControlledBy,
-				A2(_elm_lang$core$Json_Decode_ops[':='], '1', _user$project$ExportModel$controllerDecoder));
+				A2(_elm_lang$core$Json_Decode_ops[':='], '1', _user$project$CommonDecoders$controllerDecoder));
 		case 'nopiecesofgiventypecanmove':
 			return A2(
 				_elm_lang$core$Json_Decode$object1,
 				_user$project$GameEndCons$NoPiecesOfGivenTypeCanMove,
-				A2(_elm_lang$core$Json_Decode_ops[':='], '1', _user$project$ExportModel$pieceTypeDecoder));
+				A2(_elm_lang$core$Json_Decode_ops[':='], '1', _user$project$CommonDecoders$pieceTypeDecoder));
 		default:
 			return _elm_lang$core$Json_Decode$fail('Unknown game predicate type');
 	}
 };
-var _user$project$ExportModel$gamePredicateDecoder = _user$project$ExportModel$tagDecode(_user$project$ExportModel$gamePredicateInfo);
-var _user$project$ExportModel$appearancePairDecoder = A3(
+var _user$project$CommonDecoders$gamePredicateDecoder = _user$project$CommonDecoders$tagDecode(_user$project$CommonDecoders$gamePredicateInfo);
+var _user$project$CommonDecoders$appearancePairDecoder = A3(
 	_elm_lang$core$Json_Decode$tuple2,
 	F2(
 		function (v0, v1) {
 			return {ctor: '_Tuple2', _0: v0, _1: v1};
 		}),
-	_user$project$ExportModel$pieceTypeDecoder,
-	_user$project$ExportModel$appearanceDecoder);
-var _user$project$ExportModel$pieceAppearancesDecoder = A2(
+	_user$project$CommonDecoders$pieceTypeDecoder,
+	_user$project$CommonDecoders$appearanceDecoder);
+var _user$project$CommonDecoders$pieceAppearancesDecoder = A2(
 	_elm_lang$core$Json_Decode$map,
 	_user$project$PieceAppearances$fromList,
-	_elm_lang$core$Json_Decode$list(_user$project$ExportModel$appearancePairDecoder));
-var _user$project$ExportModel$protoPieceDecoder = _elm_lang$core$Json_Decode$oneOf(
+	_elm_lang$core$Json_Decode$list(_user$project$CommonDecoders$appearancePairDecoder));
+var _user$project$CommonDecoders$protoPieceDecoder = _elm_lang$core$Json_Decode$oneOf(
 	_elm_lang$core$Native_List.fromArray(
 		[
-			A2(_elm_lang$core$Json_Decode$map, _user$project$Pieces$ActualPiece, _user$project$ExportModel$pieceTypeDecoder),
+			A2(_elm_lang$core$Json_Decode$map, _user$project$Pieces$ActualPiece, _user$project$CommonDecoders$pieceTypeDecoder),
 			_elm_lang$core$Json_Decode$succeed(_user$project$Pieces$NoPiece)
 		]));
-var _user$project$ExportModel$stringToSpaceType = function (s) {
+var _user$project$CommonDecoders$stringToSpaceType = function (s) {
 	var _p9 = _elm_lang$core$String$toLower(s);
 	switch (_p9) {
 		case 'green':
@@ -16593,20 +16527,8 @@ var _user$project$ExportModel$stringToSpaceType = function (s) {
 			return _user$project$Spaces$EmptySpace;
 	}
 };
-var _user$project$ExportModel$spaceTypeDecoder = A2(_elm_lang$core$Json_Decode$map, _user$project$ExportModel$stringToSpaceType, _elm_lang$core$Json_Decode$string);
-var _user$project$ExportModel$strictPieceAppearances = A2(_elm_lang$core$Json_Decode_ops[':='], 'pieceAppearances', _user$project$ExportModel$pieceAppearancesDecoder);
-var _user$project$ExportModel$strictViewScale = A2(_elm_lang$core$Json_Decode_ops[':='], 'viewScale', _elm_lang$core$Json_Decode$float);
-var _user$project$ExportModel$strictPieceDeck = A2(
-	_elm_lang$core$Json_Decode_ops[':='],
-	'pieceDeck',
-	_elm_lang$core$Json_Decode$list(_user$project$ExportModel$protoPieceDecoder));
-var _user$project$ExportModel$strictSpaceDeck = A2(
-	_elm_lang$core$Json_Decode_ops[':='],
-	'spaceDeck',
-	_elm_lang$core$Json_Decode$list(_user$project$ExportModel$spaceTypeDecoder));
-var _user$project$ExportModel$strictGridHeight = A2(_elm_lang$core$Json_Decode_ops[':='], 'gridHeight', _elm_lang$core$Json_Decode$int);
-var _user$project$ExportModel$strictGridWidth = A2(_elm_lang$core$Json_Decode_ops[':='], 'gridWidth', _elm_lang$core$Json_Decode$int);
-var _user$project$ExportModel$apply = F2(
+var _user$project$CommonDecoders$spaceTypeDecoder = A2(_elm_lang$core$Json_Decode$map, _user$project$CommonDecoders$stringToSpaceType, _elm_lang$core$Json_Decode$string);
+var _user$project$CommonDecoders$apply = F2(
 	function (f, aDecoder) {
 		return A2(
 			_elm_lang$core$Json_Decode$andThen,
@@ -16615,6 +16537,103 @@ var _user$project$ExportModel$apply = F2(
 				return A2(_elm_lang$core$Json_Decode$map, f$, aDecoder);
 			});
 	});
+
+var _user$project$CommonPorts$saveAs = _elm_lang$core$Native_Platform.outgoingPort(
+	'saveAs',
+	function (v) {
+		return [v._0, v._1];
+	});
+
+var _user$project$Deck$maybeFromDeck = F2(
+	function (currentDeck, seed) {
+		var _p0 = A2(
+			_elm_lang$core$Random$step,
+			A2(
+				_elm_lang$core$Random$int,
+				0,
+				_elm_lang$core$List$length(currentDeck) - 1),
+			seed);
+		var index = _p0._0;
+		var newSeed = _p0._1;
+		var _p1 = _elm_lang$core$List$head(
+			A2(_elm_lang$core$List$drop, index, currentDeck));
+		if (_p1.ctor === 'Nothing') {
+			return _elm_lang$core$Maybe$Nothing;
+		} else {
+			var remainingElements = A2(
+				_elm_lang$core$Basics_ops['++'],
+				A2(_elm_lang$core$List$take, index, currentDeck),
+				A2(_elm_lang$core$List$drop, index + 1, currentDeck));
+			return _elm_lang$core$Maybe$Just(
+				{ctor: '_Tuple3', _0: _p1._0, _1: remainingElements, _2: newSeed});
+		}
+	});
+var _user$project$Deck$drawFromDeck = F4(
+	function ($default, deck, currentDeck, seed) {
+		var _p2 = A2(_user$project$Deck$maybeFromDeck, currentDeck, seed);
+		if (_p2.ctor === 'Nothing') {
+			var _p3 = A2(_user$project$Deck$maybeFromDeck, deck, seed);
+			if (_p3.ctor === 'Nothing') {
+				return {ctor: '_Tuple3', _0: $default, _1: deck, _2: seed};
+			} else {
+				return _p3._0;
+			}
+		} else {
+			return _p2._0;
+		}
+	});
+var _user$project$Deck$fillListFromDeckHelper = F6(
+	function ($default, deck, currentDeck, remainingLength, seed, result) {
+		fillListFromDeckHelper:
+		while (true) {
+			if (_elm_lang$core$Native_Utils.eq(remainingLength, 0)) {
+				return {ctor: '_Tuple2', _0: result, _1: seed};
+			} else {
+				var _p4 = A4(_user$project$Deck$drawFromDeck, $default, deck, currentDeck, seed);
+				var drawnElement = _p4._0;
+				var newDeck = _p4._1;
+				var newSeed = _p4._2;
+				var _v3 = $default,
+					_v4 = deck,
+					_v5 = newDeck,
+					_v6 = remainingLength - 1,
+					_v7 = newSeed,
+					_v8 = A2(_elm_lang$core$List_ops['::'], drawnElement, result);
+				$default = _v3;
+				deck = _v4;
+				currentDeck = _v5;
+				remainingLength = _v6;
+				seed = _v7;
+				result = _v8;
+				continue fillListFromDeckHelper;
+			}
+		}
+	});
+var _user$project$Deck$fillListFromDeck = F4(
+	function ($default, deck, length, seed) {
+		return A6(
+			_user$project$Deck$fillListFromDeckHelper,
+			$default,
+			deck,
+			deck,
+			length,
+			seed,
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	});
+
+var _user$project$ExportModel$strictPieceAppearances = A2(_elm_lang$core$Json_Decode_ops[':='], 'pieceAppearances', _user$project$CommonDecoders$pieceAppearancesDecoder);
+var _user$project$ExportModel$strictViewScale = A2(_elm_lang$core$Json_Decode_ops[':='], 'viewScale', _elm_lang$core$Json_Decode$float);
+var _user$project$ExportModel$strictPieceDeck = A2(
+	_elm_lang$core$Json_Decode_ops[':='],
+	'pieceDeck',
+	_elm_lang$core$Json_Decode$list(_user$project$CommonDecoders$protoPieceDecoder));
+var _user$project$ExportModel$strictSpaceDeck = A2(
+	_elm_lang$core$Json_Decode_ops[':='],
+	'spaceDeck',
+	_elm_lang$core$Json_Decode$list(_user$project$CommonDecoders$spaceTypeDecoder));
+var _user$project$ExportModel$strictGridHeight = A2(_elm_lang$core$Json_Decode_ops[':='], 'gridHeight', _elm_lang$core$Json_Decode$int);
+var _user$project$ExportModel$strictGridWidth = A2(_elm_lang$core$Json_Decode_ops[':='], 'gridWidth', _elm_lang$core$Json_Decode$int);
 var _user$project$ExportModel$encodeVec2 = function (vector) {
 	return _elm_lang$core$Json_Encode$list(
 		_elm_lang$core$Native_List.fromArray(
@@ -16627,13 +16646,13 @@ var _user$project$ExportModel$encodeVec2 = function (vector) {
 };
 var _user$project$ExportModel$assignTag = F2(
 	function (index, value) {
-		var _p10 = index;
-		if (_p10 === 0) {
+		var _p0 = index;
+		if (_p0 === 0) {
 			return {ctor: '_Tuple2', _0: 'tag', _1: value};
 		} else {
 			return {
 				ctor: '_Tuple2',
-				_0: _elm_lang$core$Basics$toString(_p10),
+				_0: _elm_lang$core$Basics$toString(_p0),
 				_1: value
 			};
 		}
@@ -16649,9 +16668,9 @@ var _user$project$ExportModel$encodeTag = F2(
 					_elm_lang$core$Json_Encode$string(s),
 					list)));
 	});
-var _user$project$ExportModel$stringIt = function (_p11) {
+var _user$project$ExportModel$stringIt = function (_p1) {
 	return _elm_lang$core$Json_Encode$string(
-		_elm_lang$core$Basics$toString(_p11));
+		_elm_lang$core$Basics$toString(_p1));
 };
 var _user$project$ExportModel$encodeSpaceType = function (spaceType) {
 	return _user$project$ExportModel$stringIt(spaceType);
@@ -16660,16 +16679,16 @@ var _user$project$ExportModel$encodeMoveType = function (moveType) {
 	return _user$project$ExportModel$stringIt(moveType);
 };
 var _user$project$ExportModel$encodeMoveEffect = function (moveEffect) {
-	var _p12 = moveEffect;
-	if (_p12.ctor === 'Bump') {
+	var _p2 = moveEffect;
+	if (_p2.ctor === 'Bump') {
 		return _elm_lang$core$Json_Encode$string(
 			A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Bump ',
 				_elm_lang$core$Basics$toString(
-					_user$project$PosInt$toInt(_p12._0))));
+					_user$project$PosInt$toInt(_p2._0))));
 	} else {
-		return _user$project$ExportModel$stringIt(_p12);
+		return _user$project$ExportModel$stringIt(_p2);
 	}
 };
 var _user$project$ExportModel$encodeController = _user$project$ExportModel$stringIt;
@@ -16695,23 +16714,23 @@ var _user$project$ExportModel$encodePieceType = function (pieceType) {
 			]));
 };
 var _user$project$ExportModel$encodeProtoPiece = function (protoPiece) {
-	var _p13 = protoPiece;
-	if (_p13.ctor === 'ActualPiece') {
-		return _user$project$ExportModel$encodePieceType(_p13._0);
+	var _p3 = protoPiece;
+	if (_p3.ctor === 'ActualPiece') {
+		return _user$project$ExportModel$encodePieceType(_p3._0);
 	} else {
 		return _elm_lang$core$Json_Encode$string('NoPiece');
 	}
 };
 var _user$project$ExportModel$encodeGamePredicate = function (con) {
-	var _p14 = con;
-	switch (_p14.ctor) {
+	var _p4 = con;
+	switch (_p4.ctor) {
 		case 'NoPiecesControlledBy':
 			return A2(
 				_user$project$ExportModel$encodeTag,
 				'NoPiecesControlledBy',
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_user$project$ExportModel$encodeController(_p14._0)
+						_user$project$ExportModel$encodeController(_p4._0)
 					]));
 		case 'NoPiecesStrictlyControlledBy':
 			return A2(
@@ -16719,7 +16738,7 @@ var _user$project$ExportModel$encodeGamePredicate = function (con) {
 				'NoPiecesStrictlyControlledBy',
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_user$project$ExportModel$encodeController(_p14._0)
+						_user$project$ExportModel$encodeController(_p4._0)
 					]));
 		default:
 			return A2(
@@ -16727,7 +16746,7 @@ var _user$project$ExportModel$encodeGamePredicate = function (con) {
 				'NoPiecesStrictlyControlledBy',
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_user$project$ExportModel$encodePieceType(_p14._0)
+						_user$project$ExportModel$encodePieceType(_p4._0)
 					]));
 	}
 };
@@ -16737,30 +16756,30 @@ var _user$project$ExportModel$encodeMap = F2(
 			A2(_elm_lang$core$List$map, f, list));
 	});
 var _user$project$ExportModel$encodeGameEndCons = function (cons) {
-	var _p15 = cons;
+	var _p5 = cons;
 	return A2(
 		_user$project$ExportModel$encodeMap,
 		_user$project$ExportModel$encodeGamePredicate,
 		_elm_lang$core$Native_List.fromArray(
-			[_p15._0, _p15._1]));
+			[_p5._0, _p5._1]));
 };
 var _user$project$ExportModel$encodeShape = function (shape) {
-	var _p16 = shape;
-	if (_p16.ctor === 'PointsList') {
+	var _p6 = shape;
+	if (_p6.ctor === 'PointsList') {
 		return A2(
 			_user$project$ExportModel$encodeTag,
 			'PointsList',
 			_elm_lang$core$Native_List.fromArray(
 				[
-					A2(_user$project$ExportModel$encodeMap, _user$project$ExportModel$encodeVec2, _p16._0)
+					A2(_user$project$ExportModel$encodeMap, _user$project$ExportModel$encodeVec2, _p6._0)
 				]));
 	} else {
 		return _elm_lang$core$Json_Encode$string('Eye');
 	}
 };
 var _user$project$ExportModel$encodeIcon = function (icon) {
-	var _p17 = icon;
-	switch (_p17.ctor) {
+	var _p7 = icon;
+	switch (_p7.ctor) {
 		case 'EmptySpaceIcon':
 			return _elm_lang$core$Json_Encode$string('EmptySpaceIcon');
 		case 'ShapeSpaceIcon':
@@ -16769,7 +16788,7 @@ var _user$project$ExportModel$encodeIcon = function (icon) {
 				'ShapeSpaceIcon',
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_user$project$ExportModel$encodeShape(_p17._0)
+						_user$project$ExportModel$encodeShape(_p7._0)
 					]));
 		case 'ShapeIcon':
 			return A2(
@@ -16777,29 +16796,29 @@ var _user$project$ExportModel$encodeIcon = function (icon) {
 				'ShapeIcon',
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_user$project$ExportModel$encodeShape(_p17._0)
+						_user$project$ExportModel$encodeShape(_p7._0)
 					]));
 		default:
 			return _elm_lang$core$Json_Encode$string('NoIcon');
 	}
 };
-var _user$project$ExportModel$encodeAppearance = function (_p18) {
-	var _p19 = _p18;
+var _user$project$ExportModel$encodeAppearance = function (_p8) {
+	var _p9 = _p8;
 	return _elm_lang$core$Json_Encode$list(
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_user$project$ExportModel$encodeShape(_p19._0),
-				_elm_lang$core$Json_Encode$string(_p19._1),
-				_user$project$ExportModel$encodeIcon(_p19._2)
+				_user$project$ExportModel$encodeShape(_p9._0),
+				_elm_lang$core$Json_Encode$string(_p9._1),
+				_user$project$ExportModel$encodeIcon(_p9._2)
 			]));
 };
-var _user$project$ExportModel$encodeAppearancePair = function (_p20) {
-	var _p21 = _p20;
+var _user$project$ExportModel$encodeAppearancePair = function (_p10) {
+	var _p11 = _p10;
 	return _elm_lang$core$Json_Encode$list(
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_user$project$ExportModel$encodePieceType(_p21._0),
-				_user$project$ExportModel$encodeAppearance(_p21._1)
+				_user$project$ExportModel$encodePieceType(_p11._0),
+				_user$project$ExportModel$encodeAppearance(_p11._1)
 			]));
 };
 var _user$project$ExportModel$encode = function (exportModel) {
@@ -16882,14 +16901,14 @@ var _user$project$ExportModel$defaultGameEndCons = A2(_user$project$GameEndCons$
 var _user$project$ExportModel$gameEndConsDecoder = A2(
 	_elm_lang$core$Json_Decode$map,
 	function (list) {
-		var _p22 = list;
-		if ((_p22.ctor === '::') && (_p22._1.ctor === '::')) {
-			return A2(_user$project$GameEndCons$GameEndCons, _p22._0, _p22._1._0);
+		var _p12 = list;
+		if ((_p12.ctor === '::') && (_p12._1.ctor === '::')) {
+			return A2(_user$project$GameEndCons$GameEndCons, _p12._0, _p12._1._0);
 		} else {
 			return _user$project$ExportModel$defaultGameEndCons;
 		}
 	},
-	_elm_lang$core$Json_Decode$list(_user$project$ExportModel$gamePredicateDecoder));
+	_elm_lang$core$Json_Decode$list(_user$project$CommonDecoders$gamePredicateDecoder));
 var _user$project$ExportModel$strictGameEndCons = A2(_elm_lang$core$Json_Decode_ops[':='], 'gameEndCons', _user$project$ExportModel$gameEndConsDecoder);
 var _user$project$ExportModel$defaultViewScale = 1.0;
 var _user$project$ExportModel$defaultHeight = 5;
@@ -16900,17 +16919,17 @@ var _user$project$ExportModel$ExportModel = F7(
 		return {gridWidth: a, gridHeight: b, spaceDeck: c, pieceDeck: d, gameEndCons: e, viewScale: f, pieceAppearances: g};
 	});
 var _user$project$ExportModel$decoder = A2(
-	_user$project$ExportModel$apply,
+	_user$project$CommonDecoders$apply,
 	A2(
-		_user$project$ExportModel$apply,
+		_user$project$CommonDecoders$apply,
 		A2(
-			_user$project$ExportModel$apply,
+			_user$project$CommonDecoders$apply,
 			A2(
-				_user$project$ExportModel$apply,
+				_user$project$CommonDecoders$apply,
 				A2(
-					_user$project$ExportModel$apply,
+					_user$project$CommonDecoders$apply,
 					A2(
-						_user$project$ExportModel$apply,
+						_user$project$CommonDecoders$apply,
 						A2(_elm_lang$core$Json_Decode$map, _user$project$ExportModel$ExportModel, _user$project$ExportModel$strictGridWidth),
 						_user$project$ExportModel$strictGridHeight),
 					_user$project$ExportModel$strictSpaceDeck),
@@ -16920,17 +16939,17 @@ var _user$project$ExportModel$decoder = A2(
 	_user$project$ExportModel$strictPieceAppearances);
 var _user$project$ExportModel$parse = _elm_lang$core$Json_Decode$decodeString(_user$project$ExportModel$decoder);
 var _user$project$ExportModel$lenientDecoder = A2(
-	_user$project$ExportModel$apply,
+	_user$project$CommonDecoders$apply,
 	A2(
-		_user$project$ExportModel$apply,
+		_user$project$CommonDecoders$apply,
 		A2(
-			_user$project$ExportModel$apply,
+			_user$project$CommonDecoders$apply,
 			A2(
-				_user$project$ExportModel$apply,
+				_user$project$CommonDecoders$apply,
 				A2(
-					_user$project$ExportModel$apply,
+					_user$project$CommonDecoders$apply,
 					A2(
-						_user$project$ExportModel$apply,
+						_user$project$CommonDecoders$apply,
 						A2(
 							_elm_lang$core$Json_Decode$map,
 							_user$project$ExportModel$ExportModel,
@@ -18217,16 +18236,146 @@ var _user$project$GameUpdate$update = F2(
 		}
 	});
 
+var _user$project$TransferModel$stringToSpaceType = function (string) {
+	var _p0 = string;
+	switch (_p0) {
+		case 'Green':
+			return _user$project$Spaces$Green;
+		case 'Red':
+			return _user$project$Spaces$Red;
+		case 'Yellow':
+			return _user$project$Spaces$Yellow;
+		default:
+			return _user$project$Spaces$EmptySpace;
+	}
+};
+var _user$project$TransferModel$spaceTypeToString = function (spaceType) {
+	var _p1 = spaceType;
+	switch (_p1.ctor) {
+		case 'Green':
+			return 'Green';
+		case 'Red':
+			return 'Red';
+		case 'Yellow':
+			return 'Yellow';
+		default:
+			return 'EmptySpace';
+	}
+};
+var _user$project$TransferModel$transferSpaceToSpace = function (transferSpace) {
+	return {
+		position: _elm_community$elm_linear_algebra$Math_Vector2$fromTuple(transferSpace.position),
+		spaceType: _user$project$TransferModel$stringToSpaceType(transferSpace.spaceType)
+	};
+};
+var _user$project$TransferModel$spaceToTransferSpace = function (space) {
+	return {
+		position: _elm_community$elm_linear_algebra$Math_Vector2$toTuple(space.position),
+		spaceType: _user$project$TransferModel$spaceTypeToString(space.spaceType)
+	};
+};
+var _user$project$TransferModel$transferSpacesToSpaces = function (_p2) {
+	return _elm_lang$core$Dict$fromList(
+		A2(
+			_elm_lang$core$List$map,
+			_user$project$Extras$mapSnd(_user$project$TransferModel$transferSpaceToSpace),
+			_p2));
+};
+var _user$project$TransferModel$spacesToTransferSpaces = function (_p3) {
+	return A2(
+		_elm_lang$core$List$map,
+		_user$project$Extras$mapSnd(_user$project$TransferModel$spaceToTransferSpace),
+		_elm_lang$core$Dict$toList(_p3));
+};
+var _user$project$TransferModel$positionDecoder = A2(_elm_lang$core$Json_Decode_ops[':='], 'position', _user$project$CommonDecoders$vec2Decoder);
+var _user$project$TransferModel$spaceDecoder = A3(_elm_lang$core$Json_Decode$object2, _user$project$Spaces$Space, _user$project$TransferModel$positionDecoder, _user$project$CommonDecoders$spaceTypeDecoder);
+var _user$project$TransferModel$spaceIndexDecoder = A3(
+	_elm_lang$core$Json_Decode$tuple2,
+	F2(
+		function (v0, v1) {
+			return {ctor: '_Tuple2', _0: v0, _1: v1};
+		}),
+	_elm_lang$core$Json_Decode$int,
+	_elm_lang$core$Json_Decode$int);
+var _user$project$TransferModel$spacePairDecoder = A3(
+	_elm_lang$core$Json_Decode$tuple2,
+	F2(
+		function (v0, v1) {
+			return {ctor: '_Tuple2', _0: v0, _1: v1};
+		}),
+	_user$project$TransferModel$spaceIndexDecoder,
+	_user$project$TransferModel$spaceDecoder);
+var _user$project$TransferModel$spacesDecoder = A2(
+	_elm_lang$core$Json_Decode$map,
+	_elm_lang$core$Dict$fromList,
+	A2(
+		_elm_lang$core$Json_Decode_ops[':='],
+		'spaces',
+		_elm_lang$core$Json_Decode$list(_user$project$TransferModel$spacePairDecoder)));
+var _user$project$TransferModel$pieceDecoder = A3(_elm_lang$core$Json_Decode$object2, _user$project$Pieces$Piece, _user$project$CommonDecoders$pieceTypeDecoder, _user$project$TransferModel$positionDecoder);
+var _user$project$TransferModel$piecePairDecoder = A3(
+	_elm_lang$core$Json_Decode$tuple2,
+	F2(
+		function (v0, v1) {
+			return {ctor: '_Tuple2', _0: v0, _1: v1};
+		}),
+	_elm_lang$core$Json_Decode$int,
+	_user$project$TransferModel$pieceDecoder);
+var _user$project$TransferModel$piecesDecoder = A2(
+	_elm_lang$core$Json_Decode$map,
+	_elm_lang$core$Dict$fromList,
+	A2(
+		_elm_lang$core$Json_Decode_ops[':='],
+		'pieces',
+		_elm_lang$core$Json_Decode$list(_user$project$TransferModel$piecePairDecoder)));
+var _user$project$TransferModel$TransferModel = F6(
+	function (a, b, c, d, e, f) {
+		return {exportModel: a, pieces: b, spaces: c, ignoreGameResult: d, showSpaceOutlines: e, allowMovingAllPieces: f};
+	});
+var _user$project$TransferModel$decoder = A2(
+	_user$project$CommonDecoders$apply,
+	A2(
+		_user$project$CommonDecoders$apply,
+		A2(
+			_user$project$CommonDecoders$apply,
+			A2(
+				_user$project$CommonDecoders$apply,
+				A2(
+					_user$project$CommonDecoders$apply,
+					A2(_elm_lang$core$Json_Decode$map, _user$project$TransferModel$TransferModel, _user$project$ExportModel$lenientDecoder),
+					_user$project$TransferModel$piecesDecoder),
+				_user$project$TransferModel$spacesDecoder),
+			A2(_elm_lang$core$Json_Decode_ops[':='], 'ignoreGameResult', _elm_lang$core$Json_Decode$bool)),
+		A2(_elm_lang$core$Json_Decode_ops[':='], 'showSpaceOutlines', _elm_lang$core$Json_Decode$bool)),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'allowMovingAllPieces', _elm_lang$core$Json_Decode$bool));
+var _user$project$TransferModel$parse = _elm_lang$core$Json_Decode$decodeValue(_user$project$TransferModel$decoder);
+var _user$project$TransferModel$TransferSpace = F2(
+	function (a, b) {
+		return {position: a, spaceType: b};
+	});
+
 var _user$project$Game$alwaysList = _elm_lang$core$Native_List.fromArray(
 	[]);
 var _user$project$Game$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$batch(_user$project$Game$alwaysList);
 };
-var _user$project$Game$init = function (maybeTransportModel) {
-	var state = function () {
-		var _p0 = maybeTransportModel;
-		return _user$project$GameModel$defaultState;
-	}();
+var _user$project$Game$applyTransferModelToGameModel = F2(
+	function (gameModel, transferModel) {
+		return _elm_lang$core$Native_Utils.update(
+			gameModel,
+			{exportModel: transferModel.exportModel, pieces: transferModel.pieces, spaces: transferModel.spaces, ignoreGameResult: transferModel.ignoreGameResult, showSpaceOutlines: transferModel.showSpaceOutlines, allowMovingAllPieces: transferModel.allowMovingAllPieces});
+	});
+var _user$project$Game$init = function (maybeValue) {
+	var state = A2(
+		_elm_lang$core$Result$withDefault,
+		_user$project$GameModel$defaultState,
+		A2(
+			_elm_lang$core$Result$map,
+			_user$project$Game$applyTransferModelToGameModel(_user$project$GameModel$defaultState),
+			A2(
+				_elm_lang$core$Result$andThen,
+				A2(_elm_lang$core$Result$fromMaybe, '', maybeValue),
+				_user$project$TransferModel$parse)));
 	return A2(
 		_elm_lang$core$Platform_Cmd_ops['!'],
 		state,
@@ -18248,7 +18397,7 @@ var _user$project$Game$main = {
 		_elm_lang$core$Native_List.fromArray(
 			[
 				_elm_lang$core$Json_Decode$null(_elm_lang$core$Maybe$Nothing),
-				A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Maybe$Just, _elm_lang$core$Json_Decode$int)
+				A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Maybe$Just, _elm_lang$core$Json_Decode$value)
 			]))
 };
 
