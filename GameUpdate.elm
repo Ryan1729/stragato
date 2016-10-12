@@ -12,14 +12,15 @@ import Movement
 import GameEndCons exposing (GameEndCons(..), GamePredicate(..))
 import Math.Vector2 as V2 exposing (Vec2, vec2)
 import Random exposing (Seed)
-import Ports
+import CommonPorts
+import CommonUpdate
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         HitTable ->
-            { model | pieceSelected = Nothing } ! [ Ports.sound "tableHit" ]
+            { model | pieceSelected = Nothing } ! [ CommonPorts.sound "tableHit" ]
 
         SelectPiece id ->
             { model | pieceSelected = Just id } ! []
@@ -37,14 +38,17 @@ update msg model =
                     , pieces = newPieces
                     , gameResult = getGameResult model newPieces
                 }
-                    ! [ Ports.sound "clack" ]
+                    ! [ CommonPorts.sound "clack" ]
 
         GenerateBoard ->
             generateBoard model
 
+        GetSeed time ->
+            CommonUpdate.getSeed model time
+
         MakeAIMove ->
             if GameModel.canMove model then
-                randomAIMove model ! [ Ports.sound "clack" ]
+                randomAIMove model ! [ CommonPorts.sound "clack" ]
             else
                 model ! []
 
@@ -59,7 +63,7 @@ generateBoard model =
             if gameResult == GameModel.TBD then
                 []
             else
-                [ Ports.alert "This game has ended before it began! You might want to adjust some parameters to make this less likely to happen again." ]
+                [ CommonPorts.alert "This game has ended before it began! You might want to adjust some parameters to make this less likely to happen again." ]
     in
         { model
             | seed = newSeed

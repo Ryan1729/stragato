@@ -86,7 +86,7 @@ view model =
                        , ( "pointer-events", "auto" )
                        ]
                 ]
-                [ text "New GameResult" ]
+                [ text "New Game" ]
             , svg
                 [ width playfieldWidthString
                 , height playfieldHeightString

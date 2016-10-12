@@ -2,6 +2,7 @@ module GameModel exposing (..)
 
 import Model
 import ExportModel exposing (ExportModel)
+import TransferModel exposing (TransferModel)
 import Spaces exposing (Spaces, Space, SpaceType(..), SpaceIndex)
 import Pieces exposing (Pieces)
 import Random exposing (Seed)
@@ -46,3 +47,15 @@ type GameResult
 canMove : Model -> Bool
 canMove model =
     model.ignoreGameResult || model.gameResult == TBD
+
+
+applyTransferModelToGameModel : Model -> TransferModel -> Model
+applyTransferModelToGameModel gameModel transferModel =
+    { gameModel
+        | exportModel = transferModel.exportModel
+        , pieces = transferModel.pieces
+        , spaces = transferModel.spaces
+        , ignoreGameResult = transferModel.ignoreGameResult
+        , showSpaceOutlines = transferModel.showSpaceOutlines
+        , allowMovingAllPieces = transferModel.allowMovingAllPieces
+    }

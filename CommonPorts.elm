@@ -1,5 +1,13 @@
 port module CommonPorts exposing (..)
 
+
+port alert : String -> Cmd msg
+
+
+port sound : String -> Cmd msg
+
+
+
 -- (fileContents, filename)
 
 

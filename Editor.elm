@@ -10,7 +10,7 @@ import Mouse
 import AnimationFrame
 import Time
 import Task
-import Ports
+import EditorPorts
 
 
 main : Program Never
@@ -32,7 +32,7 @@ init =
 
 
 alwaysList =
-    [ Ports.recieveFile RecieveLoadedFile
+    [ EditorPorts.recieveFile RecieveLoadedFile
       -- , AnimationFrame.diffs Animate
     ]
 

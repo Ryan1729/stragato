@@ -1,0 +1,13 @@
+module CommonUpdate exposing (..)
+
+import Random exposing (Seed)
+
+
+getSeed model time =
+    { model
+        | seed =
+            Random.initialSeed
+                <| Debug.log "seed"
+                <| round time
+    }
+        ! []

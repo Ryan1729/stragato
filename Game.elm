@@ -8,7 +8,7 @@ import CommonPorts
 import Time
 import GameMsg exposing (Msg(GetSeed))
 import Task
-import GameModel exposing (Model)
+import GameModel exposing (Model, applyTransferModelToGameModel)
 import TransferModel exposing (TransferModel)
 import Dict
 import Json.Decode as Decode
@@ -43,18 +43,6 @@ init maybeValue =
         state
             ! [ Task.perform (always <| GetSeed -1.0) GetSeed Time.now
               ]
-
-
-applyTransferModelToGameModel : Model -> TransferModel -> Model
-applyTransferModelToGameModel gameModel transferModel =
-    { gameModel
-        | exportModel = transferModel.exportModel
-        , pieces = transferModel.pieces
-        , spaces = transferModel.spaces
-        , ignoreGameResult = transferModel.ignoreGameResult
-        , showSpaceOutlines = transferModel.showSpaceOutlines
-        , allowMovingAllPieces = transferModel.allowMovingAllPieces
-    }
 
 
 alwaysList =

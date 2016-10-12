@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cp {index.html,elm.js} ./docs
+cp {index.html,game.js,editor.js} ./docs
 
 cp -r sounds ./docs
 

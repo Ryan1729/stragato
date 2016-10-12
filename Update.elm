@@ -2,10 +2,9 @@ module Update exposing (update)
 
 import Model exposing (Model)
 import Msg exposing (Msg(..), ExportMsg(..))
-import Ports
+import EditorPorts
 import CommonPorts
 import Math.Vector2 as V2 exposing (Vec2, vec2)
-import Random exposing (Seed)
 import Extras
 import Material
 import Spaces exposing (Spaces, SpaceType(..), SpaceIndex)
@@ -18,6 +17,7 @@ import Movement
 import GameEndCons exposing (GameEndCons(..), GamePredicate(..))
 import ExportModel exposing (ExportModel)
 import String
+import CommonUpdate
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -50,7 +50,7 @@ update message model =
                   ]
 
         Load ->
-            { model | showFileInput = True } ! [ Ports.load () ]
+            { model | showFileInput = True } ! [ EditorPorts.load () ]
 
         RecieveLoadedFile fileString ->
             case ExportModel.parse fileString of
@@ -68,29 +68,23 @@ update message model =
                                 | exportModel = newExportModelUsingDefaults
                                 , showFileInput = False
                             }
-                                ! [ Ports.alert
+                                ! [ CommonPorts.alert
                                         <| "Falling back to some defaults since parsing the file failed with this message: "
                                         ++ message
                                   ]
 
                         Err message2 ->
-                            model ! [ Ports.alert message2 ]
+                            model ! [ CommonPorts.alert message2 ]
 
         --TODO animate something or remove this!
         Animate _ ->
             model ! []
 
         GetSeed time ->
-            { model
-                | seed =
-                    Random.initialSeed
-                        <| Debug.log "seed"
-                        <| round time
-            }
-                ! []
+            CommonUpdate.getSeed model time
 
         NoOp ->
-            model ! [ Ports.sound "tableHit" ]
+            model ! [ CommonPorts.sound "tableHit" ]
 
         -- When the `Mdl` messages come through, update appropriately.
         Mdl msg' ->
