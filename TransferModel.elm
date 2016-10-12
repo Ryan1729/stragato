@@ -112,7 +112,7 @@ parse =
 decoder : Decoder TransferModel
 decoder =
     TransferModel
-        `Decode.map` ExportModel.lenientDecoder
+        `Decode.map` ("exportModel" := ExportModel.lenientDecoder)
         `apply` piecesDecoder
         `apply` spacesDecoder
         `apply` ("ignoreGameResult" := Decode.bool)

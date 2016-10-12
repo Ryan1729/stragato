@@ -61,17 +61,13 @@ update msg model =
                             |> TransferModel.parse
                             |> Result.map (applyTransferModelToGameModel model)
                     of
-                        Ok m ->
-                            let
-                                _ =
-                                    Debug.log "match" (m == model)
-                            in
-                                m
+                        Ok parsedModel ->
+                            parsedModel
 
                         Err message ->
                             let
                                 _ =
-                                    Debug.log "message" message
+                                    Debug.log "TODO show this to the user instead of spewing it to the console!" message
                             in
                                 model
             in
@@ -108,7 +104,7 @@ generateBoardInfoHelper : Int -> Model -> ( Spaces, Pieces, GameResult, Seed )
 generateBoardInfoHelper attempts model =
     let
         ( spaces, postSpacesSeed ) =
-            Model.makeSpaces model.exportModel.gridWidth
+            Model.makeSpaces (Debug.log "gridWidth" model.exportModel.gridWidth)
                 model.exportModel.gridHeight
                 model.exportModel.spaceDeck
                 model.seed

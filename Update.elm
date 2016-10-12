@@ -186,7 +186,7 @@ updateExportModel msg model =
             { model | gameEndCons = GameEndCons.incrementLossCon model.gameEndCons }
 
         DecrementSubWinCon ->
-            { model | gameEndCons = Debug.log "" <| GameEndCons.decrementSubWinCon model.gameEndCons }
+            { model | gameEndCons = GameEndCons.decrementSubWinCon model.gameEndCons }
 
         IncrementSubWinCon ->
             { model | gameEndCons = GameEndCons.incrementSubWinCon model.gameEndCons }

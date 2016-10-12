@@ -57,5 +57,5 @@ applyTransferModelToGameModel gameModel transferModel =
         , spaces = transferModel.spaces
         , ignoreGameResult = transferModel.ignoreGameResult
         , showSpaceOutlines = transferModel.showSpaceOutlines
-        , allowMovingAllPieces = Debug.log "allowMovingAllPieces" transferModel.allowMovingAllPieces
+        , allowMovingAllPieces = transferModel.allowMovingAllPieces
     }
