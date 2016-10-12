@@ -1,7 +1,7 @@
 module GameUpdate exposing (..)
 
 import GameMsg exposing (Msg(..))
-import GameModel exposing (Model, GameResult)
+import GameModel exposing (Model, GameResult, applyTransferModelToGameModel)
 import Model
 import Spaces exposing (Spaces, Space, SpaceType(..), SpaceIndex)
 import Pieces exposing (Pieces)
@@ -14,6 +14,7 @@ import Math.Vector2 as V2 exposing (Vec2, vec2)
 import Random exposing (Seed)
 import CommonPorts
 import CommonUpdate
+import TransferModel
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -51,6 +52,16 @@ update msg model =
                 randomAIMove model ! [ CommonPorts.sound "clack" ]
             else
                 model ! []
+
+        RecieveEditorFile value ->
+            let
+                newModel =
+                    value
+                        |> TransferModel.parse
+                        |> Result.map (applyTransferModelToGameModel model)
+                        |> Result.withDefault model
+            in
+                newModel ! []
 
 
 generateBoard : Model -> ( Model, Cmd Msg )

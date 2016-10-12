@@ -1,5 +1,7 @@
 module GameMsg exposing (..)
 
+import Json.Decode as Decode
+
 
 type Msg
     = HitTable
@@ -9,3 +11,4 @@ type Msg
     | GenerateBoard
     | MakeAIMove
     | GetSeed Float
+    | RecieveEditorFile Decode.Value

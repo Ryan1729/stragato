@@ -4,9 +4,9 @@ import Html.App exposing (programWithFlags)
 import GameModel
 import GameView exposing (view)
 import GameUpdate exposing (update)
-import CommonPorts
+import GamePorts
 import Time
-import GameMsg exposing (Msg(GetSeed))
+import GameMsg exposing (Msg(GetSeed, RecieveEditorFile))
 import Task
 import GameModel exposing (Model, applyTransferModelToGameModel)
 import TransferModel exposing (TransferModel)
@@ -46,7 +46,8 @@ init maybeValue =
 
 
 alwaysList =
-    [-- , AnimationFrame.diffs Animate
+    [ GamePorts.recieveFromEditor RecieveEditorFile
+      -- , AnimationFrame.diffs Animate
     ]
 
 
