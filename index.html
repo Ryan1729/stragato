@@ -46,8 +46,7 @@
                 spare: document.getElementById("audspare")
             }
 
-
-            app.ports.sound.subscribe(function(name) {
+            var soundHandler = function(name) {
                 var currentSound = sounds[name]
 
                 if (currentSound.paused) {
@@ -59,9 +58,12 @@
                         spare.play()
                     }
                 }
-            });
+            }
 
-            app.ports.saveAs.subscribe(function(tuple) {
+            app.ports.sound.subscribe(soundHandler);
+            game.ports.sound.subscribe(soundHandler);
+
+            var saveAsHandler = function(tuple) {
                 var contents = tuple[0],
                     filename = tuple[1];
 
@@ -72,45 +74,50 @@
                 } else {
                   saveAs(blob)
                 }
-            });
+            }
+
+            app.ports.saveAs.subscribe(saveAsHandler);
+            game.ports.saveAs.subscribe(saveAsHandler);
 
 
             app.ports.load.subscribe(function(_) {
 
-            setTimeout(function () {
-                var fileInput = document.getElementById('fileInput');
+              setTimeout(function () {
+                  var fileInput = document.getElementById('fileInput');
 
-                if (fileInput == null) {
-                  app.ports.errorMessage.send("😞 Uploading is broke for some reason.")
-                } else {
-                  var fileReader = new FileReader();
+                  if (fileInput == null) {
+                    app.ports.errorMessage.send("😞 Uploading is broke for some reason.")
+                  } else {
+                    var fileReader = new FileReader();
 
-                  fileReader.onload = function (event) {
-                    console.log(event)
-                    app.ports.recieveFile.send(event.target.result)
+                    fileReader.onload = function (event) {
+                      console.log(event)
+                      app.ports.recieveFile.send(event.target.result)
+                    }
+
+                    fileInput.addEventListener('change', function(e) {
+                     var file = fileInput.files[0];
+
+                     fileReader.readAsText(file);
+                    })
+
                   }
-
-                  fileInput.addEventListener('change', function(e) {
-                   var file = fileInput.files[0];
-
-                   fileReader.readAsText(file);
-                  })
-
                 }
-              }
-            , 16)
+              , 16)
 
           });
 
 
+          var alertHandler = function (alertString) {
+            //this doesn't seem to work if I just pass alert
+            //to subscribe
+            alert(alertString)
+
+          }
 
 
-            app.ports.alert.subscribe(function (alertString) {
-              //this doesn't seem to work if I just pass alert
-              //to subscribe
-              alert(alertString)
-
-            });
+            app.ports.alert.subscribe(alertHandler);
+            game.ports.alert.subscribe(alertHandler);
 
         }())
     </script>
