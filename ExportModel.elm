@@ -144,13 +144,18 @@ encode exportModel =
 --               dP                                             d8888P
 
 
-parse : String -> Result String ExportModel
+parse : Decode.Value -> Result String ExportModel
 parse =
+    Decode.decodeValue decoder
+
+
+parseString : String -> Result String ExportModel
+parseString =
     Decode.decodeString decoder
 
 
-parseDefaultingOnError : String -> Result String ExportModel
-parseDefaultingOnError =
+parseStringDefaultingOnError : String -> Result String ExportModel
+parseStringDefaultingOnError =
     Decode.decodeString lenientDecoder
 
 

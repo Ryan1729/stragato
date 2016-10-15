@@ -20,6 +20,7 @@ type Msg
     | UpdateExportModel ExportMsg
     | SaveAs
     | Load
+    | Export
     | RecieveLoadedFile String
     | NoOp
 

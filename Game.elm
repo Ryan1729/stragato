@@ -8,8 +8,9 @@ import GamePorts
 import Time
 import GameMsg exposing (Msg(GetSeed, RecieveEditorFile))
 import Task
-import GameModel exposing (Model, applyTransferModelToGameModel)
-import TransferModel exposing (TransferModel)
+import GameModel exposing (Model, applyTransferModelToGameModel, applyExportModelToGameModel)
+import TransferModel
+import ExportModel
 import Dict
 import Json.Decode as Decode
 
@@ -33,12 +34,22 @@ bugWorkaround =
 init : Maybe Decode.Value -> ( Model, Cmd Msg )
 init maybeValue =
     let
+        resultValue =
+            Result.fromMaybe "" maybeValue
+
         state =
-            Result.fromMaybe ""
-                maybeValue
-                `Result.andThen` TransferModel.parse
-                |> Result.map (applyTransferModelToGameModel GameModel.defaultState)
-                |> Result.withDefault GameModel.defaultState
+            case resultValue `Result.andThen` TransferModel.parse of
+                Ok transferModel ->
+                    transferModel
+                        |> applyTransferModelToGameModel GameModel.defaultState
+
+                Err _ ->
+                    case resultValue `Result.andThen` ExportModel.parse of
+                        Ok exportModel ->
+                            applyExportModelToGameModel GameModel.defaultState exportModel
+
+                        Err _ ->
+                            GameModel.defaultState
     in
         state
             ! [ Task.perform (always <| GetSeed -1.0) GetSeed Time.now

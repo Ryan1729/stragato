@@ -108,6 +108,44 @@
 
           });
 
+          var preamble = "<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>♜♞♝♟♙♗♘♖</title><style type=\"text/css\">html,head,body {margin: 0;height: 100%;background-color: #7F9Fff;}</style></head><body><script>"
+
+          var postamble = "<\/script></body></html>"
+
+          //skip loading it twice if the is never an export
+          var loadedScript = null
+
+          var exportTheString = function (exportedString){
+            var script = loadedScript
+                    + "\nElm.Game.fullscreen(" + exportedString + ")"
+
+            var fileString = preamble + script + postamble
+
+            var blob = new Blob([fileString], {type: "text/plain;charset=utf-8"});
+
+            saveAs(blob, "exportedGame.html")
+          }
+
+          app.ports.exportGame.subscribe(function(exportedObject){
+              var exportedString = typeof exportedObject == "string"
+                                  ? exportedObject
+                                  : JSON.stringify(exportedObject)
+
+              if (loadedScript) {
+                exportTheString(exportedString)
+              } else {
+                  var xhttp = new XMLHttpRequest();
+                  xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                     loadedScript = this.responseText;
+                     exportTheString(exportedString)
+                    }
+                  };
+                  xhttp.open("GET", "game.js", true);
+                  xhttp.send();
+              }
+
+          })
 
           var alertHandler = function (alertString) {
             //this doesn't seem to work if I just pass alert

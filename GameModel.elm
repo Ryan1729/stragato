@@ -59,3 +59,8 @@ applyTransferModelToGameModel gameModel transferModel =
         , showSpaceOutlines = transferModel.showSpaceOutlines
         , allowMovingAllPieces = transferModel.allowMovingAllPieces
     }
+
+
+applyExportModelToGameModel : Model -> ExportModel -> Model
+applyExportModelToGameModel gameModel exportModel =
+    { gameModel | exportModel = exportModel }

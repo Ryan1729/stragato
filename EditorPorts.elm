@@ -6,6 +6,9 @@ import Json.Encode as Encode
 port load : () -> Cmd msg
 
 
+port exportGame : Encode.Value -> Cmd msg
+
+
 port recieveFile : (String -> msg) -> Sub msg
 
 

@@ -50,6 +50,18 @@ make model =
                     , text "load"
                     ]
             ]
+        , cell [ size All 2 ]
+            [ Button.render Msg.Mdl
+                [ -9 ]
+                model.mdl
+                [ Button.onClick Msg.Export
+                , css "margin" "0 24px"
+                ]
+                [ Icon.i "play_for_work"
+                , Options.span [ css "width" "4px" ] []
+                , text "export"
+                ]
+            ]
         ]
     , Tabs.render Msg.Mdl
         [ -1 ]

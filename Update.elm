@@ -69,8 +69,11 @@ update message model =
         Load ->
             { model | showFileInput = True } ! [ EditorPorts.load () ]
 
+        Export ->
+            model ! [ model.exportModel |> ExportModel.encode |> EditorPorts.exportGame ]
+
         RecieveLoadedFile fileString ->
-            case ExportModel.parse fileString of
+            case ExportModel.parseString fileString of
                 Ok newExportModel ->
                     let
                         newModel =
@@ -82,7 +85,7 @@ update message model =
                         newModel ! [ newModel |> encodeAndSend ]
 
                 Err message ->
-                    case ExportModel.parseDefaultingOnError fileString of
+                    case ExportModel.parseStringDefaultingOnError fileString of
                         Ok newExportModelUsingDefaults ->
                             let
                                 newModel =
