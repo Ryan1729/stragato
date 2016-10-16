@@ -98,4 +98,6 @@ make model =
                     [ text (toString model)
                     ]
         ]
+    , Html.hr [] []
+    , text "1.0.0"
     ]
