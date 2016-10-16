@@ -1,6 +1,15 @@
-# :warning: *So* Not Even Doing Much Of Anything Yet :warning:
+# Stragato
 
-This is planned to eventually be a tool used to create strategy games. 
-It's still in the design/figuring out what it even wants to be phase. :seedling:
+This is a tool for creating strategy games (STRAtegy GAme TOol)
+
+Currently there are relatively few distinct games that can be made with it, but it does have the following features
+
+* Entirely GUI driven
+* Rules enforcement
+* Deck-based PCG customization
+* Save and load editor state
+* Export to standalone HTML pages
+* (limited) visual customization
+
 
 See demo at https://ryan1729.github.io/stragato/
