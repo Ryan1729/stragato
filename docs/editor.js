@@ -20487,7 +20487,14 @@ var _user$project$DevControls$make = function (model) {
 									]));
 					}
 				}()
-				]))
+				])),
+			A2(
+			_elm_lang$html$Html$hr,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			_elm_lang$core$Native_List.fromArray(
+				[])),
+			_elm_lang$html$Html$text('1.0.0')
 		]);
 };
 
