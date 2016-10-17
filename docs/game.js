@@ -15663,6 +15663,121 @@ var _user$project$PosInt$fromInt = function (x) {
 	return (_elm_lang$core$Native_Utils.cmp(x, 0) > 0) ? _user$project$PosInt$PosInt(x) : _user$project$PosInt$PosInt(1);
 };
 
+var _user$project$Hexagons$northEast = function (_p0) {
+	var _p1 = _p0;
+	return {ctor: '_Tuple2', _0: _p1._0 + 1, _1: _p1._1 - 1};
+};
+var _user$project$Hexagons$north = function (_p2) {
+	var _p3 = _p2;
+	return {ctor: '_Tuple2', _0: _p3._0, _1: _p3._1 - 2};
+};
+var _user$project$Hexagons$northWest = function (_p4) {
+	var _p5 = _p4;
+	return {ctor: '_Tuple2', _0: _p5._0 + 1, _1: _p5._1 - 1};
+};
+var _user$project$Hexagons$southWest = function (_p6) {
+	var _p7 = _p6;
+	return {ctor: '_Tuple2', _0: _p7._0 + 1, _1: _p7._1 + 1};
+};
+var _user$project$Hexagons$south = function (_p8) {
+	var _p9 = _p8;
+	return {ctor: '_Tuple2', _0: _p9._0, _1: _p9._1 + 2};
+};
+var _user$project$Hexagons$southEast = function (_p10) {
+	var _p11 = _p10;
+	return {ctor: '_Tuple2', _0: _p11._0 + 1, _1: _p11._1 + 1};
+};
+var _user$project$Hexagons$ring = function (radius) {
+	if (_elm_lang$core$Native_Utils.cmp(radius, 0) < 1) {
+		return _elm_lang$core$Native_List.fromArray(
+			[
+				{ctor: '_Tuple2', _0: 0, _1: 0}
+			]);
+	} else {
+		if (_elm_lang$core$Native_Utils.eq(radius, 1)) {
+			return _elm_lang$core$Native_List.fromArray(
+				[
+					{ctor: '_Tuple2', _0: 0, _1: 2},
+					{ctor: '_Tuple2', _0: 1, _1: -1},
+					{ctor: '_Tuple2', _0: 1, _1: 1},
+					{ctor: '_Tuple2', _0: 2, _1: 0},
+					{ctor: '_Tuple2', _0: -1, _1: 1},
+					{ctor: '_Tuple2', _0: -1, _1: -1}
+				]);
+		} else {
+			var range = _elm_lang$core$Native_List.range(1, radius);
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				A3(
+					_elm_lang$core$List$scanl,
+					_user$project$Extras$ignoreFirstArg(_user$project$Hexagons$southEast),
+					{ctor: '_Tuple2', _0: 0, _1: radius * 2},
+					range),
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					A3(
+						_elm_lang$core$List$scanl,
+						_user$project$Extras$ignoreFirstArg(_user$project$Hexagons$south),
+						{ctor: '_Tuple2', _0: radius, _1: 0 - radius},
+						range),
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						A3(
+							_elm_lang$core$List$scanl,
+							_user$project$Extras$ignoreFirstArg(_user$project$Hexagons$southWest),
+							{ctor: '_Tuple2', _0: radius, _1: radius},
+							range),
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							A3(
+								_elm_lang$core$List$scanl,
+								_user$project$Extras$ignoreFirstArg(_user$project$Hexagons$northWest),
+								{ctor: '_Tuple2', _0: radius * 2, _1: 0},
+								range),
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								A3(
+									_elm_lang$core$List$scanl,
+									_user$project$Extras$ignoreFirstArg(_user$project$Hexagons$north),
+									{ctor: '_Tuple2', _0: 0 - radius, _1: radius},
+									range),
+								A3(
+									_elm_lang$core$List$scanl,
+									_user$project$Extras$ignoreFirstArg(_user$project$Hexagons$northEast),
+									{ctor: '_Tuple2', _0: 0 - radius, _1: 0 - radius},
+									range))))));
+		}
+	}
+};
+var _user$project$Hexagons$hexagonHeightConstant = _elm_lang$core$Basics$sqrt(3) / 2;
+var _user$project$Hexagons$grid = F2(
+	function (width, height) {
+		var baseList = _elm_lang$core$Native_List.range(0, (width * height) - 1);
+		return A2(
+			_elm_lang$core$List$filterMap,
+			function (index) {
+				var y = (index / width) | 0;
+				var x = A2(_elm_lang$core$Basics_ops['%'], index, width);
+				if (_elm_lang$core$Native_Utils.eq(
+					A2(_elm_lang$core$Basics_ops['%'], x + y, 2),
+					0)) {
+					var vector = A2(
+						_elm_community$elm_linear_algebra$Math_Vector2$vec2,
+						_elm_lang$core$Basics$toFloat(x) * 1.5,
+						_elm_lang$core$Basics$toFloat(y) * _user$project$Hexagons$hexagonHeightConstant);
+					return _elm_lang$core$Maybe$Just(
+						{
+							ctor: '_Tuple2',
+							_0: {ctor: '_Tuple2', _0: x, _1: y},
+							_1: vector
+						});
+				} else {
+					return _elm_lang$core$Maybe$Nothing;
+				}
+			},
+			baseList);
+	});
+
 var _user$project$Pieces$removePiecesAtPosition = F2(
 	function (position, pieces) {
 		return A2(
@@ -15748,9 +15863,21 @@ var _user$project$Pieces$pieceTypeToStringList = function (pieceType) {
 			_elm_lang$core$Basics$toString(pieceType.moveOccupancy)
 		]);
 };
+var _user$project$Pieces$someMoveOffsetPossibilities = A2(
+	_elm_lang$core$Debug$log,
+	'',
+	A2(
+		_elm_lang$core$List$concatMap,
+		_user$project$Hexagons$ring,
+		_elm_lang$core$Native_List.fromArray(
+			[0, 1, 2])));
 var _user$project$Pieces$Piece = F2(
 	function (a, b) {
 		return {pieceType: a, position: b};
+	});
+var _user$project$Pieces$MovePattern = F3(
+	function (a, b, c) {
+		return {occupied: a, unoccupied: b, anyspace: c};
 	});
 var _user$project$Pieces$PieceType = F3(
 	function (a, b, c) {
@@ -16213,34 +16340,6 @@ var _user$project$Points$trianglePointsList = A2(
 	_elm_lang$core$Native_List.fromArray(
 		[0, 2 / 5, 3 / 5]));
 var _user$project$Points$triangle = _user$project$Points$pointsListToSVGString(_user$project$Points$trianglePointsList);
-var _user$project$Points$hexagonHeightConstant = _elm_lang$core$Basics$sqrt(3) / 2;
-var _user$project$Points$hexGrid = F2(
-	function (width, height) {
-		var baseList = _elm_lang$core$Native_List.range(0, (width * height) - 1);
-		return A2(
-			_elm_lang$core$List$filterMap,
-			function (index) {
-				var y = (index / width) | 0;
-				var x = A2(_elm_lang$core$Basics_ops['%'], index, width);
-				if (_elm_lang$core$Native_Utils.eq(
-					A2(_elm_lang$core$Basics_ops['%'], x + y, 2),
-					0)) {
-					var vector = A2(
-						_elm_community$elm_linear_algebra$Math_Vector2$vec2,
-						_elm_lang$core$Basics$toFloat(x) * 1.5,
-						_elm_lang$core$Basics$toFloat(y) * _user$project$Points$hexagonHeightConstant);
-					return _elm_lang$core$Maybe$Just(
-						{
-							ctor: '_Tuple2',
-							_0: {ctor: '_Tuple2', _0: x, _1: y},
-							_1: vector
-						});
-				} else {
-					return _elm_lang$core$Maybe$Nothing;
-				}
-			},
-			baseList);
-	});
 
 var _user$project$PieceAppearances$getFill = function (control) {
 	var _p0 = control;
@@ -16973,7 +17072,7 @@ var _user$project$Deck$fillListFromDeck = F4(
 				[]));
 	});
 
-var _user$project$Version$string = '1.1.0';
+var _user$project$Version$string = '1.1.1';
 
 var _user$project$ExportModel$strictPieceAppearances = A2(_elm_lang$core$Json_Decode_ops[':='], 'pieceAppearances', _user$project$CommonDecoders$pieceAppearancesDecoder);
 var _user$project$ExportModel$strictViewScale = A2(_elm_lang$core$Json_Decode_ops[':='], 'viewScale', _elm_lang$core$Json_Decode$float);
@@ -17290,9 +17389,16 @@ var _user$project$TransferModel$encode = function (transferModel) {
 				ctor: '_Tuple2',
 				_0: 'pieces',
 				_1: A2(
-					_user$project$CommonEncoders$encodeMap,
-					_user$project$TransferModel$encodePiecePair,
-					_elm_lang$core$Dict$toList(
+					_elm_lang$core$Maybe$withDefault,
+					_elm_lang$core$Json_Encode$null,
+					A2(
+						_elm_lang$core$Maybe$map,
+						function (_p6) {
+							return A2(
+								_user$project$CommonEncoders$encodeMap,
+								_user$project$TransferModel$encodePiecePair,
+								_elm_lang$core$Dict$toList(_p6));
+						},
 						function (_) {
 							return _.pieces;
 						}(transferModel)))
@@ -17301,9 +17407,16 @@ var _user$project$TransferModel$encode = function (transferModel) {
 				ctor: '_Tuple2',
 				_0: 'spaces',
 				_1: A2(
-					_user$project$CommonEncoders$encodeMap,
-					_user$project$TransferModel$encodeSpacePair,
-					_elm_lang$core$Dict$toList(
+					_elm_lang$core$Maybe$withDefault,
+					_elm_lang$core$Json_Encode$null,
+					A2(
+						_elm_lang$core$Maybe$map,
+						function (_p7) {
+							return A2(
+								_user$project$CommonEncoders$encodeMap,
+								_user$project$TransferModel$encodeSpacePair,
+								_elm_lang$core$Dict$toList(_p7));
+						},
 						function (_) {
 							return _.spaces;
 						}(transferModel)))
@@ -17349,15 +17462,25 @@ var _user$project$TransferModel$decoder = A2(
 						_elm_lang$core$Json_Decode$map,
 						_user$project$TransferModel$TransferModel,
 						A2(_elm_lang$core$Json_Decode_ops[':='], 'exportModel', _user$project$ExportModel$lenientDecoder)),
-					_user$project$TransferModel$piecesDecoder),
-				_user$project$TransferModel$spacesDecoder),
+					_elm_lang$core$Json_Decode$maybe(_user$project$TransferModel$piecesDecoder)),
+				_elm_lang$core$Json_Decode$maybe(_user$project$TransferModel$spacesDecoder)),
 			A2(_elm_lang$core$Json_Decode_ops[':='], 'ignoreGameResult', _elm_lang$core$Json_Decode$bool)),
 		A2(_elm_lang$core$Json_Decode_ops[':='], 'showSpaceOutlines', _elm_lang$core$Json_Decode$bool)),
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'allowMovingAllPieces', _elm_lang$core$Json_Decode$bool));
 var _user$project$TransferModel$parse = _elm_lang$core$Json_Decode$decodeValue(_user$project$TransferModel$decoder);
 
+var _user$project$Model$modelToTransferModelWithoutPieces = function (model) {
+	return {exportModel: model.exportModel, pieces: _elm_lang$core$Maybe$Nothing, spaces: _elm_lang$core$Maybe$Nothing, ignoreGameResult: model.ignoreGameResult, showSpaceOutlines: model.showSpaceOutlines, allowMovingAllPieces: model.allowMovingAllPieces};
+};
 var _user$project$Model$modelToTransferModel = function (model) {
-	return {exportModel: model.exportModel, pieces: model.pieces, spaces: model.spaces, ignoreGameResult: model.ignoreGameResult, showSpaceOutlines: model.showSpaceOutlines, allowMovingAllPieces: model.allowMovingAllPieces};
+	return {
+		exportModel: model.exportModel,
+		pieces: _elm_lang$core$Maybe$Just(model.pieces),
+		spaces: _elm_lang$core$Maybe$Just(model.spaces),
+		ignoreGameResult: model.ignoreGameResult,
+		showSpaceOutlines: model.showSpaceOutlines,
+		allowMovingAllPieces: model.allowMovingAllPieces
+	};
 };
 var _user$project$Model$attemptPiece = F2(
 	function (protoPiece, position) {
@@ -17404,7 +17527,7 @@ var _user$project$Model$makeGridPoints = F2(
 						A2(_elm_community$elm_linear_algebra$Math_Vector2$scale, 60, _p3._1))
 				};
 			},
-			A2(_user$project$Points$hexGrid, width, height));
+			A2(_user$project$Hexagons$grid, width, height));
 	});
 var _user$project$Model$putSpaceTogether = F2(
 	function (_p4, spaceType) {
@@ -17490,7 +17613,14 @@ var _user$project$GameModel$applyTransferModelToGameModel = F2(
 	function (gameModel, transferModel) {
 		return _elm_lang$core$Native_Utils.update(
 			gameModel,
-			{exportModel: transferModel.exportModel, pieces: transferModel.pieces, spaces: transferModel.spaces, ignoreGameResult: transferModel.ignoreGameResult, showSpaceOutlines: transferModel.showSpaceOutlines, allowMovingAllPieces: transferModel.allowMovingAllPieces});
+			{
+				exportModel: transferModel.exportModel,
+				pieces: A2(_elm_lang$core$Maybe$withDefault, gameModel.pieces, transferModel.pieces),
+				spaces: A2(_elm_lang$core$Maybe$withDefault, gameModel.spaces, transferModel.spaces),
+				ignoreGameResult: transferModel.ignoreGameResult,
+				showSpaceOutlines: transferModel.showSpaceOutlines,
+				allowMovingAllPieces: transferModel.allowMovingAllPieces
+			});
 	});
 var _user$project$GameModel$Model = F9(
 	function (a, b, c, d, e, f, g, h, i) {
