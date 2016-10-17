@@ -137,8 +137,19 @@ attemptPiece protoPiece position =
 modelToTransferModel : Model -> TransferModel
 modelToTransferModel model =
     { exportModel = model.exportModel
-    , pieces = model.pieces
-    , spaces = model.spaces
+    , pieces = Just model.pieces
+    , spaces = Just model.spaces
+    , ignoreGameResult = model.ignoreGameResult
+    , showSpaceOutlines = model.showSpaceOutlines
+    , allowMovingAllPieces = model.allowMovingAllPieces
+    }
+
+
+modelToTransferModelWithoutPieces : Model -> TransferModel
+modelToTransferModelWithoutPieces model =
+    { exportModel = model.exportModel
+    , pieces = Nothing
+    , spaces = Nothing
     , ignoreGameResult = model.ignoreGameResult
     , showSpaceOutlines = model.showSpaceOutlines
     , allowMovingAllPieces = model.allowMovingAllPieces

@@ -124,7 +124,7 @@ update message model =
 
 encodeAndSend : Model -> Cmd Msg
 encodeAndSend =
-    Model.modelToTransferModel
+    Model.modelToTransferModelWithoutPieces
         >> TransferModel.encode
         >> EditorPorts.sendToGame
 

@@ -14,8 +14,8 @@ import CommonDecoders exposing (apply)
 
 type alias TransferModel =
     { exportModel : ExportModel
-    , pieces : Pieces
-    , spaces : Spaces
+    , pieces : Maybe Pieces
+    , spaces : Maybe Spaces
     , ignoreGameResult : Bool
     , showSpaceOutlines : Bool
     , allowMovingAllPieces : Bool
@@ -47,14 +47,20 @@ encode transferModel =
         , ( "pieces"
           , transferModel
                 |> .pieces
-                |> Dict.toList
-                |> encodeMap encodePiecePair
+                |> Maybe.map
+                    (Dict.toList
+                        >> encodeMap encodePiecePair
+                    )
+                |> Maybe.withDefault Encode.null
           )
         , ( "spaces"
           , transferModel
                 |> .spaces
-                |> Dict.toList
-                |> encodeMap encodeSpacePair
+                |> Maybe.map
+                    (Dict.toList
+                        >> encodeMap encodeSpacePair
+                    )
+                |> Maybe.withDefault Encode.null
           )
         , ( "ignoreGameResult", Encode.bool transferModel.ignoreGameResult )
         , ( "showSpaceOutlines", Encode.bool transferModel.showSpaceOutlines )
@@ -113,8 +119,8 @@ decoder : Decoder TransferModel
 decoder =
     TransferModel
         `Decode.map` ("exportModel" := ExportModel.lenientDecoder)
-        `apply` piecesDecoder
-        `apply` spacesDecoder
+        `apply` Decode.maybe piecesDecoder
+        `apply` Decode.maybe spacesDecoder
         `apply` ("ignoreGameResult" := Decode.bool)
         `apply` ("showSpaceOutlines" := Decode.bool)
         `apply` ("allowMovingAllPieces" := Decode.bool)

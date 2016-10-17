@@ -53,8 +53,8 @@ applyTransferModelToGameModel : Model -> TransferModel -> Model
 applyTransferModelToGameModel gameModel transferModel =
     { gameModel
         | exportModel = transferModel.exportModel
-        , pieces = transferModel.pieces
-        , spaces = transferModel.spaces
+        , pieces = Maybe.withDefault gameModel.pieces transferModel.pieces
+        , spaces = Maybe.withDefault gameModel.spaces transferModel.spaces
         , ignoreGameResult = transferModel.ignoreGameResult
         , showSpaceOutlines = transferModel.showSpaceOutlines
         , allowMovingAllPieces = transferModel.allowMovingAllPieces
