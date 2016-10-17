@@ -1,7 +1,7 @@
 module Movement exposing (..)
 
 import Spaces exposing (Spaces, SpaceType(..), SpaceIndex)
-import Pieces exposing (Pieces, Piece, PieceType, Shape(..), MoveType(..), MoveEffect(..))
+import Pieces exposing (Pieces, Piece, PieceType, Shape(..), MoveOccupancy(..), MoveEffect(..))
 import PiecesAndSpaces
 import Model exposing (Model)
 import Extras
@@ -112,7 +112,7 @@ canPieceMoveToSpace pieces spaces index spaceIndex =
         in
             Maybe.map
                 (\piece ->
-                    case piece.pieceType.moveType of
+                    case piece.pieceType.moveOccupancy of
                         Occupied ->
                             PiecesAndSpaces.isSpaceOccupied pieces spaces spaceIndex
 

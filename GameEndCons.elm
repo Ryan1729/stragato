@@ -1,7 +1,7 @@
 module GameEndCons exposing (..)
 
 import Spaces exposing (Spaces, Space, SpaceType(..))
-import Pieces exposing (Pieces, Piece, PieceType, Controller(..), MoveType(..), ProtoPiece(..))
+import Pieces exposing (Pieces, Piece, PieceType, Controller(..), MoveOccupancy(..), ProtoPiece(..))
 import Extras
 import String
 

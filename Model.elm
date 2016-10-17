@@ -8,7 +8,7 @@ import Points
 import Extras
 import Dict exposing (Dict)
 import Spaces exposing (Spaces, Space, SpaceType(..))
-import Pieces exposing (Pieces, Piece, PieceType, Controller(..), MoveType(..), ProtoPiece(..))
+import Pieces exposing (Pieces, Piece, PieceType, Controller(..), MoveOccupancy(..), ProtoPiece(..))
 import Deck
 import PieceAppearances exposing (PieceAppearances, Appearance)
 import GameEndCons exposing (GameEndCons(..), GamePredicate(..))

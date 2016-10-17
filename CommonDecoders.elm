@@ -3,7 +3,7 @@ module CommonDecoders exposing (..)
 import GameEndCons exposing (GameEndCons(..), GamePredicate(..))
 import PieceAppearances exposing (PieceAppearances, Appearance, Icon(..), AppearancePair)
 import Spaces exposing (Spaces, Space, SpaceType(..))
-import Pieces exposing (Pieces, Piece, Shape(..), PieceType, Controller(..), MoveType(..), ProtoPiece(..), MoveEffect(..))
+import Pieces exposing (Pieces, Piece, Shape(..), PieceType, Controller(..), MoveOccupancy(..), ProtoPiece(..), MoveEffect(..))
 import Math.Vector2 as V2 exposing (Vec2, vec2)
 import Json.Decode as Decode exposing (Decoder, (:=))
 import PosInt
@@ -54,7 +54,7 @@ pieceTypeDecoder =
     Decode.object3 PieceType
         ("moveEffect" := moveEffectDecoder)
         ("controller" := controllerDecoder)
-        ("moveType" := moveTypeDecoder)
+        ("moveOccupancy" := moveOccupancyDecoder)
 
 
 moveEffectDecoder : Decoder MoveEffect
@@ -130,14 +130,14 @@ stringToController s =
             None
 
 
-moveTypeDecoder : Decoder MoveType
-moveTypeDecoder =
-    Decode.map stringToMoveType
+moveOccupancyDecoder : Decoder MoveOccupancy
+moveOccupancyDecoder =
+    Decode.map stringToMoveOccupancy
         Decode.string
 
 
-stringToMoveType : String -> MoveType
-stringToMoveType s =
+stringToMoveOccupancy : String -> MoveOccupancy
+stringToMoveOccupancy s =
     case String.toLower s of
         "occupied" ->
             Occupied

@@ -18,7 +18,7 @@ import Math.Vector2 as V2 exposing (Vec2, vec2)
 import Svg exposing (Svg, svg)
 import Svg.Attributes exposing (height, width, viewBox, stroke)
 import Playfield
-import Pieces exposing (Piece, PieceType, ProtoPiece(..), Controller(..), MoveType(..), Shape(..))
+import Pieces exposing (Piece, PieceType, ProtoPiece(..), Controller(..), MoveOccupancy(..), Shape(..))
 import Spaces
 import PieceAppearances exposing (PieceAppearances)
 import String

@@ -3,7 +3,7 @@ module ExportModel exposing (..)
 import GameEndCons exposing (GameEndCons(..), GamePredicate(..))
 import PieceAppearances exposing (PieceAppearances, Appearance, Icon(..), AppearancePair)
 import Spaces exposing (Spaces, Space, SpaceType(..))
-import Pieces exposing (Pieces, Piece, Shape(..), PieceType, Controller(..), MoveType(..), ProtoPiece(..), MoveEffect(..))
+import Pieces exposing (Pieces, Piece, Shape(..), PieceType, Controller(..), MoveOccupancy(..), ProtoPiece(..), MoveEffect(..))
 import Json.Encode as Encode
 import Json.Decode as Decode exposing (Decoder, (:=))
 import PosInt
@@ -69,7 +69,7 @@ defaultPieceAppearances =
 
 defaultPieceTypeDeck =
     Pieces.actualPieceTypePossibilities
-        |> List.filter (\p -> p.moveType == Pieces.AnySpace)
+        |> List.filter (\p -> p.moveOccupancy == Pieces.AnySpace)
         |> List.map Pieces.ActualPiece
         |> (++)
             [ NoPiece
@@ -84,8 +84,8 @@ defaultPieceTypeDeck =
 --        ]
 
 
-defaultMoveTypeDeck =
-    Pieces.moveTypePossibilities
+defaultMoveOccupancyDeck =
+    Pieces.moveOccupancyPossibilities
 
 
 defaultSpaceDeck =

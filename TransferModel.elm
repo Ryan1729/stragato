@@ -3,7 +3,7 @@ module TransferModel exposing (..)
 import ExportModel exposing (ExportModel)
 import Math.Vector2 as V2 exposing (Vec2, vec2)
 import Spaces exposing (Spaces, Space, SpaceType(..))
-import Pieces exposing (Pieces, Piece, Shape(..), PieceType, Controller(..), MoveType(..), ProtoPiece(..), MoveEffect(..))
+import Pieces exposing (Pieces, Piece, Shape(..), PieceType, Controller(..), MoveOccupancy(..), ProtoPiece(..), MoveEffect(..))
 import Extras
 import Dict
 import Json.Encode as Encode

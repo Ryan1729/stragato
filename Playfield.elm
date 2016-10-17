@@ -9,7 +9,7 @@ import Math.Vector2 as V2 exposing (Vec2, vec2, getX, getY, add, scale)
 import Points
 import Array
 import Spaces exposing (Spaces, Space, SpaceType(..), SpaceIndex)
-import Pieces exposing (Piece, PieceType, Controller(..), MoveType(..), Shape(..))
+import Pieces exposing (Piece, PieceType, Controller(..), MoveOccupancy(..), Shape(..))
 import PiecesAndSpaces
 import Dict exposing (Dict)
 import String
@@ -168,8 +168,8 @@ piece pieceAppearances extras center pieceType =
         otherAttributes =
             basicPieceAttributes ++ extras
     in
-        case ( PieceAppearances.get pieceType pieceAppearances, pieceType.moveType ) of
-            ( ( PointsList pointsList, fillString, icon ), moveType ) ->
+        case ( PieceAppearances.get pieceType pieceAppearances, pieceType.moveOccupancy ) of
+            ( ( PointsList pointsList, fillString, icon ), moveOccupancy ) ->
                 (polygonPiece
                     <| [ fill fillString
                        , points (Points.piecePointsListToSVGString pointsList center)
@@ -178,7 +178,7 @@ piece pieceAppearances extras center pieceType =
                 )
                     |> addIcon icon center
 
-            ( ( Eye, fillString, icon ), moveType ) ->
+            ( ( Eye, fillString, icon ), moveOccupancy ) ->
                 eyePiece
                     (fill fillString
                         :: otherAttributes

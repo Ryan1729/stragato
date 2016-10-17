@@ -4,6 +4,7 @@ import Math.Vector2 exposing (Vec2)
 import Dict exposing (Dict)
 import Extras
 import PosInt exposing (PosInt)
+import Set exposing (Set)
 
 
 type alias Piece =
@@ -16,17 +17,36 @@ type alias Pieces =
     Dict Int Piece
 
 
-type MoveType
+type MoveOccupancy
     = Occupied
     | Unoccupied
     | AnySpace
 
 
-moveTypePossibilities =
+moveOccupancyPossibilities =
     [ Occupied
     , Unoccupied
     , AnySpace
     ]
+
+
+type alias MoveOffset =
+    ( Int, Int )
+
+
+
+-- someMoveOffsetPossibilities = List.concatMap
+--     (\moveEffect ->
+-- type alias MovePattern =
+--     { occupied : List MoveOffset
+--     , unoccupied : List MoveOffset
+--     , anyspace : List MoveOffset
+--     }
+--
+--
+-- getPatternGetter : MoveOccupancy -> (MovePattern ->  List MoveOffset)
+-- getPatternGetter moveOccupancy =
+--   case moveOccupancy of
 
 
 type Controller
@@ -82,7 +102,9 @@ type ProtoPiece
 type alias PieceType =
     { moveEffect : MoveEffect
     , controller : Controller
-    , moveType : MoveType
+    , moveOccupancy :
+        MoveOccupancy
+        -- , movePattern : MovePattern
     }
 
 
@@ -90,7 +112,7 @@ pieceTypeToStringList : PieceType -> List String
 pieceTypeToStringList pieceType =
     [ toString pieceType.moveEffect
     , toString pieceType.controller
-    , toString pieceType.moveType
+    , toString pieceType.moveOccupancy
     ]
 
 
@@ -100,7 +122,12 @@ actualPieceTypePossibilities =
             List.concatMap
                 (\controller ->
                     List.map (PieceType moveEffect controller)
-                        moveTypePossibilities
+                        -- (\moveyType ->
+                        --     List.map
+                        --     (PieceType moveEffect controller moveyType)
+                        --         someMovePositionPossibilities
+                        -- )
+                        moveOccupancyPossibilities
                 )
                 controllerPossibilities
         )

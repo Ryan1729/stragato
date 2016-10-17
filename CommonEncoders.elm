@@ -3,7 +3,7 @@ module CommonEncoders exposing (..)
 import Json.Encode as Encode
 import PieceAppearances exposing (PieceAppearances, Appearance, Icon(..), AppearancePair)
 import Spaces exposing (Spaces, Space, SpaceType(..))
-import Pieces exposing (Pieces, Piece, Shape(..), PieceType, Controller(..), MoveType(..), ProtoPiece(..), MoveEffect(..))
+import Pieces exposing (Pieces, Piece, Shape(..), PieceType, Controller(..), MoveOccupancy(..), ProtoPiece(..), MoveEffect(..))
 import PosInt
 import Math.Vector2 as V2 exposing (Vec2, vec2)
 import GameEndCons exposing (GameEndCons(..), GamePredicate(..))
@@ -25,9 +25,9 @@ encodeSpaceType spaceType =
     spaceType |> stringIt
 
 
-encodeMoveType : MoveType -> Encode.Value
-encodeMoveType moveType =
-    moveType |> stringIt
+encodeMoveOccupancy : MoveOccupancy -> Encode.Value
+encodeMoveOccupancy moveOccupancy =
+    moveOccupancy |> stringIt
 
 
 encodeMoveEffect : MoveEffect -> Encode.Value
@@ -58,7 +58,7 @@ encodePieceType pieceType =
     Encode.object
         [ ( "moveEffect", pieceType.moveEffect |> encodeMoveEffect )
         , ( "controller", pieceType.controller |> encodeController )
-        , ( "moveType", pieceType.moveType |> encodeMoveType )
+        , ( "moveOccupancy", pieceType.moveOccupancy |> encodeMoveOccupancy )
         ]
 
 

@@ -13,7 +13,7 @@ import Material.Table as Table
 import Material.Toggles as Toggles
 import Material.Grid exposing (grid, cell, size, offset, Device(All, Tablet))
 import Math.Vector2 as V2 exposing (Vec2, vec2)
-import Pieces exposing (Piece, PieceType, ProtoPiece(..), Controller(..), MoveType(..), Shape(..))
+import Pieces exposing (Piece, PieceType, ProtoPiece(..), Controller(..), MoveOccupancy(..), Shape(..))
 import Spaces
 import PieceAppearances exposing (PieceAppearances, Icon(..))
 import Extras

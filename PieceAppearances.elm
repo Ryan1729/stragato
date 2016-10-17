@@ -1,7 +1,7 @@
 module PieceAppearances exposing (..)
 
 import Math.Vector2 exposing (Vec2)
-import Pieces exposing (Controller(..), MoveType(..), MoveEffect(..), Shape(..), PieceType)
+import Pieces exposing (Controller(..), MoveOccupancy(..), MoveEffect(..), Shape(..), PieceType)
 import GenericDict exposing (GenericDict)
 import Extras
 import PosInt
@@ -29,12 +29,12 @@ get pieceType pieceAppearances =
 
 
 comparer : PieceType -> PieceType -> Order
-comparer { moveEffect, controller, moveType } other =
+comparer { moveEffect, controller, moveOccupancy } other =
     case moveEffectCompare moveEffect other.moveEffect of
         EQ ->
             case controllerCompare controller other.controller of
                 EQ ->
-                    moveTypeCompare moveType other.moveType
+                    moveOccupancyCompare moveOccupancy other.moveOccupancy
 
                 order ->
                     order
@@ -80,16 +80,16 @@ controllerCompare controller controller' =
         compare controllerInt controllerInt'
 
 
-moveTypeCompare : MoveType -> MoveType -> Order
-moveTypeCompare moveType moveType' =
+moveOccupancyCompare : MoveOccupancy -> MoveOccupancy -> Order
+moveOccupancyCompare moveOccupancy moveOccupancy' =
     let
-        moveTypeInt =
-            Extras.indexOfDefault Pieces.moveTypePossibilities moveType
+        moveOccupancyInt =
+            Extras.indexOfDefault Pieces.moveOccupancyPossibilities moveOccupancy
 
-        moveTypeInt' =
-            Extras.indexOfDefault Pieces.moveTypePossibilities moveType'
+        moveOccupancyInt' =
+            Extras.indexOfDefault Pieces.moveOccupancyPossibilities moveOccupancy'
     in
-        compare moveTypeInt moveTypeInt'
+        compare moveOccupancyInt moveOccupancyInt'
 
 
 fromList : List AppearancePair -> PieceAppearances
@@ -126,7 +126,7 @@ updatePoints pieceType list pieceAppearances =
                     Just
                         ( PointsList list
                         , getFill pieceType.controller
-                        , getIcon pieceType.moveType
+                        , getIcon pieceType.moveOccupancy
                         )
         )
         pieceAppearances
@@ -148,7 +148,7 @@ updateColour pieceType colour pieceAppearances =
                     Just
                         ( getShape pieceType.moveEffect
                         , colour
-                        , getIcon pieceType.moveType
+                        , getIcon pieceType.moveOccupancy
                         )
         )
         pieceAppearances
@@ -177,8 +177,8 @@ updateIcon pieceType icon pieceAppearances =
 
 
 pairWithAppearance : PieceType -> ( PieceType, Appearance )
-pairWithAppearance ({ moveEffect, controller, moveType } as pieceType) =
-    ( pieceType, ( getShape moveEffect, getFill controller, getIcon moveType ) )
+pairWithAppearance ({ moveEffect, controller, moveOccupancy } as pieceType) =
+    ( pieceType, ( getShape moveEffect, getFill controller, getIcon moveOccupancy ) )
 
 
 type Icon
@@ -195,9 +195,9 @@ triangleIcon =
         |> ShapeSpaceIcon
 
 
-getIcon : MoveType -> Icon
-getIcon moveType =
-    case moveType of
+getIcon : MoveOccupancy -> Icon
+getIcon moveOccupancy =
+    case moveOccupancy of
         AnySpace ->
             NoIcon
 
