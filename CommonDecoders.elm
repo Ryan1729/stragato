@@ -54,7 +54,7 @@ pieceTypeDecoder =
     Decode.object3 PieceType
         ("moveEffect" := moveEffectDecoder)
         ("controller" := controllerDecoder)
-        ("moveOccupancy" := moveOccupancyDecoder)
+        (Decode.oneOf [ "moveOccupancy" := moveOccupancyDecoder, "moveType" := moveOccupancyDecoder ])
 
 
 moveEffectDecoder : Decoder MoveEffect

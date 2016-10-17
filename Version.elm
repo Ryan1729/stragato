@@ -1,3 +1,5 @@
 module Version exposing (string)
 
-string = "2.0.0"
+
+string =
+    "1.1.0"
