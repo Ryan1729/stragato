@@ -14731,6 +14731,137 @@ var _elm_lang$core$Random$cmdMap = F2(
 	});
 _elm_lang$core$Native_Platform.effectManagers['Random'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Random$init, onEffects: _elm_lang$core$Random$onEffects, onSelfMsg: _elm_lang$core$Random$onSelfMsg, tag: 'cmd', cmdMap: _elm_lang$core$Random$cmdMap};
 
+var _elm_lang$core$Set$foldr = F3(
+	function (f, b, _p0) {
+		var _p1 = _p0;
+		return A3(
+			_elm_lang$core$Dict$foldr,
+			F3(
+				function (k, _p2, b) {
+					return A2(f, k, b);
+				}),
+			b,
+			_p1._0);
+	});
+var _elm_lang$core$Set$foldl = F3(
+	function (f, b, _p3) {
+		var _p4 = _p3;
+		return A3(
+			_elm_lang$core$Dict$foldl,
+			F3(
+				function (k, _p5, b) {
+					return A2(f, k, b);
+				}),
+			b,
+			_p4._0);
+	});
+var _elm_lang$core$Set$toList = function (_p6) {
+	var _p7 = _p6;
+	return _elm_lang$core$Dict$keys(_p7._0);
+};
+var _elm_lang$core$Set$size = function (_p8) {
+	var _p9 = _p8;
+	return _elm_lang$core$Dict$size(_p9._0);
+};
+var _elm_lang$core$Set$member = F2(
+	function (k, _p10) {
+		var _p11 = _p10;
+		return A2(_elm_lang$core$Dict$member, k, _p11._0);
+	});
+var _elm_lang$core$Set$isEmpty = function (_p12) {
+	var _p13 = _p12;
+	return _elm_lang$core$Dict$isEmpty(_p13._0);
+};
+var _elm_lang$core$Set$Set_elm_builtin = function (a) {
+	return {ctor: 'Set_elm_builtin', _0: a};
+};
+var _elm_lang$core$Set$empty = _elm_lang$core$Set$Set_elm_builtin(_elm_lang$core$Dict$empty);
+var _elm_lang$core$Set$singleton = function (k) {
+	return _elm_lang$core$Set$Set_elm_builtin(
+		A2(
+			_elm_lang$core$Dict$singleton,
+			k,
+			{ctor: '_Tuple0'}));
+};
+var _elm_lang$core$Set$insert = F2(
+	function (k, _p14) {
+		var _p15 = _p14;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A3(
+				_elm_lang$core$Dict$insert,
+				k,
+				{ctor: '_Tuple0'},
+				_p15._0));
+	});
+var _elm_lang$core$Set$fromList = function (xs) {
+	return A3(_elm_lang$core$List$foldl, _elm_lang$core$Set$insert, _elm_lang$core$Set$empty, xs);
+};
+var _elm_lang$core$Set$map = F2(
+	function (f, s) {
+		return _elm_lang$core$Set$fromList(
+			A2(
+				_elm_lang$core$List$map,
+				f,
+				_elm_lang$core$Set$toList(s)));
+	});
+var _elm_lang$core$Set$remove = F2(
+	function (k, _p16) {
+		var _p17 = _p16;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(_elm_lang$core$Dict$remove, k, _p17._0));
+	});
+var _elm_lang$core$Set$union = F2(
+	function (_p19, _p18) {
+		var _p20 = _p19;
+		var _p21 = _p18;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(_elm_lang$core$Dict$union, _p20._0, _p21._0));
+	});
+var _elm_lang$core$Set$intersect = F2(
+	function (_p23, _p22) {
+		var _p24 = _p23;
+		var _p25 = _p22;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(_elm_lang$core$Dict$intersect, _p24._0, _p25._0));
+	});
+var _elm_lang$core$Set$diff = F2(
+	function (_p27, _p26) {
+		var _p28 = _p27;
+		var _p29 = _p26;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(_elm_lang$core$Dict$diff, _p28._0, _p29._0));
+	});
+var _elm_lang$core$Set$filter = F2(
+	function (p, _p30) {
+		var _p31 = _p30;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(
+				_elm_lang$core$Dict$filter,
+				F2(
+					function (k, _p32) {
+						return p(k);
+					}),
+				_p31._0));
+	});
+var _elm_lang$core$Set$partition = F2(
+	function (p, _p33) {
+		var _p34 = _p33;
+		var _p35 = A2(
+			_elm_lang$core$Dict$partition,
+			F2(
+				function (k, _p36) {
+					return p(k);
+				}),
+			_p34._0);
+		var p1 = _p35._0;
+		var p2 = _p35._1;
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Set$Set_elm_builtin(p1),
+			_1: _elm_lang$core$Set$Set_elm_builtin(p2)
+		};
+	});
+
 var _elm_lang$svg$Svg$text = _elm_lang$virtual_dom$VirtualDom$text;
 var _elm_lang$svg$Svg$svgNamespace = A2(
 	_elm_lang$virtual_dom$VirtualDom$property,
@@ -16514,7 +16645,7 @@ var _user$project$Pieces$pieceTypeToStringList = function (pieceType) {
 		[
 			_elm_lang$core$Basics$toString(pieceType.moveEffect),
 			_elm_lang$core$Basics$toString(pieceType.controller),
-			_elm_lang$core$Basics$toString(pieceType.moveType)
+			_elm_lang$core$Basics$toString(pieceType.moveOccupancy)
 		]);
 };
 var _user$project$Pieces$Piece = F2(
@@ -16523,12 +16654,12 @@ var _user$project$Pieces$Piece = F2(
 	});
 var _user$project$Pieces$PieceType = F3(
 	function (a, b, c) {
-		return {moveEffect: a, controller: b, moveType: c};
+		return {moveEffect: a, controller: b, moveOccupancy: c};
 	});
 var _user$project$Pieces$AnySpace = {ctor: 'AnySpace'};
 var _user$project$Pieces$Unoccupied = {ctor: 'Unoccupied'};
 var _user$project$Pieces$Occupied = {ctor: 'Occupied'};
-var _user$project$Pieces$moveTypePossibilities = _elm_lang$core$Native_List.fromArray(
+var _user$project$Pieces$moveOccupancyPossibilities = _elm_lang$core$Native_List.fromArray(
 	[_user$project$Pieces$Occupied, _user$project$Pieces$Unoccupied, _user$project$Pieces$AnySpace]);
 var _user$project$Pieces$None = {ctor: 'None'};
 var _user$project$Pieces$isNoneController = function (controller) {
@@ -16651,7 +16782,7 @@ var _user$project$Pieces$actualPieceTypePossibilities = A2(
 				return A2(
 					_elm_lang$core$List$map,
 					A2(_user$project$Pieces$PieceType, moveEffect, controller),
-					_user$project$Pieces$moveTypePossibilities);
+					_user$project$Pieces$moveOccupancyPossibilities);
 			},
 			_user$project$Pieces$controllerPossibilities);
 	},
@@ -16810,11 +16941,11 @@ var _user$project$PieceAppearances$updateIcon = F3(
 			pieceAppearances);
 	});
 var _user$project$PieceAppearances$toList = _robertjlooby$elm_generic_dict$GenericDict$toList;
-var _user$project$PieceAppearances$moveTypeCompare = F2(
-	function (moveType, moveType$) {
-		var moveTypeInt$ = A2(_user$project$Extras$indexOfDefault, _user$project$Pieces$moveTypePossibilities, moveType$);
-		var moveTypeInt = A2(_user$project$Extras$indexOfDefault, _user$project$Pieces$moveTypePossibilities, moveType);
-		return A2(_elm_lang$core$Basics$compare, moveTypeInt, moveTypeInt$);
+var _user$project$PieceAppearances$moveOccupancyCompare = F2(
+	function (moveOccupancy, moveOccupancy$) {
+		var moveOccupancyInt$ = A2(_user$project$Extras$indexOfDefault, _user$project$Pieces$moveOccupancyPossibilities, moveOccupancy$);
+		var moveOccupancyInt = A2(_user$project$Extras$indexOfDefault, _user$project$Pieces$moveOccupancyPossibilities, moveOccupancy);
+		return A2(_elm_lang$core$Basics$compare, moveOccupancyInt, moveOccupancyInt$);
 	});
 var _user$project$PieceAppearances$controllerCompare = F2(
 	function (controller, controller$) {
@@ -16844,7 +16975,7 @@ var _user$project$PieceAppearances$comparer = F2(
 		if (_p7.ctor === 'EQ') {
 			var _p8 = A2(_user$project$PieceAppearances$controllerCompare, _p6.controller, other.controller);
 			if (_p8.ctor === 'EQ') {
-				return A2(_user$project$PieceAppearances$moveTypeCompare, _p6.moveType, other.moveType);
+				return A2(_user$project$PieceAppearances$moveOccupancyCompare, _p6.moveOccupancy, other.moveOccupancy);
 			} else {
 				return _p8;
 			}
@@ -16871,8 +17002,8 @@ var _user$project$PieceAppearances$triangleIcon = _user$project$PieceAppearances
 	_user$project$Pieces$PointsList(
 		_user$project$Points$pointsListToPiecePointsList(_user$project$Points$trianglePointsList)));
 var _user$project$PieceAppearances$EmptySpaceIcon = {ctor: 'EmptySpaceIcon'};
-var _user$project$PieceAppearances$getIcon = function (moveType) {
-	var _p9 = moveType;
+var _user$project$PieceAppearances$getIcon = function (moveOccupancy) {
+	var _p9 = moveOccupancy;
 	switch (_p9.ctor) {
 		case 'AnySpace':
 			return _user$project$PieceAppearances$NoIcon;
@@ -16903,7 +17034,7 @@ var _user$project$PieceAppearances$updatePoints = F3(
 							ctor: '_Tuple3',
 							_0: _user$project$Pieces$PointsList(list),
 							_1: _user$project$PieceAppearances$getFill(pieceType.controller),
-							_2: _user$project$PieceAppearances$getIcon(pieceType.moveType)
+							_2: _user$project$PieceAppearances$getIcon(pieceType.moveOccupancy)
 						});
 				}
 			},
@@ -16925,7 +17056,7 @@ var _user$project$PieceAppearances$updateColour = F3(
 							ctor: '_Tuple3',
 							_0: _user$project$PieceAppearances$getShape(pieceType.moveEffect),
 							_1: colour,
-							_2: _user$project$PieceAppearances$getIcon(pieceType.moveType)
+							_2: _user$project$PieceAppearances$getIcon(pieceType.moveOccupancy)
 						});
 				}
 			},
@@ -16940,7 +17071,7 @@ var _user$project$PieceAppearances$pairWithAppearance = function (_p12) {
 			ctor: '_Tuple3',
 			_0: _user$project$PieceAppearances$getShape(_p13.moveEffect),
 			_1: _user$project$PieceAppearances$getFill(_p13.controller),
-			_2: _user$project$PieceAppearances$getIcon(_p13.moveType)
+			_2: _user$project$PieceAppearances$getIcon(_p13.moveOccupancy)
 		}
 	};
 };
@@ -17232,7 +17363,7 @@ var _user$project$CommonDecoders$appearanceDecoder = A4(
 	_user$project$CommonDecoders$shapeDecoder,
 	_elm_lang$core$Json_Decode$string,
 	_user$project$CommonDecoders$iconDecoder);
-var _user$project$CommonDecoders$stringToMoveType = function (s) {
+var _user$project$CommonDecoders$stringToMoveOccupancy = function (s) {
 	var _p4 = _elm_lang$core$String$toLower(s);
 	switch (_p4) {
 		case 'occupied':
@@ -17243,7 +17374,7 @@ var _user$project$CommonDecoders$stringToMoveType = function (s) {
 			return _user$project$Pieces$AnySpace;
 	}
 };
-var _user$project$CommonDecoders$moveTypeDecoder = A2(_elm_lang$core$Json_Decode$map, _user$project$CommonDecoders$stringToMoveType, _elm_lang$core$Json_Decode$string);
+var _user$project$CommonDecoders$moveOccupancyDecoder = A2(_elm_lang$core$Json_Decode$map, _user$project$CommonDecoders$stringToMoveOccupancy, _elm_lang$core$Json_Decode$string);
 var _user$project$CommonDecoders$stringToController = function (s) {
 	var _p5 = _elm_lang$core$String$toLower(s);
 	switch (_p5) {
@@ -17307,7 +17438,7 @@ var _user$project$CommonDecoders$pieceTypeDecoder = A4(
 	_user$project$Pieces$PieceType,
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'moveEffect', _user$project$CommonDecoders$moveEffectDecoder),
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'controller', _user$project$CommonDecoders$controllerDecoder),
-	A2(_elm_lang$core$Json_Decode_ops[':='], 'moveType', _user$project$CommonDecoders$moveTypeDecoder));
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'moveOccupancy', _user$project$CommonDecoders$moveOccupancyDecoder));
 var _user$project$CommonDecoders$gamePredicateInfo = function (tag) {
 	var _p8 = _elm_lang$core$String$toLower(tag);
 	switch (_p8) {
@@ -17414,8 +17545,8 @@ var _user$project$CommonEncoders$stringIt = function (_p1) {
 var _user$project$CommonEncoders$encodeSpaceType = function (spaceType) {
 	return _user$project$CommonEncoders$stringIt(spaceType);
 };
-var _user$project$CommonEncoders$encodeMoveType = function (moveType) {
-	return _user$project$CommonEncoders$stringIt(moveType);
+var _user$project$CommonEncoders$encodeMoveOccupancy = function (moveOccupancy) {
+	return _user$project$CommonEncoders$stringIt(moveOccupancy);
 };
 var _user$project$CommonEncoders$encodeMoveEffect = function (moveEffect) {
 	var _p2 = moveEffect;
@@ -17447,8 +17578,8 @@ var _user$project$CommonEncoders$encodePieceType = function (pieceType) {
 			},
 				{
 				ctor: '_Tuple2',
-				_0: 'moveType',
-				_1: _user$project$CommonEncoders$encodeMoveType(pieceType.moveType)
+				_0: 'moveOccupancy',
+				_1: _user$project$CommonEncoders$encodeMoveOccupancy(pieceType.moveOccupancy)
 			}
 			]));
 };
@@ -17561,6 +17692,8 @@ var _user$project$CommonEncoders$encodeAppearancePair = function (_p10) {
 			]));
 };
 
+var _user$project$Version$string = '2.0.0';
+
 var _user$project$ExportModel$strictPieceAppearances = A2(_elm_lang$core$Json_Decode_ops[':='], 'pieceAppearances', _user$project$CommonDecoders$pieceAppearancesDecoder);
 var _user$project$ExportModel$strictViewScale = A2(_elm_lang$core$Json_Decode_ops[':='], 'viewScale', _elm_lang$core$Json_Decode$float);
 var _user$project$ExportModel$strictPieceDeck = A2(
@@ -17617,6 +17750,11 @@ var _user$project$ExportModel$encode = function (exportModel) {
 						function (_) {
 							return _.pieceAppearances;
 						}(exportModel)))
+			},
+				{
+				ctor: '_Tuple2',
+				_0: 'version',
+				_1: _elm_lang$core$Json_Encode$string(_user$project$Version$string)
 			}
 			]));
 };
@@ -17628,7 +17766,7 @@ var _user$project$ExportModel$toString = function (exportModel) {
 };
 var _user$project$ExportModel$defaultSpaceDeck = _elm_lang$core$Native_List.fromArray(
 	[_user$project$Spaces$Green, _user$project$Spaces$Green, _user$project$Spaces$Red, _user$project$Spaces$Red, _user$project$Spaces$EmptySpace]);
-var _user$project$ExportModel$defaultMoveTypeDeck = _user$project$Pieces$moveTypePossibilities;
+var _user$project$ExportModel$defaultMoveOccupancyDeck = _user$project$Pieces$moveOccupancyPossibilities;
 var _user$project$ExportModel$defaultPieceTypeDeck = A2(
 	F2(
 		function (x, y) {
@@ -17642,7 +17780,7 @@ var _user$project$ExportModel$defaultPieceTypeDeck = A2(
 		A2(
 			_elm_lang$core$List$filter,
 			function (p) {
-				return _elm_lang$core$Native_Utils.eq(p.moveType, _user$project$Pieces$AnySpace);
+				return _elm_lang$core$Native_Utils.eq(p.moveOccupancy, _user$project$Pieces$AnySpace);
 			},
 			_user$project$Pieces$actualPieceTypePossibilities)));
 var _user$project$ExportModel$defaultPieceAppearances = _user$project$PieceAppearances$fromList(
@@ -18330,7 +18468,7 @@ var _user$project$Movement$canPieceMoveToSpace = F4(
 				A2(
 					_elm_lang$core$Maybe$map,
 					function (piece) {
-						var _p9 = piece.pieceType.moveType;
+						var _p9 = piece.pieceType.moveOccupancy;
 						switch (_p9.ctor) {
 							case 'Occupied':
 								return A3(_user$project$PiecesAndSpaces$isSpaceOccupied, pieces, spaces, spaceIndex);
@@ -18712,7 +18850,7 @@ var _user$project$Playfield$piece = F4(
 		var _p3 = {
 			ctor: '_Tuple2',
 			_0: A2(_user$project$PieceAppearances$get, pieceType, pieceAppearances),
-			_1: pieceType.moveType
+			_1: pieceType.moveOccupancy
 		};
 		if (_p3._0._0.ctor === 'PointsList') {
 			return A3(
@@ -20494,7 +20632,7 @@ var _user$project$DevControls$make = function (model) {
 				[]),
 			_elm_lang$core$Native_List.fromArray(
 				[])),
-			_elm_lang$html$Html$text('1.0.0')
+			_elm_lang$html$Html$text(_user$project$Version$string)
 		]);
 };
 
