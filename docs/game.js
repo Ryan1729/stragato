@@ -16603,7 +16603,12 @@ var _user$project$CommonDecoders$pieceTypeDecoder = A4(
 	_user$project$Pieces$PieceType,
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'moveEffect', _user$project$CommonDecoders$moveEffectDecoder),
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'controller', _user$project$CommonDecoders$controllerDecoder),
-	A2(_elm_lang$core$Json_Decode_ops[':='], 'moveOccupancy', _user$project$CommonDecoders$moveOccupancyDecoder));
+	_elm_lang$core$Json_Decode$oneOf(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(_elm_lang$core$Json_Decode_ops[':='], 'moveOccupancy', _user$project$CommonDecoders$moveOccupancyDecoder),
+				A2(_elm_lang$core$Json_Decode_ops[':='], 'moveType', _user$project$CommonDecoders$moveOccupancyDecoder)
+			])));
 var _user$project$CommonDecoders$gamePredicateInfo = function (tag) {
 	var _p8 = _elm_lang$core$String$toLower(tag);
 	switch (_p8) {
@@ -16968,7 +16973,7 @@ var _user$project$Deck$fillListFromDeck = F4(
 				[]));
 	});
 
-var _user$project$Version$string = '2.0.0';
+var _user$project$Version$string = '1.1.0';
 
 var _user$project$ExportModel$strictPieceAppearances = A2(_elm_lang$core$Json_Decode_ops[':='], 'pieceAppearances', _user$project$CommonDecoders$pieceAppearancesDecoder);
 var _user$project$ExportModel$strictViewScale = A2(_elm_lang$core$Json_Decode_ops[':='], 'viewScale', _elm_lang$core$Json_Decode$float);
