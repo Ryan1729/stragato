@@ -11,6 +11,7 @@ import String
 import CommonDecoders exposing (..)
 import CommonEncoders exposing (..)
 import Math.Vector2 as V2 exposing (Vec2, vec2)
+import Version
 
 
 type alias ExportModel =
@@ -130,6 +131,7 @@ encode exportModel =
                 |> PieceAppearances.toList
                 |> encodeMap encodeAppearancePair
           )
+        , ( "version", Encode.string Version.string )
         ]
 
 

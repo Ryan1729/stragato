@@ -13,6 +13,7 @@ import Material.Tabs as Tabs
 import PieceAppearances exposing (PieceAppearances)
 import AppearanceTab
 import EditTab
+import Version
 
 
 make : Model -> List (Html Msg)
@@ -99,5 +100,5 @@ make model =
                     ]
         ]
     , Html.hr [] []
-    , text "1.0.0"
+    , text Version.string
     ]
