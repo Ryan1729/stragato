@@ -14,6 +14,7 @@ import PieceAppearances exposing (PieceAppearances, Appearance)
 import GameEndCons exposing (GameEndCons(..), GamePredicate(..))
 import ExportModel exposing (ExportModel)
 import TransferModel exposing (TransferModel)
+import Hexagons
 
 
 type alias Model =
@@ -85,7 +86,7 @@ putSpaceTogether ( index, position ) spaceType =
 
 makeGridPoints : Int -> Int -> List ( ( Int, Int ), Vec2 )
 makeGridPoints width height =
-    Points.hexGrid width height
+    Hexagons.grid width height
         |> List.map
             (\( pair, vector ) ->
                 ( pair

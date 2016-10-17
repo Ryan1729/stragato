@@ -4,38 +4,6 @@ import Math.Vector2 as V2 exposing (Vec2, vec2, getX, getY, add, scale)
 import String
 
 
-hexagonHeightConstant =
-    (sqrt 3) / 2
-
-
-hexGrid : Int -> Int -> List ( ( Int, Int ), Vec2 )
-hexGrid width height =
-    let
-        baseList =
-            [0..width * height - 1]
-    in
-        List.filterMap
-            (\index ->
-                let
-                    x =
-                        index % width
-
-                    y =
-                        index // width
-                in
-                    if (x + y) % 2 == 0 then
-                        let
-                            vector =
-                                vec2 (toFloat x * 1.5)
-                                    (toFloat y * hexagonHeightConstant)
-                        in
-                            Just ( ( x, y ), vector )
-                    else
-                        Nothing
-            )
-            baseList
-
-
 tau =
     2 * pi
 

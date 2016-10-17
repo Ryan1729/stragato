@@ -5,6 +5,7 @@ import Dict exposing (Dict)
 import Extras
 import PosInt exposing (PosInt)
 import Set exposing (Set)
+import Hexagons
 
 
 type alias Piece =
@@ -34,19 +35,25 @@ type alias MoveOffset =
     ( Int, Int )
 
 
+someMoveOffsetPossibilities =
+    List.concatMap Hexagons.ring
+        [ 0, 1, 2 ]
+        |> Debug.log ""
 
--- someMoveOffsetPossibilities = List.concatMap
---     (\moveEffect ->
--- type alias MovePattern =
---     { occupied : List MoveOffset
---     , unoccupied : List MoveOffset
---     , anyspace : List MoveOffset
---     }
---
+
+type alias MovePattern =
+    { occupied : List MoveOffset
+    , unoccupied : List MoveOffset
+    , anyspace : List MoveOffset
+    }
+
+
+
 --
 -- getPatternGetter : MoveOccupancy -> (MovePattern ->  List MoveOffset)
 -- getPatternGetter moveOccupancy =
 --   case moveOccupancy of
+--
 
 
 type Controller
