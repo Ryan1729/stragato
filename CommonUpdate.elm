@@ -1,6 +1,6 @@
 module CommonUpdate exposing (..)
 
-import Random exposing (Seed)
+import Random.Pcg as Random exposing (Seed)
 
 
 getSeed model time =

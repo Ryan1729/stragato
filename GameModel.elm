@@ -5,7 +5,7 @@ import ExportModel exposing (ExportModel)
 import TransferModel exposing (TransferModel)
 import Spaces exposing (Spaces, Space, SpaceType(..), SpaceIndex)
 import Pieces exposing (Pieces)
-import Random exposing (Seed)
+import Random.Pcg as Random exposing (Seed)
 
 
 type alias Model =

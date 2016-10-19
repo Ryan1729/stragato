@@ -11,7 +11,7 @@ import Deck
 import Movement
 import GameEndCons exposing (GameEndCons(..), GamePredicate(..))
 import Math.Vector2 as V2 exposing (Vec2, vec2)
-import Random exposing (Seed)
+import Random.Pcg as Random exposing (Seed)
 import CommonPorts
 import CommonUpdate
 import TransferModel

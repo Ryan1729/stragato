@@ -1,6 +1,6 @@
 module Deck exposing (..)
 
-import Random exposing (Seed)
+import Random.Pcg as Random exposing (Seed)
 
 
 fillListFromDeck : a -> List a -> Int -> Seed -> ( List a, Seed )

@@ -2,7 +2,7 @@ module Model exposing (..)
 
 import Mouse
 import Math.Vector2 as V2 exposing (Vec2, vec2, getX, getY, add, scale)
-import Random exposing (Seed)
+import Random.Pcg as Random exposing (Seed)
 import Material
 import Points
 import Extras
