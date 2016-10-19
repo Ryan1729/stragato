@@ -14,7 +14,7 @@ import PiecesAndSpaces
 import Dict exposing (Dict)
 import String
 import Movement
-import PieceAppearances exposing (PieceAppearances, Icon(..))
+import PieceAppearances exposing (PieceAppearances)
 
 
 getPieces model =
@@ -168,107 +168,20 @@ piece pieceAppearances extras center pieceType =
         otherAttributes =
             basicPieceAttributes ++ extras
     in
-        case ( PieceAppearances.get pieceType pieceAppearances, pieceType.moveOccupancy ) of
-            ( ( PointsList pointsList, fillString, icon ), moveOccupancy ) ->
-                (polygonPiece
+        case PieceAppearances.get pieceType pieceAppearances of
+            ( PointsList pointsList, fillString ) ->
+                polygonPiece
                     <| [ fill fillString
                        , points (Points.piecePointsListToSVGString pointsList center)
                        ]
                     ++ otherAttributes
-                )
-                    |> addIcon icon center
 
-            ( ( Eye, fillString, icon ), moveOccupancy ) ->
+            ( Eye, fillString ) ->
                 eyePiece
                     (fill fillString
                         :: otherAttributes
                     )
                     center
-                    |> addIcon icon center
-
-
-addIcon : Icon -> Vec2 -> Svg msg -> Svg msg
-addIcon icon center pieceView =
-    let
-        baseList =
-            case icon of
-                NoIcon ->
-                    []
-
-                EmptySpaceIcon ->
-                    [ emptySpaceIcon center ]
-
-                ShapeSpaceIcon shape ->
-                    [ makeShapeIcon center shape, emptySpaceIcon center ]
-
-                ShapeIcon shape ->
-                    [ makeShapeIcon center shape, emptySpaceIcon center ]
-    in
-        g []
-            <| pieceView
-            :: baseList
-
-
-iconOffset =
-    vec2 Points.pieceScaleFactor Points.pieceScaleFactor
-        |> V2.scale (0.6)
-
-
-iconScale =
-    0.25
-
-
-pieceScale =
-    iconScale * (Points.pieceScaleFactor / Points.spaceScale)
-
-
-scaledSpacePointsList =
-    List.map (V2.scale iconScale)
-        Points.spacePointsList
-
-
-emptySpaceIcon : Vec2 -> Svg msg
-emptySpaceIcon center =
-    let
-        iconCenter =
-            V2.add iconOffset
-                center
-    in
-        polygon
-            [ iconCenter
-                |> Points.piecePointsListToSVGString scaledSpacePointsList
-                |> points
-            , strokeWidth "4"
-            , fillOpacity "0.0"
-            , stroke "black"
-            ]
-            []
-
-
-makeShapeIcon center shape =
-    let
-        iconCenter =
-            V2.add iconOffset center
-    in
-        case shape of
-            PointsList pointsList ->
-                polygonPiece
-                    [ points
-                        (Points.piecePointsListToSVGString (List.map (V2.scale pieceScale) pointsList)
-                            iconCenter
-                        )
-                    , strokeWidth "4"
-                    , fillOpacity "0.0"
-                    , stroke "black"
-                    ]
-
-            Eye ->
-                eyePieceSized (Points.circleRadius * pieceScale)
-                    [ strokeWidth "4"
-                    , fillOpacity "0.0"
-                    , stroke "black"
-                    ]
-                    iconCenter
 
 
 basicPieceAttributes =

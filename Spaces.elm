@@ -96,3 +96,9 @@ getNonMatchingSpaceIndicies spaces position =
         Just spaceIndex ->
             Dict.keys spaces
                 |> List.filter ((/=) spaceIndex)
+
+
+getIndexOffsetFromPosition : Spaces -> SpaceIndex -> Vec2 -> Maybe ( Int, Int )
+getIndexOffsetFromPosition spaces ( tx, ty ) piecePosition =
+    getSpaceFromPosition spaces piecePosition
+        |> Maybe.map (\( sx, sy ) -> ( tx - sx, ty - sy ))

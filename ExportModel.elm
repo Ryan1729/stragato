@@ -1,7 +1,7 @@
 module ExportModel exposing (..)
 
 import GameEndCons exposing (GameEndCons(..), GamePredicate(..))
-import PieceAppearances exposing (PieceAppearances, Appearance, Icon(..), AppearancePair)
+import PieceAppearances exposing (PieceAppearances, Appearance, AppearancePair)
 import Spaces exposing (Spaces, Space, SpaceType(..))
 import Pieces exposing (Pieces, Piece, Shape(..), PieceType, Controller(..), MoveOccupancy(..), ProtoPiece(..), MoveEffect(..))
 import Json.Encode as Encode
@@ -70,7 +70,6 @@ defaultPieceAppearances =
 
 defaultPieceTypeDeck =
     Pieces.actualPieceTypePossibilities
-        |> List.filter (\p -> p.moveOccupancy == Pieces.AnySpace)
         |> List.map Pieces.ActualPiece
         |> (++)
             [ NoPiece

@@ -110,19 +110,28 @@ canPieceMoveToSpace pieces spaces index spaceIndex =
             maybePiece =
                 Dict.get index pieces
         in
-            Maybe.map
-                (\piece ->
-                    case piece.pieceType.moveOccupancy of
-                        Occupied ->
-                            PiecesAndSpaces.isSpaceOccupied pieces spaces spaceIndex
+            maybePiece
+                |> Maybe.map
+                    (\piece ->
+                        case PiecesAndSpaces.isSpaceOccupied pieces spaces spaceIndex of
+                            Just bool ->
+                                case Spaces.getIndexOffsetFromPosition spaces spaceIndex piece.position of
+                                    Just pieceOffset ->
+                                        let
+                                            searchedList =
+                                                if bool then
+                                                    piece.pieceType.movePattern.occupied
+                                                else
+                                                    piece.pieceType.movePattern.unoccupied
+                                        in
+                                            List.any ((==) pieceOffset) searchedList
 
-                        Unoccupied ->
-                            PiecesAndSpaces.isSpaceUnoccupied pieces spaces spaceIndex
+                                    Nothing ->
+                                        False
 
-                        AnySpace ->
-                            Spaces.indexIsOfActualSpace spaces spaceIndex
-                )
-                maybePiece
+                            Nothing ->
+                                False
+                    )
                 |> Maybe.withDefault False
     else
         False

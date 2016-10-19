@@ -150,12 +150,7 @@ spacesDecoder =
 
 spacePairDecoder : Decoder ( ( Int, Int ), Space )
 spacePairDecoder =
-    Decode.tuple2 (,) spaceIndexDecoder spaceDecoder
-
-
-spaceIndexDecoder : Decoder ( Int, Int )
-spaceIndexDecoder =
-    Decode.tuple2 (,) Decode.int Decode.int
+    Decode.tuple2 (,) CommonDecoders.intPairDecoder spaceDecoder
 
 
 spaceDecoder : Decoder Space

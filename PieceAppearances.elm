@@ -1,7 +1,7 @@
 module PieceAppearances exposing (..)
 
 import Math.Vector2 exposing (Vec2)
-import Pieces exposing (Controller(..), MoveOccupancy(..), MoveEffect(..), Shape(..), PieceType)
+import Pieces exposing (Controller(..), MovePattern, MoveOccupancy(..), MoveEffect(..), Shape(..), PieceType)
 import GenericDict exposing (GenericDict)
 import Extras
 import PosInt
@@ -9,7 +9,7 @@ import Points
 
 
 type alias Appearance =
-    ( Shape, String, Icon )
+    ( Shape, String )
 
 
 type alias PieceAppearances =
@@ -25,16 +25,16 @@ get pieceType pieceAppearances =
     GenericDict.get pieceType pieceAppearances
         --TODO more obviously wrong default case?
         |>
-            Maybe.withDefault ( Eye, "#f0f", NoIcon )
+            Maybe.withDefault ( Eye, "#f0f" )
 
 
 comparer : PieceType -> PieceType -> Order
-comparer { moveEffect, controller, moveOccupancy } other =
+comparer { moveEffect, controller, movePattern } other =
     case moveEffectCompare moveEffect other.moveEffect of
         EQ ->
             case controllerCompare controller other.controller of
                 EQ ->
-                    moveOccupancyCompare moveOccupancy other.moveOccupancy
+                    movePatternCompare movePattern other.movePattern
 
                 order ->
                     order
@@ -80,16 +80,14 @@ controllerCompare controller controller' =
         compare controllerInt controllerInt'
 
 
-moveOccupancyCompare : MoveOccupancy -> MoveOccupancy -> Order
-moveOccupancyCompare moveOccupancy moveOccupancy' =
-    let
-        moveOccupancyInt =
-            Extras.indexOfDefault Pieces.moveOccupancyPossibilities moveOccupancy
+movePatternCompare : MovePattern -> MovePattern -> Order
+movePatternCompare movePattern movePattern' =
+    case compare movePattern.occupied movePattern'.occupied of
+        EQ ->
+            compare movePattern.unoccupied movePattern'.unoccupied
 
-        moveOccupancyInt' =
-            Extras.indexOfDefault Pieces.moveOccupancyPossibilities moveOccupancy'
-    in
-        compare moveOccupancyInt moveOccupancyInt'
+        order ->
+            order
 
 
 fromList : List AppearancePair -> PieceAppearances
@@ -119,14 +117,13 @@ updatePoints pieceType list pieceAppearances =
     update pieceType
         (\maybeOldApppearance ->
             case maybeOldApppearance of
-                Just ( _, colour, icon ) ->
-                    Just ( PointsList list, colour, icon )
+                Just ( _, colour ) ->
+                    Just ( PointsList list, colour )
 
                 Nothing ->
                     Just
                         ( PointsList list
                         , getFill pieceType.controller
-                        , getIcon pieceType.moveOccupancy
                         )
         )
         pieceAppearances
@@ -141,71 +138,21 @@ updateColour pieceType colour pieceAppearances =
     update pieceType
         (\maybeOldApppearance ->
             case maybeOldApppearance of
-                Just ( points, _, icon ) ->
-                    Just ( points, colour, icon )
+                Just ( points, _ ) ->
+                    Just ( points, colour )
 
                 Nothing ->
                     Just
                         ( getShape pieceType.moveEffect
                         , colour
-                        , getIcon pieceType.moveOccupancy
-                        )
-        )
-        pieceAppearances
-
-
-updateIcon :
-    PieceType
-    -> Icon
-    -> PieceAppearances
-    -> PieceAppearances
-updateIcon pieceType icon pieceAppearances =
-    update pieceType
-        (\maybeOldApppearance ->
-            case maybeOldApppearance of
-                Just ( points, colour, _ ) ->
-                    Just ( points, colour, icon )
-
-                Nothing ->
-                    Just
-                        ( getShape pieceType.moveEffect
-                        , getFill pieceType.controller
-                        , icon
                         )
         )
         pieceAppearances
 
 
 pairWithAppearance : PieceType -> ( PieceType, Appearance )
-pairWithAppearance ({ moveEffect, controller, moveOccupancy } as pieceType) =
-    ( pieceType, ( getShape moveEffect, getFill controller, getIcon moveOccupancy ) )
-
-
-type Icon
-    = EmptySpaceIcon
-    | ShapeSpaceIcon Shape
-    | ShapeIcon Shape
-    | NoIcon
-
-
-triangleIcon =
-    Points.trianglePointsList
-        |> Points.pointsListToPiecePointsList
-        |> PointsList
-        |> ShapeSpaceIcon
-
-
-getIcon : MoveOccupancy -> Icon
-getIcon moveOccupancy =
-    case moveOccupancy of
-        AnySpace ->
-            NoIcon
-
-        Occupied ->
-            triangleIcon
-
-        Unoccupied ->
-            EmptySpaceIcon
+pairWithAppearance ({ moveEffect, controller } as pieceType) =
+    ( pieceType, ( getShape moveEffect, getFill controller ) )
 
 
 getShape : MoveEffect -> Shape

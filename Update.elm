@@ -207,11 +207,3 @@ updateExportModel msg model =
                         newPoints
                         model.pieceAppearances
             }
-
-        SetIcon icon pieceType ->
-            { model
-                | pieceAppearances =
-                    PieceAppearances.updateIcon pieceType
-                        icon
-                        model.pieceAppearances
-            }

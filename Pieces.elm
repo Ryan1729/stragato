@@ -21,13 +21,11 @@ type alias Pieces =
 type MoveOccupancy
     = Occupied
     | Unoccupied
-    | AnySpace
 
 
 moveOccupancyPossibilities =
     [ Occupied
     , Unoccupied
-    , AnySpace
     ]
 
 
@@ -35,25 +33,34 @@ type alias MoveOffset =
     ( Int, Int )
 
 
+someMoveOffsetPossibilities : List (List MoveOffset)
 someMoveOffsetPossibilities =
-    List.concatMap Hexagons.ring
+    List.map Hexagons.ring
         [ 0, 1, 2 ]
-        |> Debug.log ""
 
 
 type alias MovePattern =
     { occupied : List MoveOffset
     , unoccupied : List MoveOffset
-    , anyspace : List MoveOffset
     }
 
 
+someMovePatternPossibilities =
+    List.concatMap
+        (\occupiedOffsets ->
+            List.map (MovePattern occupiedOffsets) someMoveOffsetPossibilities
+        )
+        someMoveOffsetPossibilities
 
---
--- getPatternGetter : MoveOccupancy -> (MovePattern ->  List MoveOffset)
--- getPatternGetter moveOccupancy =
---   case moveOccupancy of
---
+
+getOffsetList : MoveOccupancy -> MovePattern -> List MoveOffset
+getOffsetList moveOccupancy =
+    case moveOccupancy of
+        Occupied ->
+            .occupied
+
+        Unoccupied ->
+            .unoccupied
 
 
 type Controller
@@ -109,9 +116,7 @@ type ProtoPiece
 type alias PieceType =
     { moveEffect : MoveEffect
     , controller : Controller
-    , moveOccupancy :
-        MoveOccupancy
-        -- , movePattern : MovePattern
+    , movePattern : MovePattern
     }
 
 
@@ -119,8 +124,37 @@ pieceTypeToStringList : PieceType -> List String
 pieceTypeToStringList pieceType =
     [ toString pieceType.moveEffect
     , toString pieceType.controller
-    , toString pieceType.moveOccupancy
     ]
+        ++ movePatternToStringList pieceType.movePattern
+
+
+movePatternToStringList : MovePattern -> List String
+movePatternToStringList pattern =
+    let
+        occupiedCount =
+            pattern
+                |> getOffsetList Occupied
+                |> List.length
+
+        unoccupiedCount =
+            pattern
+                |> getOffsetList Unoccupied
+                |> List.length
+
+        occupiedList =
+            if occupiedCount > 0 then
+                [ "Occupied " ++ toString occupiedCount ]
+            else
+                []
+
+        unoccupiedList =
+            if unoccupiedCount > 0 then
+                [ "Unoccupied " ++ toString unoccupiedCount ]
+            else
+                []
+    in
+        occupiedList
+            ++ unoccupiedList
 
 
 actualPieceTypePossibilities =
@@ -129,12 +163,7 @@ actualPieceTypePossibilities =
             List.concatMap
                 (\controller ->
                     List.map (PieceType moveEffect controller)
-                        -- (\moveyType ->
-                        --     List.map
-                        --     (PieceType moveEffect controller moveyType)
-                        --         someMovePositionPossibilities
-                        -- )
-                        moveOccupancyPossibilities
+                        someMovePatternPossibilities
                 )
                 controllerPossibilities
         )

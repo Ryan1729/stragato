@@ -1,9 +1,9 @@
 module CommonEncoders exposing (..)
 
 import Json.Encode as Encode
-import PieceAppearances exposing (PieceAppearances, Appearance, Icon(..), AppearancePair)
+import PieceAppearances exposing (PieceAppearances, Appearance, AppearancePair)
 import Spaces exposing (Spaces, Space, SpaceType(..))
-import Pieces exposing (Pieces, Piece, Shape(..), PieceType, Controller(..), MoveOccupancy(..), ProtoPiece(..), MoveEffect(..))
+import Pieces exposing (Pieces, Piece, Shape(..), PieceType, Controller(..), MovePattern, MoveOccupancy(..), ProtoPiece(..), MoveEffect(..))
 import PosInt
 import Math.Vector2 as V2 exposing (Vec2, vec2)
 import GameEndCons exposing (GameEndCons(..), GamePredicate(..))
@@ -25,9 +25,10 @@ encodeSpaceType spaceType =
     spaceType |> stringIt
 
 
-encodeMoveOccupancy : MoveOccupancy -> Encode.Value
-encodeMoveOccupancy moveOccupancy =
-    moveOccupancy |> stringIt
+encodeMovePatteen : MovePattern -> Encode.Value
+encodeMovePatteen movePattern =
+    --TODO leaving this here to make sure the fuzz test can catch it.
+    movePattern |> stringIt
 
 
 encodeMoveEffect : MoveEffect -> Encode.Value
@@ -58,7 +59,7 @@ encodePieceType pieceType =
     Encode.object
         [ ( "moveEffect", pieceType.moveEffect |> encodeMoveEffect )
         , ( "controller", pieceType.controller |> encodeController )
-        , ( "moveOccupancy", pieceType.moveOccupancy |> encodeMoveOccupancy )
+        , ( "movePattern", pieceType.movePattern |> encodeMovePatteen )
         ]
 
 
@@ -110,11 +111,10 @@ encodeAppearancePair ( pieceType, apearance ) =
 
 
 encodeAppearance : Appearance -> Encode.Value
-encodeAppearance ( shape, string, icon ) =
+encodeAppearance ( shape, string ) =
     Encode.list
         [ encodeShape shape
         , Encode.string string
-        , encodeIcon icon
         ]
 
 
@@ -138,21 +138,3 @@ encodeShape shape =
 
         Eye ->
             Encode.string "Eye"
-
-
-encodeIcon : Icon -> Encode.Value
-encodeIcon icon =
-    case icon of
-        EmptySpaceIcon ->
-            Encode.string "EmptySpaceIcon"
-
-        ShapeSpaceIcon shape ->
-            [ encodeShape shape ]
-                |> encodeTag "ShapeSpaceIcon"
-
-        ShapeIcon shape ->
-            [ encodeShape shape ]
-                |> encodeTag "ShapeIcon"
-
-        NoIcon ->
-            Encode.string "NoIcon"

@@ -1,9 +1,9 @@
 module CommonDecoders exposing (..)
 
 import GameEndCons exposing (GameEndCons(..), GamePredicate(..))
-import PieceAppearances exposing (PieceAppearances, Appearance, Icon(..), AppearancePair)
+import PieceAppearances exposing (PieceAppearances, Appearance, AppearancePair)
 import Spaces exposing (Spaces, Space, SpaceType(..))
-import Pieces exposing (Pieces, Piece, Shape(..), PieceType, Controller(..), MoveOccupancy(..), ProtoPiece(..), MoveEffect(..))
+import Pieces exposing (Pieces, Piece, Shape(..), PieceType, MovePattern, Controller(..), MoveOccupancy(..), ProtoPiece(..), MoveEffect(..))
 import Math.Vector2 as V2 exposing (Vec2, vec2)
 import Json.Decode as Decode exposing (Decoder, (:=))
 import PosInt
@@ -54,7 +54,7 @@ pieceTypeDecoder =
     Decode.object3 PieceType
         ("moveEffect" := moveEffectDecoder)
         ("controller" := controllerDecoder)
-        (Decode.oneOf [ "moveOccupancy" := moveOccupancyDecoder, "moveType" := moveOccupancyDecoder ])
+        ("movePattern" := movePatternDecoder)
 
 
 moveEffectDecoder : Decoder MoveEffect
@@ -130,10 +130,11 @@ stringToController s =
             None
 
 
-moveOccupancyDecoder : Decoder MoveOccupancy
-moveOccupancyDecoder =
-    Decode.map stringToMoveOccupancy
-        Decode.string
+movePatternDecoder : Decoder MovePattern
+movePatternDecoder =
+    Decode.object2 MovePattern
+        ("occupied" := Decode.list intPairDecoder)
+        ("occupied" := Decode.list intPairDecoder)
 
 
 stringToMoveOccupancy : String -> MoveOccupancy
@@ -142,11 +143,8 @@ stringToMoveOccupancy s =
         "occupied" ->
             Occupied
 
-        "unoccupied" ->
-            Unoccupied
-
         _ ->
-            AnySpace
+            Unoccupied
 
 
 gamePredicateDecoder : Decoder GamePredicate
@@ -187,49 +185,7 @@ appearancePairDecoder =
 
 appearanceDecoder : Decoder Appearance
 appearanceDecoder =
-    Decode.tuple3 (,,) shapeDecoder Decode.string iconDecoder
-
-
-iconDecoder : Decoder Icon
-iconDecoder =
-    Decode.oneOf
-        [ simpleIconDecoder
-        , taggedIconDecoder
-        ]
-
-
-simpleIconDecoder : Decoder Icon
-simpleIconDecoder =
-    Decode.string
-        `Decode.andThen` (\string ->
-                            case String.toLower string of
-                                "emptyspaceicon" ->
-                                    Decode.succeed EmptySpaceIcon
-
-                                "noicon" ->
-                                    Decode.succeed NoIcon
-
-                                _ ->
-                                    Decode.fail "Unknown simple shape type"
-                         )
-
-
-taggedIconDecoder : Decoder Icon
-taggedIconDecoder =
-    tagDecode iconInfo
-
-
-iconInfo : String -> Decoder Icon
-iconInfo tag =
-    case String.toLower tag of
-        "shapespaceicon" ->
-            Decode.object1 ShapeSpaceIcon ("1" := shapeDecoder)
-
-        "shapeicon" ->
-            Decode.object1 ShapeIcon ("1" := shapeDecoder)
-
-        _ ->
-            Decode.fail "Unknown shape type"
+    Decode.tuple2 (,) shapeDecoder Decode.string
 
 
 shapeDecoder : Decoder Shape
@@ -277,3 +233,8 @@ vec2Decoder : Decoder Vec2
 vec2Decoder =
     Decode.tuple2 (,) Decode.float Decode.float
         |> Decode.map V2.fromTuple
+
+
+intPairDecoder : Decoder ( Int, Int )
+intPairDecoder =
+    Decode.tuple2 (,) Decode.int Decode.int
