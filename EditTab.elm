@@ -147,10 +147,10 @@ render model =
 splitOnController : List ProtoPiece -> List (List ProtoPiece)
 splitOnController list =
     [ List.filter (protoControllerSplitter Pieces.isPlayerController) list
-        ++ List.filter ((==) NoPiece) list
     , List.filter (protoControllerSplitter Pieces.isComputerController) list
     , List.filter (protoControllerSplitter Pieces.isBothController) list
-    , List.filter (protoControllerSplitter Pieces.isNoneController) list
+    , List.filter ((==) NoPiece) list
+        ++ List.filter (protoControllerSplitter Pieces.isNoneController) list
     ]
 
 
@@ -407,9 +407,6 @@ tabbedDeckControl :
     -> Html Msg
 tabbedDeckControl index mdl bundleList typeHeading typeDisplay removeMessage addMessage elementView selectTabMsg tabIndex =
     let
-        deckAndPossibilitiesList =
-            List.map fst bundleList
-
         tabLabels =
             List.map snd bundleList
     in
