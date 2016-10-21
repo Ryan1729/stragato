@@ -129,7 +129,7 @@ render model =
                             pieceDeckContolTabLabels
 
                     quantityControl =
-                        QuantityControl.standard (UpdateExportModel ... Msg.PieceDeckDecrement)
+                        QuantityControl.confirmRemoval (UpdateExportModel ... Msg.PieceDeckDecrement)
                             (UpdateExportModel ... Msg.PieceDeckIncrement)
                             (\_ _ -> NoOp)
                   in
