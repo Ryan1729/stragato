@@ -116,30 +116,49 @@ render model =
                 ]
             , cell [ size All 6 ]
                 [ let
-                    deckAndPossibilitiesList : List ( List ProtoPiece, List ProtoPiece )
-                    deckAndPossibilitiesList =
+                    columnData =
                         List.map2 (,)
                             (splitOnController model.exportModel.pieceDeck)
-                            (splitOnController Pieces.protoPiecePossibilities)
-
-                    tabbedDeckBundle =
-                        List.map2 (,)
-                            deckAndPossibilitiesList
                             pieceDeckContolTabLabels
                   in
-                    tabbedDeckControl [ 3 ]
+                    tabbedQuantityControl [ 3 ]
                         model.mdl
-                        tabbedDeckBundle
+                        columnData
                         "piece type"
                         displayProtoPieceType
-                        Msg.PieceDeckDecrement
-                        Msg.PieceDeckIncrement
+                        (UpdateExportModel ... Msg.PieceDeckDecrement)
+                        (UpdateExportModel ... Msg.PieceDeckIncrement)
                         (DCC.positionedSvgMakerToHtmlMaker
                             <| protoPieceToSVG model.exportModel.pieceAppearances
                         )
                         Msg.SelectPieceDeckTab
                         model.pieceDeckTabIndex
                 ]
+              -- [ let
+              --     deckAndPossibilitiesList : List ( List ProtoPiece, List ProtoPiece )
+              --     deckAndPossibilitiesList =
+              --         List.map2 (,)
+              --             (splitOnController model.exportModel.pieceDeck)
+              --             (splitOnController Pieces.protoPiecePossibilities)
+              --
+              --     tabbedDeckBundle =
+              --         List.map2 (,)
+              --             deckAndPossibilitiesList
+              --             pieceDeckContolTabLabels
+              --   in
+              --     tabbedDeckControl [ 3 ]
+              --         model.mdl
+              --         tabbedDeckBundle
+              --         "piece type"
+              --         displayProtoPieceType
+              --         Msg.PieceDeckDecrement
+              --         Msg.PieceDeckIncrement
+              --         (DCC.positionedSvgMakerToHtmlMaker
+              --             <| protoPieceToSVG model.exportModel.pieceAppearances
+              --         )
+              --         Msg.SelectPieceDeckTab
+              --         model.pieceDeckTabIndex
+              -- ]
             ]
         ]
 
@@ -432,6 +451,125 @@ tabbedDeckControl index mdl bundleList typeHeading typeDisplay removeMessage add
                     )
                 |> Maybe.withDefault defaultTab
             ]
+
+
+tabbedQuantityControl :
+    List Int
+    -> Material.Model
+    -> List ( List a, Tabs.Label Msg )
+    -> String
+    -> (a -> List (Html Msg))
+    -> (a -> Int -> Msg)
+    -> (a -> Int -> Msg)
+    -> (a -> Html Msg)
+    -> (Int -> Msg)
+    -> Int
+    -> Html Msg
+tabbedQuantityControl index mdl bundleList typeHeading typeDisplay removeMessage addMessage elementView selectTabMsg tabIndex =
+    let
+        tabLabels =
+            List.map snd bundleList
+    in
+        Tabs.render Msg.Mdl
+            (index ++ [ 20 ])
+            mdl
+            [ Tabs.ripple
+            , Tabs.onSelectTab selectTabMsg
+            , Tabs.activeTab tabIndex
+            ]
+            tabLabels
+            [ List.drop tabIndex bundleList
+                |> List.head
+                |> Maybe.map
+                    (fst
+                        >> quantityControlWithTotal index
+                            mdl
+                            typeHeading
+                            typeDisplay
+                            removeMessage
+                            addMessage
+                            elementView
+                    )
+                |> Maybe.withDefault defaultTab
+            ]
+
+
+quantityControlWithTotal :
+    List Int
+    -> Material.Model
+    -> String
+    -> (a -> List (Html Msg))
+    -> (a -> Int -> Msg)
+    -> (a -> Int -> Msg)
+    -> (a -> Html Msg)
+    -> List a
+    -> Html Msg
+quantityControlWithTotal index mdl typeHeading typeDisplay removeMessage addMessage elementView dataList =
+    div
+        [ style
+            [ ( "display", "flex" )
+            , ( "flex-direction", "column" )
+            , ( "align-items", "center" )
+            ]
+        ]
+        [ div []
+            [ div [ style [ ( "width", "100%" ), ( "text-align", "center" ), ( "background-color", DCC.background ) ] ]
+                [ dataList
+                    |> List.length
+                    |> toString
+                    |> ((++) "Total: ")
+                    |> text
+                ]
+            , Table.table [ css "background-color" DCC.background ]
+                [ Table.thead []
+                    [ Table.tr []
+                        [ Table.th [{- Table.onClick Reorder -}]
+                            [ text "Deck Element" ]
+                        , Table.th [] [ text typeHeading ]
+                        , Table.th [ Table.numeric ] [ text "Quantity" ]
+                        ]
+                    ]
+                , Table.tbody []
+                    (dataList
+                        |> List.map
+                            (\item ->
+                                Table.tr []
+                                    [ Table.td []
+                                        [ elementView item
+                                        ]
+                                    , Table.td []
+                                        <| typeDisplay item
+                                    , Table.td []
+                                        [ let
+                                            currentAmount =
+                                                amountOfItemInDeck item dataList
+                                          in
+                                            Html.input
+                                                [ Html.Attributes.type' "number"
+                                                , Html.Attributes.min "0"
+                                                , Html.Attributes.step "any"
+                                                , String.toInt
+                                                    >> Result.withDefault currentAmount
+                                                    >> (\newAmount ->
+                                                            if newAmount > currentAmount then
+                                                                addMessage item (newAmount - currentAmount)
+                                                            else if newAmount < currentAmount then
+                                                                removeMessage item (currentAmount - newAmount)
+                                                            else
+                                                                NoOp
+                                                       )
+                                                    |> onInput
+                                                , currentAmount |> toString |> Html.Attributes.value
+                                                , style [ ( "width", "4rem" ), ( "background-color", DCC.background ) ]
+                                                ]
+                                                []
+                                        ]
+                                    ]
+                            )
+                    )
+                ]
+            ]
+        ]
 
 
 defaultTab =

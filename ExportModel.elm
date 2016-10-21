@@ -69,19 +69,24 @@ defaultPieceAppearances =
 
 
 defaultPieceTypeDeck =
-    Pieces.actualPieceTypePossibilities
-        |> List.map Pieces.ActualPiece
-        |> (++)
-            [ NoPiece
-            , NoPiece
-            ]
+    [ NoPiece
+    , NoPiece
+    , ActualPiece { moveEffect = Copy, controller = None, movePattern = { occupied = [ ( 0, 4 ), ( 1, 5 ), ( 2, 6 ), ( 2, -2 ), ( 2, 0 ), ( 2, 2 ), ( 2, 2 ), ( 3, 3 ), ( 4, 4 ), ( 4, 0 ), ( 5, -1 ), ( 6, -2 ), ( -2, 2 ), ( -2, 0 ), ( -2, -2 ), ( -2, -2 ), ( -1, -3 ), ( 0, -4 ) ], unoccupied = [ ( 0, 2 ), ( 1, -1 ), ( 1, 1 ), ( 2, 0 ), ( -1, 1 ), ( -1, -1 ) ] } }
+    , ActualPiece { moveEffect = Copy, controller = None, movePattern = { occupied = [ ( 0, 4 ), ( 1, 5 ), ( 2, 6 ), ( 2, -2 ), ( 2, 0 ), ( 2, 2 ), ( 2, 2 ), ( 3, 3 ), ( 4, 4 ), ( 4, 0 ), ( 5, -1 ), ( 6, -2 ), ( -2, 2 ), ( -2, 0 ), ( -2, -2 ), ( -2, -2 ), ( -1, -3 ), ( 0, -4 ) ], unoccupied = [ ( 0, 4 ), ( 1, 5 ), ( 2, 6 ), ( 2, -2 ), ( 2, 0 ), ( 2, 2 ), ( 2, 2 ), ( 3, 3 ), ( 4, 4 ), ( 4, 0 ), ( 5, -1 ), ( 6, -2 ), ( -2, 2 ), ( -2, 0 ), ( -2, -2 ), ( -2, -2 ), ( -1, -3 ), ( 0, -4 ) ] } }
+    , ActualPiece { moveEffect = NoEffect, controller = Player, movePattern = { occupied = [ ( 0, 0 ) ], unoccupied = [ ( 0, 0 ) ] } }
+    , ActualPiece { moveEffect = Capture, controller = Player, movePattern = { occupied = [ ( 0, 0 ) ], unoccupied = [ ( 0, 2 ), ( 1, -1 ), ( 1, 1 ), ( 2, 0 ), ( -1, 1 ), ( -1, -1 ) ] } }
+    , ActualPiece { moveEffect = NoEffect, controller = Computer, movePattern = { occupied = [ ( 0, 0 ) ], unoccupied = [ ( 0, 4 ), ( 1, 5 ), ( 2, 6 ), ( 2, -2 ), ( 2, 0 ), ( 2, 2 ), ( 2, 2 ), ( 3, 3 ), ( 4, 4 ), ( 4, 0 ), ( 5, -1 ), ( 6, -2 ), ( -2, 2 ), ( -2, 0 ), ( -2, -2 ), ( -2, -2 ), ( -1, -3 ), ( 0, -4 ) ] } }
+    , ActualPiece { moveEffect = NoEffect, controller = Computer, movePattern = { occupied = [ ( 0, 2 ), ( 1, -1 ), ( 1, 1 ), ( 2, 0 ), ( -1, 1 ), ( -1, -1 ) ], unoccupied = [ ( 0, 0 ) ] } }
+    ]
 
 
 
--- Pieces.protoPiecePossibilities
---     ++ [ NoPiece
+-- Pieces.actualPieceTypePossibilities
+--     |> List.map Pieces.ActualPiece
+--     |> (++)
+--         [ NoPiece
 --         , NoPiece
---        ]
+--         ]
 
 
 defaultMoveOccupancyDeck =
