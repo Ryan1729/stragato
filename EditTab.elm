@@ -297,49 +297,33 @@ deckControl :
     -> (a -> Html Msg)
     -> Html Msg
 deckControl index mdl currentDeck possibilities typeHeading typeDisplay quantityControl elementView =
-    div
-        [ style
-            [ ( "display", "flex" )
-            , ( "flex-direction", "column" )
-            , ( "align-items", "center" )
-            ]
-        ]
-        [ div []
-            [ div [ style [ ( "width", "100%" ), ( "text-align", "center" ), ( "background-color", DCC.background ) ] ]
-                [ currentDeck
-                    |> List.length
-                    |> toString
-                    |> ((++) "Total: ")
-                    |> text
-                ]
-            , Table.table [ css "background-color" DCC.background ]
-                [ Table.thead []
-                    [ Table.tr []
-                        [ Table.th [{- Table.onClick Reorder -}]
-                            [ text "Deck Element" ]
-                        , Table.th [] [ text typeHeading ]
-                        , Table.th [ Table.numeric ] [ text "Quantity" ]
-                        ]
+    wrapWithTotal (List.length currentDeck)
+        <| Table.table [ css "background-color" DCC.background ]
+            [ Table.thead []
+                [ Table.tr []
+                    [ Table.th [{- Table.onClick Reorder -}]
+                        [ text "Deck Element" ]
+                    , Table.th [] [ text typeHeading ]
+                    , Table.th [ Table.numeric ] [ text "Quantity" ]
                     ]
-                , Table.tbody []
-                    (possibilities
-                        |> List.map
-                            (\item ->
-                                Table.tr []
-                                    [ Table.td []
-                                        [ elementView item
-                                        ]
-                                    , Table.td []
-                                        <| typeDisplay item
-                                    , Table.td []
-                                        [ quantityControl currentDeck item
-                                        ]
-                                    ]
-                            )
-                    )
                 ]
+            , Table.tbody []
+                (possibilities
+                    |> List.map
+                        (\item ->
+                            Table.tr []
+                                [ Table.td []
+                                    [ elementView item
+                                    ]
+                                , Table.td []
+                                    <| typeDisplay item
+                                , Table.td []
+                                    [ quantityControl currentDeck item
+                                    ]
+                                ]
+                        )
+                )
             ]
-        ]
 
 
 
@@ -401,6 +385,37 @@ quantityControlTableWithTotal :
     -> List a
     -> Html Msg
 quantityControlTableWithTotal index mdl typeHeading typeDisplay quantityControl elementView dataList =
+    wrapWithTotal (List.length dataList)
+        <| Table.table [ css "background-color" DCC.background ]
+            [ Table.thead []
+                [ Table.tr []
+                    [ Table.th [{- Table.onClick Reorder -}]
+                        [ text "Deck Element" ]
+                    , Table.th [] [ text typeHeading ]
+                    , Table.th [ Table.numeric ] [ text "Quantity" ]
+                    ]
+                ]
+            , Table.tbody []
+                (dataList
+                    |> Extras.uniqueMap
+                        (\item ->
+                            Table.tr []
+                                [ Table.td []
+                                    [ elementView item
+                                    ]
+                                , Table.td []
+                                    <| typeDisplay item
+                                , Table.td []
+                                    [ quantityControl dataList item
+                                    ]
+                                ]
+                        )
+                )
+            ]
+
+
+wrapWithTotal : Int -> Html msg -> Html msg
+wrapWithTotal total thing =
     div
         [ style
             [ ( "display", "flex" )
@@ -410,38 +425,12 @@ quantityControlTableWithTotal index mdl typeHeading typeDisplay quantityControl 
         ]
         [ div []
             [ div [ style [ ( "width", "100%" ), ( "text-align", "center" ), ( "background-color", DCC.background ) ] ]
-                [ dataList
-                    |> List.length
+                [ total
                     |> toString
                     |> ((++) "Total: ")
                     |> text
                 ]
-            , Table.table [ css "background-color" DCC.background ]
-                [ Table.thead []
-                    [ Table.tr []
-                        [ Table.th [{- Table.onClick Reorder -}]
-                            [ text "Deck Element" ]
-                        , Table.th [] [ text typeHeading ]
-                        , Table.th [ Table.numeric ] [ text "Quantity" ]
-                        ]
-                    ]
-                , Table.tbody []
-                    (dataList
-                        |> Extras.uniqueMap
-                            (\item ->
-                                Table.tr []
-                                    [ Table.td []
-                                        [ elementView item
-                                        ]
-                                    , Table.td []
-                                        <| typeDisplay item
-                                    , Table.td []
-                                        [ quantityControl dataList item
-                                        ]
-                                    ]
-                            )
-                    )
-                ]
+            , thing
             ]
         ]
 
