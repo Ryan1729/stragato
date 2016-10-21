@@ -133,17 +133,20 @@ render model =
                             (UpdateExportModel ... Msg.PieceDeckIncrement)
                             (\_ _ -> NoOp)
                   in
-                    tabbedQuantityControlTable [ 3 ]
-                        model.mdl
-                        columnData
-                        "piece type"
-                        displayProtoPieceType
-                        quantityControl
-                        (DCC.positionedSvgMakerToHtmlMaker
-                            <| protoPieceToSVG model.exportModel.pieceAppearances
-                        )
-                        Msg.SelectPieceDeckTab
-                        model.pieceDeckTabIndex
+                    div []
+                        [ tabbedQuantityControlTable [ 3 ]
+                            model.mdl
+                            columnData
+                            Msg.SelectPieceDeckTab
+                            (quantityControlTableWithTotal "piece type"
+                                displayProtoPieceType
+                                quantityControl
+                                (DCC.positionedSvgMakerToHtmlMaker
+                                    <| protoPieceToSVG model.exportModel.pieceAppearances
+                                )
+                            )
+                            model.pieceDeckTabIndex
+                        ]
                 ]
             ]
         ]
@@ -340,14 +343,11 @@ tabbedQuantityControlTable :
     List Int
     -> Material.Model
     -> List ( List a, Tabs.Label Msg )
-    -> String
-    -> (a -> List (Html Msg))
-    -> QuantityControl a Msg
-    -> (a -> Html Msg)
     -> (Int -> Msg)
+    -> (List Int -> Material.Model -> List a -> Html Msg)
     -> Int
     -> Html Msg
-tabbedQuantityControlTable index mdl bundleList typeHeading typeDisplay quantityControl elementView selectTabMsg tabIndex =
+tabbedQuantityControlTable index mdl bundleList selectTabMsg tabDisplay tabIndex =
     let
         tabLabels =
             List.map snd bundleList
@@ -364,27 +364,22 @@ tabbedQuantityControlTable index mdl bundleList typeHeading typeDisplay quantity
                 |> List.head
                 |> Maybe.map
                     (fst
-                        >> quantityControlTableWithTotal index
-                            mdl
-                            typeHeading
-                            typeDisplay
-                            quantityControl
-                            elementView
+                        >> tabDisplay index mdl
                     )
                 |> Maybe.withDefault defaultTab
             ]
 
 
 quantityControlTableWithTotal :
-    List Int
-    -> Material.Model
-    -> String
+    String
     -> (a -> List (Html Msg))
     -> QuantityControl a Msg
     -> (a -> Html Msg)
+    -> List Int
+    -> Material.Model
     -> List a
     -> Html Msg
-quantityControlTableWithTotal index mdl typeHeading typeDisplay quantityControl elementView dataList =
+quantityControlTableWithTotal typeHeading typeDisplay quantityControl elementView index mdl dataList =
     wrapWithTotal (List.length dataList)
         <| Table.table [ css "background-color" DCC.background ]
             [ Table.thead []
