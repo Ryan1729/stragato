@@ -134,7 +134,7 @@ movePatternDecoder : Decoder MovePattern
 movePatternDecoder =
     Decode.object2 MovePattern
         ("occupied" := Decode.list intPairDecoder)
-        ("occupied" := Decode.list intPairDecoder)
+        ("unoccupied" := Decode.list intPairDecoder)
 
 
 stringToMoveOccupancy : String -> MoveOccupancy

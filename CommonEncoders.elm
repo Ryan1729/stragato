@@ -3,7 +3,7 @@ module CommonEncoders exposing (..)
 import Json.Encode as Encode
 import PieceAppearances exposing (PieceAppearances, Appearance, AppearancePair)
 import Spaces exposing (Spaces, Space, SpaceType(..))
-import Pieces exposing (Pieces, Piece, Shape(..), PieceType, Controller(..), MovePattern, MoveOccupancy(..), ProtoPiece(..), MoveEffect(..))
+import Pieces exposing (Pieces, Piece, Shape(..), PieceType, Controller(..), MovePattern, ProtoPiece(..), MoveEffect(..))
 import PosInt
 import Math.Vector2 as V2 exposing (Vec2, vec2)
 import GameEndCons exposing (GameEndCons(..), GamePredicate(..))
@@ -27,8 +27,10 @@ encodeSpaceType spaceType =
 
 encodeMovePatteen : MovePattern -> Encode.Value
 encodeMovePatteen movePattern =
-    --TODO leaving this here to make sure the fuzz test can catch it.
-    movePattern |> stringIt
+    Encode.object
+        [ ( "occupied", movePattern.occupied |> encodeMap encodeMoveOffset )
+        , ( "unoccupied", movePattern.unoccupied |> encodeMap encodeMoveOffset )
+        ]
 
 
 encodeMoveEffect : MoveEffect -> Encode.Value
@@ -85,7 +87,7 @@ encodeGamePredicate con =
             encodeTag "NoPiecesStrictlyControlledBy" [ encodeController controller ]
 
         NoPiecesOfGivenTypeCanMove pieceType ->
-            encodeTag "NoPiecesStrictlyControlledBy" [ encodePieceType pieceType ]
+            encodeTag "NoPiecesOfGivenTypeCanMove" [ encodePieceType pieceType ]
 
 
 encodeTag : String -> List Encode.Value -> Encode.Value
@@ -138,3 +140,12 @@ encodeShape shape =
 
         Eye ->
             Encode.string "Eye"
+
+
+encodeMoveOffset ( x, y ) =
+    Encode.list
+        [ x
+            |> Encode.int
+        , y
+            |> Encode.int
+        ]
