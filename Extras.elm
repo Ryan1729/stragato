@@ -52,6 +52,31 @@ setAt index value l =
 
 
 
+{- wrote myself
+   meant to act like List.Extra.unique >> List.map
+   This version doesn't require a hash function if nothing else
+-}
+
+
+uniqueMap : (a -> b) -> List a -> List b
+uniqueMap f list =
+    List.map f (uniqueMapHelper list [])
+
+
+uniqueMapHelper : List a -> List a -> List a
+uniqueMapHelper input seen =
+    case input of
+        [] ->
+            []
+
+        first :: rest ->
+            if List.member first seen then
+                uniqueMapHelper rest seen
+            else
+                first :: uniqueMapHelper rest (first :: seen)
+
+
+
 --wrote myself since apparently a function that does the argument ignoring like
 --this, isn't on package.elm-lang.org
 

@@ -25,6 +25,7 @@ import String
 import DevControlsCommon as DCC
 import GameEndCons
 import Regex
+import Extras
 
 
 render : Model -> Html Msg
@@ -134,31 +135,6 @@ render model =
                         Msg.SelectPieceDeckTab
                         model.pieceDeckTabIndex
                 ]
-              -- [ let
-              --     deckAndPossibilitiesList : List ( List ProtoPiece, List ProtoPiece )
-              --     deckAndPossibilitiesList =
-              --         List.map2 (,)
-              --             (splitOnController model.exportModel.pieceDeck)
-              --             (splitOnController Pieces.protoPiecePossibilities)
-              --
-              --     tabbedDeckBundle =
-              --         List.map2 (,)
-              --             deckAndPossibilitiesList
-              --             pieceDeckContolTabLabels
-              --   in
-              --     tabbedDeckControl [ 3 ]
-              --         model.mdl
-              --         tabbedDeckBundle
-              --         "piece type"
-              --         displayProtoPieceType
-              --         Msg.PieceDeckDecrement
-              --         Msg.PieceDeckIncrement
-              --         (DCC.positionedSvgMakerToHtmlMaker
-              --             <| protoPieceToSVG model.exportModel.pieceAppearances
-              --         )
-              --         Msg.SelectPieceDeckTab
-              --         model.pieceDeckTabIndex
-              -- ]
             ]
         ]
 
@@ -531,7 +507,7 @@ quantityControlWithTotal index mdl typeHeading typeDisplay removeMessage addMess
                     ]
                 , Table.tbody []
                     (dataList
-                        |> List.map
+                        |> Extras.uniqueMap
                             (\item ->
                                 Table.tr []
                                     [ Table.td []
