@@ -26,7 +26,7 @@ standard removeMessage addMessage noChangeMessage dataList item =
                 >> (\newAmount ->
                         if newAmount > currentAmount then
                             addMessage item (newAmount - currentAmount)
-                        else if newAmount < currentAmount then
+                        else if newAmount >= 0 && newAmount < currentAmount then
                             removeMessage item (currentAmount - newAmount)
                         else
                             noChangeMessage item currentAmount
@@ -54,7 +54,7 @@ confirmRemoval removeMessage addMessage noChangeMessage dataList item =
                     >> (\newAmount ->
                             if newAmount > currentAmount then
                                 addMessage item (newAmount - currentAmount)
-                            else if newAmount < currentAmount then
+                            else if newAmount >= 1 && newAmount < currentAmount then
                                 removeMessage item (currentAmount - newAmount)
                             else
                                 noChangeMessage item currentAmount
@@ -65,7 +65,7 @@ confirmRemoval removeMessage addMessage noChangeMessage dataList item =
                 ]
                 []
     in
-        if currentAmount == 1 then
+        if currentAmount <= 1 then
             div []
                 [ input
                 , Html.button
