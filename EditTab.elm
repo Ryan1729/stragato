@@ -26,6 +26,7 @@ import DevControlsCommon as DCC
 import GameEndCons
 import Regex
 import Extras
+import QuantityControl exposing (QuantityControl)
 
 
 render : Model -> Html Msg
@@ -103,17 +104,22 @@ render model =
             ]
         , grid []
             [ cell [ size All 6 ]
-                [ exportDeckControl [ 2 ]
-                    model.mdl
-                    model.exportModel.spaceDeck
-                    Spaces.spaceTypePossibilities
-                    "space type"
-                    DCC.displaySpaceType
-                    Msg.SpaceDeckDecrement
-                    Msg.SpaceDeckIncrement
-                    (DCC.positionedSvgMakerToHtmlMaker
-                        <| Playfield.space model.showSpaceOutlines [ stroke "grey" ]
-                    )
+                [ let
+                    quantityControl =
+                        QuantityControl.standard (UpdateExportModel ... Msg.SpaceDeckDecrement)
+                            (UpdateExportModel ... Msg.SpaceDeckIncrement)
+                            (\_ _ -> NoOp)
+                  in
+                    deckControl [ 2 ]
+                        model.mdl
+                        model.exportModel.spaceDeck
+                        Spaces.spaceTypePossibilities
+                        "space type"
+                        DCC.displaySpaceType
+                        quantityControl
+                        (DCC.positionedSvgMakerToHtmlMaker
+                            <| Playfield.space model.showSpaceOutlines [ stroke "grey" ]
+                        )
                 ]
             , cell [ size All 6 ]
                 [ let
@@ -121,14 +127,18 @@ render model =
                         List.map2 (,)
                             (splitOnController model.exportModel.pieceDeck)
                             pieceDeckContolTabLabels
+
+                    quantityControl =
+                        QuantityControl.standard (UpdateExportModel ... Msg.PieceDeckDecrement)
+                            (UpdateExportModel ... Msg.PieceDeckIncrement)
+                            (\_ _ -> NoOp)
                   in
-                    tabbedQuantityControl [ 3 ]
+                    tabbedQuantityControlTable [ 3 ]
                         model.mdl
                         columnData
                         "piece type"
                         displayProtoPieceType
-                        (UpdateExportModel ... Msg.PieceDeckDecrement)
-                        (UpdateExportModel ... Msg.PieceDeckIncrement)
+                        quantityControl
                         (DCC.positionedSvgMakerToHtmlMaker
                             <| protoPieceToSVG model.exportModel.pieceAppearances
                         )
@@ -283,11 +293,10 @@ deckControl :
     -> List a
     -> String
     -> (a -> List (Html Msg))
-    -> (a -> Int -> Msg)
-    -> (a -> Int -> Msg)
+    -> QuantityControl a Msg
     -> (a -> Html Msg)
     -> Html Msg
-deckControl index mdl currentDeck possibilities typeHeading typeDisplay removeMessage addMessage elementView =
+deckControl index mdl currentDeck possibilities typeHeading typeDisplay quantityControl elementView =
     div
         [ style
             [ ( "display", "flex" )
@@ -323,29 +332,7 @@ deckControl index mdl currentDeck possibilities typeHeading typeDisplay removeMe
                                     , Table.td []
                                         <| typeDisplay item
                                     , Table.td []
-                                        [ let
-                                            currentAmount =
-                                                amountOfItemInDeck item currentDeck
-                                          in
-                                            Html.input
-                                                [ Html.Attributes.type' "number"
-                                                , Html.Attributes.min "0"
-                                                , Html.Attributes.step "any"
-                                                , String.toInt
-                                                    >> Result.withDefault currentAmount
-                                                    >> (\newAmount ->
-                                                            if newAmount > currentAmount then
-                                                                addMessage item (newAmount - currentAmount)
-                                                            else if newAmount < currentAmount then
-                                                                removeMessage item (currentAmount - newAmount)
-                                                            else
-                                                                NoOp
-                                                       )
-                                                    |> onInput
-                                                , currentAmount |> toString |> Html.Attributes.value
-                                                , style [ ( "width", "4rem" ), ( "background-color", DCC.background ) ]
-                                                ]
-                                                []
+                                        [ quantityControl currentDeck item
                                         ]
                                     ]
                             )
@@ -353,29 +340,6 @@ deckControl index mdl currentDeck possibilities typeHeading typeDisplay removeMe
                 ]
             ]
         ]
-
-
-exportDeckControl :
-    List Int
-    -> Material.Model
-    -> List a
-    -> List a
-    -> String
-    -> (a -> List (Html Msg))
-    -> (a -> Int -> ExportMsg)
-    -> (a -> Int -> ExportMsg)
-    -> (a -> Html Msg)
-    -> Html Msg
-exportDeckControl index mdl currentDeck possibilities typeHeading typeDisplay removeMessage addMessage elementView =
-    deckControl index
-        mdl
-        currentDeck
-        possibilities
-        typeHeading
-        typeDisplay
-        (UpdateExportModel ... removeMessage)
-        (UpdateExportModel ... addMessage)
-        elementView
 
 
 
@@ -388,60 +352,18 @@ exportDeckControl index mdl currentDeck possibilities typeHeading typeDisplay re
     (<<) << (<<)
 
 
-tabbedDeckControl :
-    List Int
-    -> Material.Model
-    -> List ( ( List a, List a ), Tabs.Label Msg )
-    -> String
-    -> (a -> List (Html Msg))
-    -> (a -> Int -> ExportMsg)
-    -> (a -> Int -> ExportMsg)
-    -> (a -> Html Msg)
-    -> (Int -> Msg)
-    -> Int
-    -> Html Msg
-tabbedDeckControl index mdl bundleList typeHeading typeDisplay removeMessage addMessage elementView selectTabMsg tabIndex =
-    let
-        tabLabels =
-            List.map snd bundleList
-    in
-        Tabs.render Msg.Mdl
-            (index ++ [ 20 ])
-            mdl
-            [ Tabs.ripple
-            , Tabs.onSelectTab selectTabMsg
-            , Tabs.activeTab tabIndex
-            ]
-            tabLabels
-            [ List.drop tabIndex bundleList
-                |> List.head
-                |> Maybe.map
-                    (fst
-                        >> deckControlTab index
-                            mdl
-                            typeHeading
-                            typeDisplay
-                            removeMessage
-                            addMessage
-                            elementView
-                    )
-                |> Maybe.withDefault defaultTab
-            ]
-
-
-tabbedQuantityControl :
+tabbedQuantityControlTable :
     List Int
     -> Material.Model
     -> List ( List a, Tabs.Label Msg )
     -> String
     -> (a -> List (Html Msg))
-    -> (a -> Int -> Msg)
-    -> (a -> Int -> Msg)
+    -> QuantityControl a Msg
     -> (a -> Html Msg)
     -> (Int -> Msg)
     -> Int
     -> Html Msg
-tabbedQuantityControl index mdl bundleList typeHeading typeDisplay removeMessage addMessage elementView selectTabMsg tabIndex =
+tabbedQuantityControlTable index mdl bundleList typeHeading typeDisplay quantityControl elementView selectTabMsg tabIndex =
     let
         tabLabels =
             List.map snd bundleList
@@ -458,29 +380,27 @@ tabbedQuantityControl index mdl bundleList typeHeading typeDisplay removeMessage
                 |> List.head
                 |> Maybe.map
                     (fst
-                        >> quantityControlWithTotal index
+                        >> quantityControlTableWithTotal index
                             mdl
                             typeHeading
                             typeDisplay
-                            removeMessage
-                            addMessage
+                            quantityControl
                             elementView
                     )
                 |> Maybe.withDefault defaultTab
             ]
 
 
-quantityControlWithTotal :
+quantityControlTableWithTotal :
     List Int
     -> Material.Model
     -> String
     -> (a -> List (Html Msg))
-    -> (a -> Int -> Msg)
-    -> (a -> Int -> Msg)
+    -> QuantityControl a Msg
     -> (a -> Html Msg)
     -> List a
     -> Html Msg
-quantityControlWithTotal index mdl typeHeading typeDisplay removeMessage addMessage elementView dataList =
+quantityControlTableWithTotal index mdl typeHeading typeDisplay quantityControl elementView dataList =
     div
         [ style
             [ ( "display", "flex" )
@@ -516,29 +436,7 @@ quantityControlWithTotal index mdl typeHeading typeDisplay removeMessage addMess
                                     , Table.td []
                                         <| typeDisplay item
                                     , Table.td []
-                                        [ let
-                                            currentAmount =
-                                                amountOfItemInDeck item dataList
-                                          in
-                                            Html.input
-                                                [ Html.Attributes.type' "number"
-                                                , Html.Attributes.min "0"
-                                                , Html.Attributes.step "any"
-                                                , String.toInt
-                                                    >> Result.withDefault currentAmount
-                                                    >> (\newAmount ->
-                                                            if newAmount > currentAmount then
-                                                                addMessage item (newAmount - currentAmount)
-                                                            else if newAmount < currentAmount then
-                                                                removeMessage item (currentAmount - newAmount)
-                                                            else
-                                                                NoOp
-                                                       )
-                                                    |> onInput
-                                                , currentAmount |> toString |> Html.Attributes.value
-                                                , style [ ( "width", "4rem" ), ( "background-color", DCC.background ) ]
-                                                ]
-                                                []
+                                        [ quantityControl dataList item
                                         ]
                                     ]
                             )
@@ -562,31 +460,3 @@ pieceDeckContolTabLabels =
     , Tabs.textLabel []
         "None"
     ]
-
-
-deckControlTab :
-    List Int
-    -> Material.Model
-    -> String
-    -> (a -> List (Html Msg))
-    -> (a -> Int -> ExportMsg)
-    -> (a -> Int -> ExportMsg)
-    -> (a -> Html Msg)
-    -> ( List a, List a )
-    -> Html Msg
-deckControlTab index mdl typeHeading typeDisplay removeMessage addMessage elementView ( currentDeck, possibilities ) =
-    exportDeckControl index
-        mdl
-        currentDeck
-        possibilities
-        typeHeading
-        typeDisplay
-        removeMessage
-        addMessage
-        elementView
-
-
-amountOfItemInDeck : a -> List a -> Int
-amountOfItemInDeck item deck =
-    List.filter ((==) item) deck
-        |> List.length
