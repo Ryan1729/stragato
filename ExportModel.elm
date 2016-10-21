@@ -78,6 +78,7 @@ defaultPieceTypeDeck =
     , ActualPiece { moveEffect = NoEffect, controller = Computer, movePattern = { occupied = [ ( 0, 0 ) ], unoccupied = [ ( 0, 4 ), ( 1, 5 ), ( 2, 6 ), ( 2, -2 ), ( 2, 0 ), ( 2, 2 ), ( 2, 2 ), ( 3, 3 ), ( 4, 4 ), ( 4, 0 ), ( 5, -1 ), ( 6, -2 ), ( -2, 2 ), ( -2, 0 ), ( -2, -2 ), ( -2, -2 ), ( -1, -3 ), ( 0, -4 ) ] } }
     , ActualPiece { moveEffect = NoEffect, controller = Computer, movePattern = { occupied = [ ( 0, 2 ), ( 1, -1 ), ( 1, 1 ), ( 2, 0 ), ( -1, 1 ), ( -1, -1 ) ], unoccupied = [ ( 0, 0 ) ] } }
     ]
+        |> List.sortBy Basics.toString
 
 
 
@@ -100,6 +101,7 @@ defaultSpaceDeck =
     , Red
     , EmptySpace
     ]
+        |> List.sortBy Basics.toString
 
 
 

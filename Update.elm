@@ -133,16 +133,34 @@ updateExportModel : ExportMsg -> ExportModel -> ExportModel
 updateExportModel msg model =
     case msg of
         SpaceDeckIncrement item amount ->
-            { model | spaceDeck = List.repeat amount item ++ model.spaceDeck }
+            { model
+                | spaceDeck =
+                    List.repeat amount item
+                        ++ model.spaceDeck
+                        |> List.sortBy toString
+            }
 
         SpaceDeckDecrement item amount ->
-            { model | spaceDeck = List.foldl (Extras.ignoreFirstArg <| Extras.remove item) model.spaceDeck [1..amount] }
+            { model
+                | spaceDeck =
+                    List.foldl (Extras.ignoreFirstArg <| Extras.remove item) model.spaceDeck [1..amount]
+                        |> List.sortBy toString
+            }
 
         PieceDeckIncrement item amount ->
-            { model | pieceDeck = List.repeat amount item ++ model.pieceDeck }
+            { model
+                | pieceDeck =
+                    List.repeat amount item
+                        ++ model.pieceDeck
+                        |> List.sortBy toString
+            }
 
         PieceDeckDecrement item amount ->
-            { model | pieceDeck = List.foldl (Extras.ignoreFirstArg <| Extras.remove item) model.pieceDeck [1..amount] }
+            { model
+                | pieceDeck =
+                    List.foldl (Extras.ignoreFirstArg <| Extras.remove item) model.pieceDeck [1..amount]
+                        |> List.sortBy toString
+            }
 
         UpdateGridWidth newDimString ->
             case String.toInt newDimString of
