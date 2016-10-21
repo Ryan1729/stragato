@@ -127,24 +127,13 @@ render model =
                         List.map2 (,)
                             (splitOnController model.exportModel.pieceDeck)
                             pieceDeckContolTabLabels
-
-                    quantityControl =
-                        QuantityControl.confirmRemoval (UpdateExportModel ... Msg.PieceDeckDecrement)
-                            (UpdateExportModel ... Msg.PieceDeckIncrement)
-                            (\_ _ -> NoOp)
                   in
                     div []
                         [ tabbedQuantityControlTable [ 3 ]
                             model.mdl
                             columnData
                             Msg.SelectPieceDeckTab
-                            (quantityControlTableWithTotal "piece type"
-                                displayProtoPieceType
-                                quantityControl
-                                (DCC.positionedSvgMakerToHtmlMaker
-                                    <| protoPieceToSVG model.exportModel.pieceAppearances
-                                )
-                            )
+                            (protoPieceTabView model)
                             model.pieceDeckTabIndex
                         ]
                 ]
@@ -170,6 +159,42 @@ protoControllerSplitter f protoPiece =
 
         NoPiece ->
             False
+
+
+protoPieceTabView :
+    Model
+    -> List Int
+    -> Material.Model
+    -> List ProtoPiece
+    -> Html Msg
+protoPieceTabView model index mdl dataList =
+    let
+        quantityControl =
+            QuantityControl.confirmRemoval (UpdateExportModel ... Msg.PieceDeckDecrement)
+                (UpdateExportModel ... Msg.PieceDeckIncrement)
+                (\_ _ -> NoOp)
+    in
+        wrapWithTotal (List.length dataList)
+            <| [ quantityControlTable "piece type"
+                    displayProtoPieceType
+                    quantityControl
+                    (DCC.positionedSvgMakerToHtmlMaker
+                        <| protoPieceToSVG model.exportModel.pieceAppearances
+                    )
+                    index
+                    mdl
+                    dataList
+               , Button.render Msg.Mdl
+                    (index ++ [ 2 ])
+                    mdl
+                    [ Button.raised
+                    , Button.ripple
+                    , css "width" "100%"
+                      --Button.onClick (UpdateExportModel incrementSubPredicateMsg)
+                    ]
+                    [ Icon.i "add"
+                    ]
+               ]
 
 
 displayProtoPieceType : ProtoPiece -> List (Html Msg)
@@ -301,32 +326,33 @@ deckControl :
     -> Html Msg
 deckControl index mdl currentDeck possibilities typeHeading typeDisplay quantityControl elementView =
     wrapWithTotal (List.length currentDeck)
-        <| Table.table [ css "background-color" DCC.background ]
-            [ Table.thead []
-                [ Table.tr []
-                    [ Table.th [{- Table.onClick Reorder -}]
-                        [ text "Deck Element" ]
-                    , Table.th [] [ text typeHeading ]
-                    , Table.th [ Table.numeric ] [ text "Quantity" ]
+        <| [ Table.table [ css "background-color" DCC.background ]
+                [ Table.thead []
+                    [ Table.tr []
+                        [ Table.th [{- Table.onClick Reorder -}]
+                            [ text "Deck Element" ]
+                        , Table.th [] [ text typeHeading ]
+                        , Table.th [ Table.numeric ] [ text "Quantity" ]
+                        ]
                     ]
+                , Table.tbody []
+                    (possibilities
+                        |> List.map
+                            (\item ->
+                                Table.tr []
+                                    [ Table.td []
+                                        [ elementView item
+                                        ]
+                                    , Table.td []
+                                        <| typeDisplay item
+                                    , Table.td []
+                                        [ quantityControl currentDeck item
+                                        ]
+                                    ]
+                            )
+                    )
                 ]
-            , Table.tbody []
-                (possibilities
-                    |> List.map
-                        (\item ->
-                            Table.tr []
-                                [ Table.td []
-                                    [ elementView item
-                                    ]
-                                , Table.td []
-                                    <| typeDisplay item
-                                , Table.td []
-                                    [ quantityControl currentDeck item
-                                    ]
-                                ]
-                        )
-                )
-            ]
+           ]
 
 
 
@@ -370,7 +396,7 @@ tabbedQuantityControlTable index mdl bundleList selectTabMsg tabDisplay tabIndex
             ]
 
 
-quantityControlTableWithTotal :
+quantityControlTable :
     String
     -> (a -> List (Html Msg))
     -> QuantityControl a Msg
@@ -379,38 +405,37 @@ quantityControlTableWithTotal :
     -> Material.Model
     -> List a
     -> Html Msg
-quantityControlTableWithTotal typeHeading typeDisplay quantityControl elementView index mdl dataList =
-    wrapWithTotal (List.length dataList)
-        <| Table.table [ css "background-color" DCC.background ]
-            [ Table.thead []
-                [ Table.tr []
-                    [ Table.th [{- Table.onClick Reorder -}]
-                        [ text "Deck Element" ]
-                    , Table.th [] [ text typeHeading ]
-                    , Table.th [ Table.numeric ] [ text "Quantity" ]
-                    ]
+quantityControlTable typeHeading typeDisplay quantityControl elementView index mdl dataList =
+    Table.table [ css "background-color" DCC.background ]
+        [ Table.thead []
+            [ Table.tr []
+                [ Table.th [{- Table.onClick Reorder -}]
+                    [ text "Deck Element" ]
+                , Table.th [] [ text typeHeading ]
+                , Table.th [ Table.numeric ] [ text "Quantity" ]
                 ]
-            , Table.tbody []
-                (dataList
-                    |> Extras.uniqueMap
-                        (\item ->
-                            Table.tr []
-                                [ Table.td []
-                                    [ elementView item
-                                    ]
-                                , Table.td []
-                                    <| typeDisplay item
-                                , Table.td []
-                                    [ quantityControl dataList item
-                                    ]
-                                ]
-                        )
-                )
             ]
+        , Table.tbody []
+            (dataList
+                |> Extras.uniqueMap
+                    (\item ->
+                        Table.tr []
+                            [ Table.td []
+                                [ elementView item
+                                ]
+                            , Table.td []
+                                <| typeDisplay item
+                            , Table.td []
+                                [ quantityControl dataList item
+                                ]
+                            ]
+                    )
+            )
+        ]
 
 
-wrapWithTotal : Int -> Html msg -> Html msg
-wrapWithTotal total thing =
+wrapWithTotal : Int -> List (Html msg) -> Html msg
+wrapWithTotal total stuff =
     div
         [ style
             [ ( "display", "flex" )
@@ -419,14 +444,14 @@ wrapWithTotal total thing =
             ]
         ]
         [ div []
-            [ div [ style [ ( "width", "100%" ), ( "text-align", "center" ), ( "background-color", DCC.background ) ] ]
+            (div [ style [ ( "width", "100%" ), ( "text-align", "center" ), ( "background-color", DCC.background ) ] ]
                 [ total
                     |> toString
                     |> ((++) "Total: ")
                     |> text
                 ]
-            , thing
-            ]
+                :: stuff
+            )
         ]
 
 
