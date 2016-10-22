@@ -58,6 +58,9 @@ update message model =
             in
                 newModel ! [ newModel |> encodeAndSend ]
 
+        TogglePieceEditor ->
+            { model | showPieceEditor = not model.showPieceEditor } ! []
+
         SaveAs ->
             model
                 ! [ CommonPorts.saveAs

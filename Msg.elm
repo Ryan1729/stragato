@@ -17,6 +17,7 @@ type Msg
     | ToggleSpaceOutlines
     | ToggleAllowMovingAllPieces
     | ToggleIgnoreGameResult
+    | TogglePieceEditor
     | UpdateExportModel ExportMsg
     | SaveAs
     | Load

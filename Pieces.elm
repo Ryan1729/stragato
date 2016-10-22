@@ -128,6 +128,11 @@ pieceTypeToStringList pieceType =
         ++ movePatternToStringList pieceType.movePattern
 
 
+defaultPieceType : PieceType
+defaultPieceType =
+    PieceType NoEffect None (MovePattern [] [])
+
+
 movePatternToStringList : MovePattern -> List String
 movePatternToStringList pattern =
     let

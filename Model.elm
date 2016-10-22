@@ -8,7 +8,7 @@ import Points
 import Extras
 import Dict exposing (Dict)
 import Spaces exposing (Spaces, Space, SpaceType(..))
-import Pieces exposing (Pieces, Piece, PieceType, Controller(..), MoveOccupancy(..), ProtoPiece(..))
+import Pieces exposing (Pieces, Piece, PieceType, Controller(..), MovePattern, ProtoPiece(..))
 import Deck
 import PieceAppearances exposing (PieceAppearances, Appearance)
 import GameEndCons exposing (GameEndCons(..), GamePredicate(..))
@@ -28,6 +28,8 @@ type alias Model =
     , showSpaceOutlines : Bool
     , allowMovingAllPieces : Bool
     , showFileInput : Bool
+    , showPieceEditor : Bool
+    , editingPieceType : PieceType
     , mdl : Material.Model
     }
 
@@ -40,9 +42,11 @@ defaultState =
     , pieceDeckTabIndex = 0
     , exportModel = ExportModel.defaultExportModel
     , ignoreGameResult = False
-    , showFileInput = False
     , showSpaceOutlines = True
     , allowMovingAllPieces = False
+    , showFileInput = False
+    , showPieceEditor = False
+    , editingPieceType = Pieces.defaultPieceType
     , mdl = Material.model
     }
 

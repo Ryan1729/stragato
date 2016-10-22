@@ -173,27 +173,39 @@ protoPieceTabView model index mdl dataList =
             QuantityControl.confirmRemoval (UpdateExportModel ... Msg.PieceDeckDecrement)
                 (UpdateExportModel ... Msg.PieceDeckIncrement)
                 (\_ _ -> NoOp)
-    in
-        wrapWithTotal (List.length dataList)
-            <| [ quantityControlTable "piece type"
-                    displayProtoPieceType
-                    quantityControl
-                    (DCC.positionedSvgMakerToHtmlMaker
-                        <| protoPieceToSVG model.exportModel.pieceAppearances
-                    )
-                    index
-                    mdl
-                    dataList
-               , Button.render Msg.Mdl
-                    (index ++ [ 2 ])
+
+        table =
+            quantityControlTable "piece type"
+                displayProtoPieceType
+                quantityControl
+                (DCC.positionedSvgMakerToHtmlMaker
+                    <| protoPieceToSVG model.exportModel.pieceAppearances
+                )
+                index
+                mdl
+                dataList
+
+        newIndex =
+            index ++ [ 2 ]
+
+        editPanel =
+            if model.showPieceEditor then
+                makePieceTypeSelector newIndex mdl model.editingPieceType
+            else
+                Button.render Msg.Mdl
+                    newIndex
                     mdl
                     [ Button.raised
                     , Button.ripple
                     , css "width" "100%"
-                      --Button.onClick (UpdateExportModel incrementSubPredicateMsg)
+                    , Button.onClick TogglePieceEditor
                     ]
                     [ Icon.i "add"
                     ]
+    in
+        wrapWithTotal (List.length dataList)
+            <| [ table
+               , editPanel
                ]
 
 
@@ -228,6 +240,54 @@ toggleSwitchCell index mdl toggleMessage labelText bool =
             , Toggles.value bool
             ]
             [ text labelText ]
+        ]
+
+
+makePieceTypeSelector :
+    List Int
+    -> Material.Model
+       -- -> ExportMsg -> ExportMsg -> ExportMsg -> ExportMsg
+    -> PieceType
+    -> Html Msg
+makePieceTypeSelector index
+    mdl
+    -- decrementMsg incrementMsg decrementSubPredicateMsg incrementSubPredicateMsg
+    pieceType
+    =
+    div
+        [ style
+            [ ( "border", "1px solid" )
+            , ( "display", "flex" )
+            , ( "flex-direction", "column" )
+            ]
+        ]
+        [ mdlStepper index mdl NoOp NoOp (toString pieceType.moveEffect)
+        , mdlStepper index mdl NoOp NoOp (toString pieceType.controller)
+        , text <| toString pieceType.movePattern
+        ]
+
+
+mdlStepper index mdl incrementMsg decrementMsg value =
+    Html.ul [ style [ ( "list-style", "none" ), ( "padding", "0" ), ( "margin", "0" ) ] ]
+        [ Html.li []
+            [ Button.render Msg.Mdl
+                (index ++ [ 1 ])
+                mdl
+                [ Button.onClick incrementMsg
+                ]
+                [ Icon.i "add"
+                ]
+            ]
+        , Html.li [ style [ ( "margin-left", "2em" ) ] ] [ text value ]
+        , Html.li []
+            [ Button.render Msg.Mdl
+                (index ++ [ 0 ])
+                mdl
+                [ Button.onClick decrementMsg
+                ]
+                [ Icon.i "remove"
+                ]
+            ]
         ]
 
 
