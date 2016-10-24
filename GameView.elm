@@ -5,7 +5,7 @@ import Html exposing (Html, div, text)
 import Html.Attributes as HA
 import Svg exposing (Svg, svg, rect, polygon, Attribute)
 import Svg.Attributes exposing (..)
-import Svg.Events exposing (onClick, on)
+import Svg.Events exposing (onClick)
 import GameMsg exposing (Msg(..))
 import Playfield
 import Points
